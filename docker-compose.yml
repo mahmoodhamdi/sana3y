@@ -1,0 +1,53 @@
+services:
+  mongodb:
+    image: mongo:7
+    container_name: sana3y-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: sana3y
+      MONGO_INITDB_ROOT_PASSWORD: sana3y123
+      MONGO_INITDB_DATABASE: sana3y
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    networks:
+      - sana3y-network
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: sana3y-mongo-express
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: sana3y
+      ME_CONFIG_MONGODB_ADMINPASSWORD: sana3y123
+      ME_CONFIG_MONGODB_URL: mongodb://sana3y:sana3y123@mongodb:27017/
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin123
+    depends_on:
+      - mongodb
+    networks:
+      - sana3y-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: sana3y-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - sana3y-network
+
+volumes:
+  mongodb_data:
+  mongodb_config:
+  redis_data:
+
+networks:
+  sana3y-network:
+    driver: bridge
