@@ -19,6 +19,7 @@ npm run lint          # Run ESLint
 npm run lint:fix      # Fix ESLint issues
 npm run test          # Run Jest tests
 npm run test:watch    # Run tests in watch mode
+npm run test -- --testPathPattern="auth"  # Run single test file
 npm run seed          # Seed database
 ```
 
@@ -27,9 +28,13 @@ npm run seed          # Seed database
 cd mobile
 flutter pub get
 flutter run                          # Run on connected device/emulator
+flutter run -d chrome                # Run on Chrome (web)
 flutter build apk                    # Build Android APK
 flutter build ios                    # Build iOS
+flutter test                         # Run all tests
+flutter test test/widget_test.dart   # Run single test file
 dart run build_runner build --delete-conflicting-outputs  # Generate Freezed/Riverpod code
+dart run build_runner watch --delete-conflicting-outputs  # Watch mode for code gen
 ```
 
 ### Admin Dashboard (Next.js 16)
@@ -37,7 +42,7 @@ dart run build_runner build --delete-conflicting-outputs  # Generate Freezed/Riv
 cd admin-dashboard
 npm install
 cp .env.example .env.local  # Configure environment variables
-npm run dev                 # Start development server
+npm run dev                 # Start development server (localhost:3000)
 npm run build               # Production build
 npm run lint                # Run ESLint
 ```
@@ -64,7 +69,7 @@ Configured in `backend/tsconfig.json`:
 
 ### Backend API Structure
 - Base URL: `/api/v1`
-- Routes: `/auth`, `/categories`, `/craftsmen`, `/upload`
+- Routes: `/auth`, `/categories`, `/craftsmen`, `/requests`, `/upload`
 - Health check: `/health`
 
 ### Mobile Architecture
@@ -101,3 +106,29 @@ Key models in `backend/src/models/`:
 - Mobile app defaults to RTL with Arabic locale (ar_EG)
 - File uploads via Cloudinary
 - Real-time updates via Socket.io
+
+## Business Defaults
+
+Located in `shared/constants/index.ts` and mirrored in `mobile/lib/config/constants.dart`:
+- Commission: 15% (from craftsmen)
+- Service Fee: 5% (from customers)
+- Urgent Fee: 20% (extra charge)
+- Default location: الباجور (30.4522, 30.9667)
+- Service radius: 10 km
+
+## Socket.io Events
+
+Key events in `mobile/lib/config/constants.dart` (SocketEvents class):
+- `request:new`, `request:quote`, `request:accepted`, `request:status` - Request lifecycle
+- `message:new`, `message:read` - Chat
+- `craftsman:online`, `craftsman:offline` - Availability
+
+## Code Generation
+
+After modifying Freezed models or Riverpod providers in Flutter, regenerate:
+```bash
+cd mobile
+dart run build_runner build --delete-conflicting-outputs
+```
+
+Generated files: `*.freezed.dart`, `*.g.dart` - do not edit manually.

@@ -3,6 +3,7 @@ import authRoutes from './auth.routes';
 import categoryRoutes from './category.routes';
 import craftsmanRoutes from './craftsman.routes';
 import uploadRoutes from './upload.routes';
+import requestRoutes from './request.routes';
 
 const router = Router();
 
@@ -20,6 +21,9 @@ router.use(`${API_VERSION}/craftsmen`, craftsmanRoutes);
 
 // Upload routes
 router.use(`${API_VERSION}/upload`, uploadRoutes);
+
+// Request routes
+router.use(`${API_VERSION}/requests`, requestRoutes);
 
 // Health check
 router.get('/health', (_req, res) => {

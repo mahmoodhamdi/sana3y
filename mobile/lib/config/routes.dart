@@ -11,8 +11,14 @@ import '../screens/customer/home_screen.dart';
 import '../screens/customer/category_craftsmen_screen.dart';
 import '../screens/customer/craftsman_profile_screen.dart';
 import '../screens/customer/search_screen.dart';
+import '../screens/customer/request/create_request_screen.dart';
+import '../screens/customer/request/request_tracking_screen.dart';
+import '../screens/customer/request/requests_history_screen.dart';
 import '../screens/craftsman/craftsman_home_screen.dart';
 import '../screens/craftsman/manage_profile_screen.dart';
+import '../screens/craftsman/available_requests_screen.dart';
+import '../screens/craftsman/active_jobs_screen.dart';
+import '../screens/craftsman/earnings_screen.dart';
 
 class AppRoutes {
   // Auth Routes
@@ -189,10 +195,18 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.requestHistory,
-        builder: (context, state) => const _PlaceholderScreen(
-          title: 'طلباتي',
-          icon: Icons.list_alt,
-        ),
+        builder: (context, state) => const RequestsHistoryScreen(),
+      ),
+      GoRoute(
+        path: '/request/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return RequestTrackingScreen(requestId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.createRequest,
+        builder: (context, state) => const CreateRequestScreen(),
       ),
       GoRoute(
         path: AppRoutes.conversations,
@@ -217,24 +231,15 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.craftsmanAvailableRequests,
-        builder: (context, state) => const _PlaceholderScreen(
-          title: 'طلبات متاحة',
-          icon: Icons.work_outline,
-        ),
+        builder: (context, state) => const AvailableRequestsScreen(),
       ),
       GoRoute(
         path: AppRoutes.craftsmanActiveJobs,
-        builder: (context, state) => const _PlaceholderScreen(
-          title: 'أعمالي النشطة',
-          icon: Icons.assignment,
-        ),
+        builder: (context, state) => const ActiveJobsScreen(),
       ),
       GoRoute(
         path: AppRoutes.craftsmanEarnings,
-        builder: (context, state) => const _PlaceholderScreen(
-          title: 'أرباحي',
-          icon: Icons.account_balance_wallet,
-        ),
+        builder: (context, state) => const EarningsScreen(),
       ),
       GoRoute(
         path: AppRoutes.craftsmanWorkPhotos,
