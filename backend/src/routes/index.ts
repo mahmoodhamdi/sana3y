@@ -1,5 +1,8 @@
 import { Router } from 'express';
 import authRoutes from './auth.routes';
+import categoryRoutes from './category.routes';
+import craftsmanRoutes from './craftsman.routes';
+import uploadRoutes from './upload.routes';
 
 const router = Router();
 
@@ -8,6 +11,15 @@ const API_VERSION = '/api/v1';
 
 // Auth routes
 router.use(`${API_VERSION}/auth`, authRoutes);
+
+// Category routes
+router.use(`${API_VERSION}/categories`, categoryRoutes);
+
+// Craftsman routes
+router.use(`${API_VERSION}/craftsmen`, craftsmanRoutes);
+
+// Upload routes
+router.use(`${API_VERSION}/upload`, uploadRoutes);
 
 // Health check
 router.get('/health', (_req, res) => {

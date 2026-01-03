@@ -7,6 +7,12 @@ import '../models/user.dart';
 import '../screens/auth/phone_screen.dart';
 import '../screens/auth/otp_screen.dart';
 import '../screens/auth/register_screen.dart';
+import '../screens/customer/home_screen.dart';
+import '../screens/customer/category_craftsmen_screen.dart';
+import '../screens/customer/craftsman_profile_screen.dart';
+import '../screens/customer/search_screen.dart';
+import '../screens/craftsman/craftsman_home_screen.dart';
+import '../screens/craftsman/manage_profile_screen.dart';
 
 class AppRoutes {
   // Auth Routes
@@ -131,21 +137,131 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
 
-      // Customer Home (placeholder)
+      // Customer Home
       GoRoute(
         path: AppRoutes.customerHome,
-        builder: (context, state) => const _PlaceholderScreen(
-          title: 'الرئيسية',
-          icon: Icons.home,
-        ),
+        builder: (context, state) => const CustomerHomeScreen(),
       ),
 
-      // Craftsman Home (placeholder)
+      // Craftsman Home
       GoRoute(
         path: AppRoutes.craftsmanHome,
+        builder: (context, state) => const CraftsmanHomeScreen(),
+      ),
+
+      // Category Craftsmen
+      GoRoute(
+        path: '/category/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return CategoryCraftsmenScreen(categoryId: id);
+        },
+      ),
+
+      // Craftsman Profile
+      GoRoute(
+        path: '/craftsman/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return CraftsmanProfileScreen(craftsmanId: id);
+        },
+      ),
+
+      // Search
+      GoRoute(
+        path: AppRoutes.search,
+        builder: (context, state) => const SearchScreen(),
+      ),
+
+      // Craftsman Profile Management
+      GoRoute(
+        path: AppRoutes.craftsmanProfileManagement,
+        builder: (context, state) => const ManageProfileScreen(),
+      ),
+
+      // Placeholder routes
+      GoRoute(
+        path: AppRoutes.notifications,
         builder: (context, state) => const _PlaceholderScreen(
-          title: 'طلبات العمل',
+          title: 'الإشعارات',
+          icon: Icons.notifications,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.requestHistory,
+        builder: (context, state) => const _PlaceholderScreen(
+          title: 'طلباتي',
+          icon: Icons.list_alt,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.conversations,
+        builder: (context, state) => const _PlaceholderScreen(
+          title: 'المحادثات',
+          icon: Icons.chat,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.customerProfile,
+        builder: (context, state) => const _PlaceholderScreen(
+          title: 'حسابي',
+          icon: Icons.person,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.craftsmanRequests,
+        builder: (context, state) => const _PlaceholderScreen(
+          title: 'الطلبات',
           icon: Icons.work,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.craftsmanAvailableRequests,
+        builder: (context, state) => const _PlaceholderScreen(
+          title: 'طلبات متاحة',
+          icon: Icons.work_outline,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.craftsmanActiveJobs,
+        builder: (context, state) => const _PlaceholderScreen(
+          title: 'أعمالي النشطة',
+          icon: Icons.assignment,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.craftsmanEarnings,
+        builder: (context, state) => const _PlaceholderScreen(
+          title: 'أرباحي',
+          icon: Icons.account_balance_wallet,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.craftsmanWorkPhotos,
+        builder: (context, state) => const _PlaceholderScreen(
+          title: 'صور الأعمال',
+          icon: Icons.photo_library,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.craftsmanServices,
+        builder: (context, state) => const _PlaceholderScreen(
+          title: 'الخدمات',
+          icon: Icons.build,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.craftsmanAvailability,
+        builder: (context, state) => const _PlaceholderScreen(
+          title: 'أوقات العمل',
+          icon: Icons.access_time,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.craftsmanWithdrawal,
+        builder: (context, state) => const _PlaceholderScreen(
+          title: 'طلب سحب',
+          icon: Icons.payments,
         ),
       ),
     ],
