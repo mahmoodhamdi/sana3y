@@ -115,11 +115,9 @@ export interface IWorkingHour {
   end: string;
 }
 
-export interface AuthenticatedRequest extends Request {
-  user?: IUser;
-  customer?: ICustomer;
-  craftsman?: ICraftsman;
-}
+// Note: AuthenticatedRequest is now defined via global Express namespace extension
+// in @middleware/auth.ts. The user property contains DecodedToken from JWT.
+// Use req.user?.userId to get user ID, req.user?.role for role, etc.
 
 export interface PaginationQuery {
   page?: number;

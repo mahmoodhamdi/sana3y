@@ -25,7 +25,8 @@
       "@services/*": ["services/*"],
       "@validators/*": ["validators/*"],
       "@utils/*": ["utils/*"],
-      "@types/*": ["types/*"]
+      "@types/*": ["types/*"],
+      "@shared/*": ["../../shared/*"]
     },
     "typeRoots": ["./node_modules/@types", "./src/types"]
   },

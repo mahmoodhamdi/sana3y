@@ -8,6 +8,7 @@ import { config } from './config';
 import { errorHandler } from './middleware/errorHandler';
 import { notFoundHandler } from './middleware/notFound';
 import { logger } from './utils/logger';
+import routes from './routes';
 
 const createApp = (): Application => {
   const app = express();
@@ -68,12 +69,8 @@ const createApp = (): Application => {
     });
   });
 
-  // API routes will be added here
-  // app.use(`/api/${config.apiVersion}/auth`, authRoutes);
-  // app.use(`/api/${config.apiVersion}/categories`, categoryRoutes);
-  // app.use(`/api/${config.apiVersion}/craftsmen`, craftsmenRoutes);
-  // app.use(`/api/${config.apiVersion}/requests`, requestRoutes);
-  // app.use(`/api/${config.apiVersion}/conversations`, conversationRoutes);
+  // API routes
+  app.use(routes);
 
   // 404 handler
   app.use(notFoundHandler);

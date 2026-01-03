@@ -6,6 +6,7 @@ export interface IOTP extends Document {
   type: 'verification' | 'login' | 'password_reset';
   attempts: number;
   isVerified: boolean;
+  isUsed: boolean;
   expiresAt: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -33,6 +34,10 @@ const otpSchema = new Schema<IOTP>(
       max: 5,
     },
     isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    isUsed: {
       type: Boolean,
       default: false,
     },

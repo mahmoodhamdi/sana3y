@@ -2,6 +2,8 @@ import mongoose, { Schema, Model, HydratedDocument } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { IUser, UserRole } from '../types';
 
+export type { IUser } from '../types';
+
 interface IUserMethods {
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
