@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
 import 'config/constants.dart';
 import 'config/theme.dart';
@@ -10,9 +9,6 @@ import 'config/routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize Hive for local storage
-  await Hive.initFlutter();
 
   // Set preferred orientations
   await SystemChrome.setPreferredOrientations([
@@ -42,7 +38,7 @@ class Sana3yApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final router = createRouter();
+    final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
       title: AppConstants.appName,

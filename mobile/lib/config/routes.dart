@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../providers/auth_provider.dart';
+import '../models/auth.dart';
+import '../models/user.dart';
+import '../screens/auth/phone_screen.dart';
+import '../screens/auth/otp_screen.dart';
+import '../screens/auth/register_screen.dart';
 
 class AppRoutes {
   // Auth Routes
   static const String splash = '/';
-  static const String welcome = '/welcome';
-  static const String phone = '/phone';
+  static const String login = '/login';
   static const String otp = '/otp';
-  static const String registerCustomer = '/register/customer';
-  static const String registerCraftsman = '/register/craftsman';
-  static const String craftsmanDocuments = '/register/craftsman/documents';
-  static const String pendingApproval = '/pending-approval';
+  static const String register = '/register';
 
   // Customer Routes
   static const String customerHome = '/customer';
@@ -44,19 +47,107 @@ class AppRoutes {
   static const String craftsmanWorkPhotos = '/craftsman/photos';
 }
 
-// This will be properly configured when we implement the screens
-GoRouter createRouter() {
+final routerProvider = Provider<GoRouter>((ref) {
+  final authState = ref.watch(authProvider);
+
   return GoRouter(
     initialLocation: AppRoutes.splash,
     debugLogDiagnostics: true,
+    redirect: (context, state) {
+      final isAuthenticated = authState.status == AuthStatus.authenticated;
+      final isAuthRoute = state.uri.path == AppRoutes.login ||
+          state.uri.path == AppRoutes.otp ||
+          state.uri.path == AppRoutes.register;
+      final isSplash = state.uri.path == AppRoutes.splash;
+
+      // Still loading auth state
+      if (authState.status == AuthStatus.initial) {
+        return null;
+      }
+
+      // Redirect to login if not authenticated and not on auth route
+      if (!isAuthenticated && !isAuthRoute && !isSplash) {
+        return AppRoutes.login;
+      }
+
+      // Redirect to home if authenticated and on auth route
+      if (isAuthenticated && isAuthRoute) {
+        final role = authState.user?.role;
+        return role == UserRole.craftsman ? AppRoutes.craftsmanHome : AppRoutes.customerHome;
+      }
+
+      // Redirect from splash based on auth state
+      if (isSplash && authState.status != AuthStatus.initial) {
+        if (isAuthenticated) {
+          final role = authState.user?.role;
+          return role == UserRole.craftsman ? AppRoutes.craftsmanHome : AppRoutes.customerHome;
+        }
+        return AppRoutes.login;
+      }
+
+      return null;
+    },
     routes: [
+      // Splash Screen
       GoRoute(
         path: AppRoutes.splash,
         builder: (context, state) => const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.handyman, size: 80, color: Colors.blue),
+                SizedBox(height: 16),
+                CircularProgressIndicator(),
+              ],
+            ),
+          ),
         ),
       ),
-      // More routes will be added as screens are implemented
+
+      // Auth Routes
+      GoRoute(
+        path: AppRoutes.login,
+        builder: (context, state) => const PhoneScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.otp,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return OtpScreen(
+            phone: extra?['phone'] ?? '',
+            isLogin: extra?['isLogin'] ?? true,
+            devCode: extra?['devCode'],
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.register,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return RegisterScreen(
+            phone: extra?['phone'] ?? '',
+          );
+        },
+      ),
+
+      // Customer Home (placeholder)
+      GoRoute(
+        path: AppRoutes.customerHome,
+        builder: (context, state) => const _PlaceholderScreen(
+          title: 'الرئيسية',
+          icon: Icons.home,
+        ),
+      ),
+
+      // Craftsman Home (placeholder)
+      GoRoute(
+        path: AppRoutes.craftsmanHome,
+        builder: (context, state) => const _PlaceholderScreen(
+          title: 'طلبات العمل',
+          icon: Icons.work,
+        ),
+      ),
     ],
     errorBuilder: (context, state) => Scaffold(
       body: Center(
@@ -65,15 +156,63 @@ GoRouter createRouter() {
           children: [
             const Icon(Icons.error_outline, size: 48, color: Colors.red),
             const SizedBox(height: 16),
-            Text('Page not found: ${state.uri.path}'),
+            Text('الصفحة غير موجودة: ${state.uri.path}'),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => context.go(AppRoutes.splash),
-              child: const Text('Go Home'),
+              child: const Text('الرئيسية'),
             ),
           ],
         ),
       ),
     ),
   );
+});
+
+// Placeholder screen for unimplemented routes
+class _PlaceholderScreen extends ConsumerWidget {
+  final String title;
+  final IconData icon;
+
+  const _PlaceholderScreen({
+    required this.title,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(currentUserProvider);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              ref.read(authProvider.notifier).logout();
+            },
+          ),
+        ],
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 80, color: Colors.grey),
+            const SizedBox(height: 16),
+            Text(
+              'مرحباً ${user?.name ?? ""}!',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'سيتم إضافة المزيد من الميزات قريباً',
+              style: TextStyle(color: Colors.grey[600]),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
