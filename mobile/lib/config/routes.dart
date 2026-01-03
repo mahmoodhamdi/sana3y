@@ -22,7 +22,9 @@ import '../screens/craftsman/earnings_screen.dart';
 import '../screens/shared/conversations_list_screen.dart';
 import '../screens/shared/chat_screen.dart';
 import '../screens/shared/craftsman_reviews_screen.dart';
+import '../screens/shared/notifications_screen.dart';
 import '../screens/customer/rate_service_screen.dart';
+import '../screens/customer/profile_screen.dart';
 
 class AppRoutes {
   // Auth Routes
@@ -190,13 +192,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const ManageProfileScreen(),
       ),
 
-      // Placeholder routes
+      // Notifications
       GoRoute(
         path: AppRoutes.notifications,
-        builder: (context, state) => const _PlaceholderScreen(
-          title: 'الإشعارات',
-          icon: Icons.notifications,
-        ),
+        builder: (context, state) => const NotificationsScreen(),
       ),
       GoRoute(
         path: AppRoutes.requestHistory,
@@ -248,10 +247,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.customerProfile,
-        builder: (context, state) => const _PlaceholderScreen(
-          title: 'حسابي',
-          icon: Icons.person,
-        ),
+        builder: (context, state) => const ProfileScreen(),
       ),
       GoRoute(
         path: AppRoutes.craftsmanRequests,

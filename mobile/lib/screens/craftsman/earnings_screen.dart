@@ -35,8 +35,8 @@ class EarningsScreen extends ConsumerWidget {
                   if (profile == null) return const SizedBox.shrink();
                   return _BalanceCard(
                     currentBalance: profile.currentBalance,
-                    pendingBalance: profile.earnings?.pending ?? 0,
-                    totalEarnings: profile.earnings?.total ?? 0,
+                    pendingBalance: profile.totalEarnings - profile.currentBalance,
+                    totalEarnings: profile.totalEarnings,
                     onWithdraw: () => _showWithdrawSheet(context),
                   );
                 },
