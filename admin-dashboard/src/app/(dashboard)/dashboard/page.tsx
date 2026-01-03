@@ -1,127 +1,337 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import {
+  ClipboardList,
+  Hammer,
+  Users,
+  DollarSign,
+  TrendingUp,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+} from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/contexts/auth-context';
+import { getDashboardStats, DashboardStats } from '@/services/admin.service';
 
-const stats = [
-  { title: 'إجمالي الطلبات', value: '0', icon: '📋' },
-  { title: 'الصنايعية النشطين', value: '0', icon: '👷' },
-  { title: 'العملاء', value: '0', icon: '👥' },
-  { title: 'الإيرادات (ج.م)', value: '0', icon: '💰' },
-];
+const statusColors: Record<string, string> = {
+  pending: 'bg-yellow-100 text-yellow-800',
+  quoted: 'bg-blue-100 text-blue-800',
+  accepted: 'bg-purple-100 text-purple-800',
+  in_progress: 'bg-teal-100 text-teal-800',
+  completed: 'bg-green-100 text-green-800',
+  cancelled: 'bg-red-100 text-red-800',
+};
+
+const statusLabels: Record<string, string> = {
+  pending: 'في الانتظار',
+  quoted: 'تم التسعير',
+  accepted: 'مقبول',
+  in_progress: 'جاري العمل',
+  completed: 'مكتمل',
+  cancelled: 'ملغي',
+};
+
+const craftsmanStatusColors: Record<string, string> = {
+  pending: 'bg-yellow-100 text-yellow-800',
+  approved: 'bg-green-100 text-green-800',
+  rejected: 'bg-red-100 text-red-800',
+  suspended: 'bg-gray-100 text-gray-800',
+};
+
+const craftsmanStatusLabels: Record<string, string> = {
+  pending: 'قيد المراجعة',
+  approved: 'موافق عليه',
+  rejected: 'مرفوض',
+  suspended: 'موقوف',
+};
 
 export default function DashboardPage() {
-  const { user, isAuthenticated, isLoading, logout } = useAuth();
-  const router = useRouter();
+  const { user } = useAuth();
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.push('/login');
-    }
-  }, [isAuthenticated, isLoading, router]);
+    const fetchStats = async () => {
+      const data = await getDashboardStats();
+      setStats(data);
+      setLoading(false);
+    };
+    fetchStats();
+  }, []);
 
-  if (isLoading) {
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('ar-EG', {
+      style: 'currency',
+      currency: 'EGP',
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('ar-EG', {
+      day: 'numeric',
+      month: 'short',
+    });
+  };
+
+  if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="space-y-6">
+        <Skeleton className="h-8 w-48" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => (
+            <Skeleton key={i} className="h-32" />
+          ))}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Skeleton className="h-80" />
+          <Skeleton className="h-80" />
+        </div>
       </div>
     );
   }
 
-  if (!isAuthenticated) {
-    return null;
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-              <svg
-                className="w-5 h-5 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">صنايعي</h1>
-              <p className="text-sm text-gray-500">لوحة التحكم</p>
-            </div>
-          </div>
+    <div className="space-y-6">
+      {/* Welcome Header */}
+      <div>
+        <h1 className="text-2xl font-bold">مرحباً، {user?.name}!</h1>
+        <p className="text-muted-foreground">نظرة عامة على أداء المنصة</p>
+      </div>
 
-          <div className="flex items-center gap-4">
-            <div className="text-left">
-              <p className="font-medium text-gray-900">{user?.name}</p>
-              <p className="text-sm text-gray-500">{user?.email}</p>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              إجمالي الطلبات
+            </CardTitle>
+            <ClipboardList className="h-5 w-5 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{stats?.totalRequests || 0}</div>
+            <div className="flex items-center gap-2 mt-1 text-sm">
+              <span className="text-green-600">{stats?.activeRequests || 0} نشط</span>
+              <span className="text-muted-foreground">•</span>
+              <span className="text-muted-foreground">{stats?.completedRequests || 0} مكتمل</span>
             </div>
-            <Button variant="outline" onClick={logout}>
-              تسجيل الخروج
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              الصنايعية
+            </CardTitle>
+            <Hammer className="h-5 w-5 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{stats?.totalCraftsmen || 0}</div>
+            <div className="flex items-center gap-2 mt-1 text-sm">
+              <span className="text-green-600">{stats?.activeCraftsmen || 0} نشط</span>
+              {(stats?.pendingCraftsmen || 0) > 0 && (
+                <>
+                  <span className="text-muted-foreground">•</span>
+                  <span className="text-yellow-600">{stats?.pendingCraftsmen} قيد المراجعة</span>
+                </>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              العملاء
+            </CardTitle>
+            <Users className="h-5 w-5 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{stats?.totalCustomers || 0}</div>
+            <div className="flex items-center gap-2 mt-1 text-sm">
+              <span className="text-green-600">{stats?.activeCustomers || 0} نشط</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              الإيرادات
+            </CardTitle>
+            <DollarSign className="h-5 w-5 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{formatCurrency(stats?.totalRevenue || 0)}</div>
+            <div className="flex items-center gap-2 mt-1 text-sm">
+              <TrendingUp className="h-4 w-4 text-green-600" />
+              <span className="text-green-600">{formatCurrency(stats?.monthlyRevenue || 0)} هذا الشهر</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Quick Actions */}
+      {(stats?.pendingCraftsmen || 0) > 0 && (
+        <Card className="border-yellow-200 bg-yellow-50">
+          <CardContent className="flex items-center justify-between py-4">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="h-5 w-5 text-yellow-600" />
+              <div>
+                <p className="font-medium">طلبات صنايعية قيد المراجعة</p>
+                <p className="text-sm text-muted-foreground">
+                  يوجد {stats?.pendingCraftsmen} طلب انضمام بحاجة للمراجعة
+                </p>
+              </div>
+            </div>
+            <Button asChild>
+              <Link href="/craftsmen/pending">مراجعة الطلبات</Link>
             </Button>
-          </div>
-        </div>
-      </header>
+          </CardContent>
+        </Card>
+      )}
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h2 className="text-2xl font-bold mb-6">مرحباً، {user?.name}!</h2>
+      {/* Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Recent Requests */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>آخر الطلبات</CardTitle>
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/requests">عرض الكل</Link>
+            </Button>
+          </CardHeader>
+          <CardContent>
+            {stats?.recentRequests && stats.recentRequests.length > 0 ? (
+              <div className="space-y-4">
+                {stats.recentRequests.map((request) => (
+                  <div
+                    key={request._id}
+                    className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate">{request.title}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {request.customerName} • {formatDate(request.createdAt)}
+                      </p>
+                    </div>
+                    <Badge className={statusColors[request.status] || 'bg-gray-100'}>
+                      {statusLabels[request.status] || request.status}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-8 text-center">
+                <Clock className="h-12 w-12 text-muted-foreground mb-2" />
+                <p className="text-muted-foreground">لا يوجد طلبات حديثة</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat) => (
-            <Card key={stat.title}>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  {stat.title}
-                </CardTitle>
-                <span className="text-2xl">{stat.icon}</span>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{stat.value}</div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        {/* Recent Craftsmen */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>آخر الصنايعية</CardTitle>
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/craftsmen">عرض الكل</Link>
+            </Button>
+          </CardHeader>
+          <CardContent>
+            {stats?.recentCraftsmen && stats.recentCraftsmen.length > 0 ? (
+              <div className="space-y-4">
+                {stats.recentCraftsmen.map((craftsman) => (
+                  <div
+                    key={craftsman._id}
+                    className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate">{craftsman.name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {craftsman.category} • {formatDate(craftsman.createdAt)}
+                      </p>
+                    </div>
+                    <Badge className={craftsmanStatusColors[craftsman.status] || 'bg-gray-100'}>
+                      {craftsmanStatusLabels[craftsman.status] || craftsman.status}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-8 text-center">
+                <Hammer className="h-12 w-12 text-muted-foreground mb-2" />
+                <p className="text-muted-foreground">لا يوجد صنايعية جدد</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
-        {/* Recent Activity */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>طلبات الموافقة المعلقة</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">لا يوجد طلبات معلقة</p>
-            </CardContent>
-          </Card>
+      {/* Quick Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <CheckCircle className="h-5 w-5 text-green-600" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{stats?.completedRequests || 0}</p>
+                <p className="text-sm text-muted-foreground">طلبات مكتملة</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>آخر الطلبات</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">لا يوجد طلبات حديثة</p>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Clock className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{stats?.activeRequests || 0}</p>
+                <p className="text-sm text-muted-foreground">طلبات جارية</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-purple-100 rounded-lg">
+                <Hammer className="h-5 w-5 text-purple-600" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{stats?.activeCraftsmen || 0}</p>
+                <p className="text-sm text-muted-foreground">صنايعي نشط</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-yellow-100 rounded-lg">
+                <DollarSign className="h-5 w-5 text-yellow-600" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{formatCurrency(stats?.pendingPayouts || 0)}</p>
+                <p className="text-sm text-muted-foreground">مستحقات معلقة</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
