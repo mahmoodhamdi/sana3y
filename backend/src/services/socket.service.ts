@@ -63,7 +63,7 @@ class SocketService {
         }
 
         next();
-      } catch (error) {
+      } catch (_error) {
         next(new Error('Invalid token'));
       }
     });

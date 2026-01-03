@@ -1,4 +1,3 @@
-import { Request } from 'express';
 import { Document, Types } from 'mongoose';
 
 export type UserRole = 'customer' | 'craftsman' | 'admin';

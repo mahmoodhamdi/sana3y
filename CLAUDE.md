@@ -69,7 +69,7 @@ Configured in `backend/tsconfig.json`:
 
 ### Backend API Structure
 - Base URL: `/api/v1`
-- Routes: `/auth`, `/categories`, `/craftsmen`, `/requests`, `/upload`
+- Routes: `/auth`, `/categories`, `/craftsmen`, `/requests`, `/chat`, `/reviews`, `/notifications`, `/upload`
 - Health check: `/health`
 
 ### Mobile Architecture
@@ -77,18 +77,22 @@ Configured in `backend/tsconfig.json`:
 - **Routing**: GoRouter with auth guards
 - **Models**: Freezed for immutable data classes with JSON serialization
 - **Services**: Dio for HTTP, Socket.io for real-time
+- **Screen Organization**: `screens/auth/` (shared), `screens/customer/`, `screens/craftsman/`, `screens/shared/`
 
 ### Admin Dashboard Architecture
 - **App Router**: Next.js 16 with route groups `(auth)` and `(dashboard)`
 - **State**: Zustand for global state, React Query for server state
 - **UI**: shadcn/ui components with Radix primitives
+- **Dashboard Routes**: `/dashboard`, `/craftsmen`, `/customers`, `/requests`, `/categories`, `/finance`, `/zones`, `/notifications`, `/settings`
 
 ### Database Models (MongoDB)
 Key models in `backend/src/models/`:
 - User, Customer, Craftsman, ServiceCategory
-- ServiceRequest, Quote, Review
+- ServiceRequest, Review
 - Conversation, Message
 - Transaction, Notification, Zone, Setting, OTP
+
+Note: Quote is embedded in ServiceRequest, not a separate model.
 
 ### User Roles
 - **customer** - Request services

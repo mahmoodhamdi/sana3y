@@ -6,7 +6,7 @@ const EGYPT_PHONE_REGEX = /^\+20[0-9]{10}$/;
  */
 export const formatPhone = (phone: string): string => {
   // Remove all non-digits
-  let cleaned = phone.replace(/\D/g, '');
+  const cleaned = phone.replace(/\D/g, '');
 
   // Handle different input formats
   if (cleaned.startsWith('20') && cleaned.length === 12) {

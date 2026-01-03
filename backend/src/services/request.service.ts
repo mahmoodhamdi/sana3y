@@ -1,6 +1,5 @@
 import { Types } from 'mongoose';
 import ServiceRequest, { IServiceRequest } from '../models/ServiceRequest';
-import User from '../models/User';
 import Craftsman from '../models/Craftsman';
 import Customer from '../models/Customer';
 import { NotFoundError, BadRequestError, ForbiddenError } from '@utils/errors';

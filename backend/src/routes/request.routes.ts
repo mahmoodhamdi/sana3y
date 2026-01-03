@@ -18,7 +18,7 @@ import {
   getStatuses,
   deleteRequest,
 } from '../controllers/request.controller';
-import { authenticate, requireRole, requireCustomer, requireCraftsman, requireAdmin } from '../middleware/auth';
+import { authenticate, requireCustomer, requireCraftsman, requireAdmin } from '../middleware/auth';
 import {
   validateCreateRequest,
   validateUpdateRequest,
