@@ -1,4 +1,3 @@
-// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -10,72 +9,41 @@ part of 'craftsman.dart';
 // FreezedGenerator
 // **************************************************************************
 
-// dart format off
 T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+
+ServiceInfo _$ServiceInfoFromJson(Map<String, dynamic> json) {
+  return _ServiceInfo.fromJson(json);
+}
 
 /// @nodoc
 mixin _$ServiceInfo {
-  String get categoryId;
-  List<String> get subcategories;
-  int get experience;
-  PriceType get priceType;
-  double? get basePrice;
-  String? get description; // Populated category details
-  Map<String, dynamic>? get category;
+  String get categoryId => throw _privateConstructorUsedError;
+  List<String> get subcategories => throw _privateConstructorUsedError;
+  int get experience => throw _privateConstructorUsedError;
+  PriceType get priceType => throw _privateConstructorUsedError;
+  double? get basePrice => throw _privateConstructorUsedError;
+  String? get description =>
+      throw _privateConstructorUsedError; // Populated category details
+  Map<String, dynamic>? get category => throw _privateConstructorUsedError;
+
+  /// Serializes this ServiceInfo to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
   /// Create a copy of ServiceInfo
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
   $ServiceInfoCopyWith<ServiceInfo> get copyWith =>
-      _$ServiceInfoCopyWithImpl<ServiceInfo>(this as ServiceInfo, _$identity);
-
-  /// Serializes this ServiceInfo to a JSON map.
-  Map<String, dynamic> toJson();
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is ServiceInfo &&
-            (identical(other.categoryId, categoryId) ||
-                other.categoryId == categoryId) &&
-            const DeepCollectionEquality()
-                .equals(other.subcategories, subcategories) &&
-            (identical(other.experience, experience) ||
-                other.experience == experience) &&
-            (identical(other.priceType, priceType) ||
-                other.priceType == priceType) &&
-            (identical(other.basePrice, basePrice) ||
-                other.basePrice == basePrice) &&
-            (identical(other.description, description) ||
-                other.description == description) &&
-            const DeepCollectionEquality().equals(other.category, category));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      categoryId,
-      const DeepCollectionEquality().hash(subcategories),
-      experience,
-      priceType,
-      basePrice,
-      description,
-      const DeepCollectionEquality().hash(category));
-
-  @override
-  String toString() {
-    return 'ServiceInfo(categoryId: $categoryId, subcategories: $subcategories, experience: $experience, priceType: $priceType, basePrice: $basePrice, description: $description, category: $category)';
-  }
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract mixin class $ServiceInfoCopyWith<$Res> {
+abstract class $ServiceInfoCopyWith<$Res> {
   factory $ServiceInfoCopyWith(
-          ServiceInfo value, $Res Function(ServiceInfo) _then) =
-      _$ServiceInfoCopyWithImpl;
+          ServiceInfo value, $Res Function(ServiceInfo) then) =
+      _$ServiceInfoCopyWithImpl<$Res, ServiceInfo>;
   @useResult
   $Res call(
       {String categoryId,
@@ -88,11 +56,14 @@ abstract mixin class $ServiceInfoCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$ServiceInfoCopyWithImpl<$Res> implements $ServiceInfoCopyWith<$Res> {
-  _$ServiceInfoCopyWithImpl(this._self, this._then);
+class _$ServiceInfoCopyWithImpl<$Res, $Val extends ServiceInfo>
+    implements $ServiceInfoCopyWith<$Res> {
+  _$ServiceInfoCopyWithImpl(this._value, this._then);
 
-  final ServiceInfo _self;
-  final $Res Function(ServiceInfo) _then;
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
   /// Create a copy of ServiceInfo
   /// with the given fields replaced by the non-null parameter values.
@@ -107,33 +78,105 @@ class _$ServiceInfoCopyWithImpl<$Res> implements $ServiceInfoCopyWith<$Res> {
     Object? description = freezed,
     Object? category = freezed,
   }) {
-    return _then(_self.copyWith(
+    return _then(_value.copyWith(
       categoryId: null == categoryId
-          ? _self.categoryId
+          ? _value.categoryId
           : categoryId // ignore: cast_nullable_to_non_nullable
               as String,
       subcategories: null == subcategories
-          ? _self.subcategories
+          ? _value.subcategories
           : subcategories // ignore: cast_nullable_to_non_nullable
               as List<String>,
       experience: null == experience
-          ? _self.experience
+          ? _value.experience
           : experience // ignore: cast_nullable_to_non_nullable
               as int,
       priceType: null == priceType
-          ? _self.priceType
+          ? _value.priceType
           : priceType // ignore: cast_nullable_to_non_nullable
               as PriceType,
       basePrice: freezed == basePrice
-          ? _self.basePrice
+          ? _value.basePrice
           : basePrice // ignore: cast_nullable_to_non_nullable
               as double?,
       description: freezed == description
-          ? _self.description
+          ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
       category: freezed == category
-          ? _self.category
+          ? _value.category
+          : category // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ServiceInfoImplCopyWith<$Res>
+    implements $ServiceInfoCopyWith<$Res> {
+  factory _$$ServiceInfoImplCopyWith(
+          _$ServiceInfoImpl value, $Res Function(_$ServiceInfoImpl) then) =
+      __$$ServiceInfoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String categoryId,
+      List<String> subcategories,
+      int experience,
+      PriceType priceType,
+      double? basePrice,
+      String? description,
+      Map<String, dynamic>? category});
+}
+
+/// @nodoc
+class __$$ServiceInfoImplCopyWithImpl<$Res>
+    extends _$ServiceInfoCopyWithImpl<$Res, _$ServiceInfoImpl>
+    implements _$$ServiceInfoImplCopyWith<$Res> {
+  __$$ServiceInfoImplCopyWithImpl(
+      _$ServiceInfoImpl _value, $Res Function(_$ServiceInfoImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of ServiceInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? categoryId = null,
+    Object? subcategories = null,
+    Object? experience = null,
+    Object? priceType = null,
+    Object? basePrice = freezed,
+    Object? description = freezed,
+    Object? category = freezed,
+  }) {
+    return _then(_$ServiceInfoImpl(
+      categoryId: null == categoryId
+          ? _value.categoryId
+          : categoryId // ignore: cast_nullable_to_non_nullable
+              as String,
+      subcategories: null == subcategories
+          ? _value._subcategories
+          : subcategories // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      experience: null == experience
+          ? _value.experience
+          : experience // ignore: cast_nullable_to_non_nullable
+              as int,
+      priceType: null == priceType
+          ? _value.priceType
+          : priceType // ignore: cast_nullable_to_non_nullable
+              as PriceType,
+      basePrice: freezed == basePrice
+          ? _value.basePrice
+          : basePrice // ignore: cast_nullable_to_non_nullable
+              as double?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      category: freezed == category
+          ? _value._category
           : category // ignore: cast_nullable_to_non_nullable
               as Map<String, dynamic>?,
     ));
@@ -142,8 +185,8 @@ class _$ServiceInfoCopyWithImpl<$Res> implements $ServiceInfoCopyWith<$Res> {
 
 /// @nodoc
 @JsonSerializable()
-class _ServiceInfo implements ServiceInfo {
-  const _ServiceInfo(
+class _$ServiceInfoImpl implements _ServiceInfo {
+  const _$ServiceInfoImpl(
       {required this.categoryId,
       final List<String> subcategories = const [],
       this.experience = 0,
@@ -153,8 +196,9 @@ class _ServiceInfo implements ServiceInfo {
       final Map<String, dynamic>? category})
       : _subcategories = subcategories,
         _category = category;
-  factory _ServiceInfo.fromJson(Map<String, dynamic> json) =>
-      _$ServiceInfoFromJson(json);
+
+  factory _$ServiceInfoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ServiceInfoImplFromJson(json);
 
   @override
   final String categoryId;
@@ -189,26 +233,16 @@ class _ServiceInfo implements ServiceInfo {
     return EqualUnmodifiableMapView(value);
   }
 
-  /// Create a copy of ServiceInfo
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  _$ServiceInfoCopyWith<_ServiceInfo> get copyWith =>
-      __$ServiceInfoCopyWithImpl<_ServiceInfo>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$ServiceInfoToJson(
-      this,
-    );
+  String toString() {
+    return 'ServiceInfo(categoryId: $categoryId, subcategories: $subcategories, experience: $experience, priceType: $priceType, basePrice: $basePrice, description: $description, category: $category)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _ServiceInfo &&
+            other is _$ServiceInfoImpl &&
             (identical(other.categoryId, categoryId) ||
                 other.categoryId == categoryId) &&
             const DeepCollectionEquality()
@@ -236,137 +270,97 @@ class _ServiceInfo implements ServiceInfo {
       description,
       const DeepCollectionEquality().hash(_category));
 
+  /// Create a copy of ServiceInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  String toString() {
-    return 'ServiceInfo(categoryId: $categoryId, subcategories: $subcategories, experience: $experience, priceType: $priceType, basePrice: $basePrice, description: $description, category: $category)';
+  @pragma('vm:prefer-inline')
+  _$$ServiceInfoImplCopyWith<_$ServiceInfoImpl> get copyWith =>
+      __$$ServiceInfoImplCopyWithImpl<_$ServiceInfoImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ServiceInfoImplToJson(
+      this,
+    );
   }
 }
 
-/// @nodoc
-abstract mixin class _$ServiceInfoCopyWith<$Res>
-    implements $ServiceInfoCopyWith<$Res> {
-  factory _$ServiceInfoCopyWith(
-          _ServiceInfo value, $Res Function(_ServiceInfo) _then) =
-      __$ServiceInfoCopyWithImpl;
+abstract class _ServiceInfo implements ServiceInfo {
+  const factory _ServiceInfo(
+      {required final String categoryId,
+      final List<String> subcategories,
+      final int experience,
+      final PriceType priceType,
+      final double? basePrice,
+      final String? description,
+      final Map<String, dynamic>? category}) = _$ServiceInfoImpl;
+
+  factory _ServiceInfo.fromJson(Map<String, dynamic> json) =
+      _$ServiceInfoImpl.fromJson;
+
   @override
-  @useResult
-  $Res call(
-      {String categoryId,
-      List<String> subcategories,
-      int experience,
-      PriceType priceType,
-      double? basePrice,
-      String? description,
-      Map<String, dynamic>? category});
-}
-
-/// @nodoc
-class __$ServiceInfoCopyWithImpl<$Res> implements _$ServiceInfoCopyWith<$Res> {
-  __$ServiceInfoCopyWithImpl(this._self, this._then);
-
-  final _ServiceInfo _self;
-  final $Res Function(_ServiceInfo) _then;
+  String get categoryId;
+  @override
+  List<String> get subcategories;
+  @override
+  int get experience;
+  @override
+  PriceType get priceType;
+  @override
+  double? get basePrice;
+  @override
+  String? get description; // Populated category details
+  @override
+  Map<String, dynamic>? get category;
 
   /// Create a copy of ServiceInfo
   /// with the given fields replaced by the non-null parameter values.
   @override
-  @pragma('vm:prefer-inline')
-  $Res call({
-    Object? categoryId = null,
-    Object? subcategories = null,
-    Object? experience = null,
-    Object? priceType = null,
-    Object? basePrice = freezed,
-    Object? description = freezed,
-    Object? category = freezed,
-  }) {
-    return _then(_ServiceInfo(
-      categoryId: null == categoryId
-          ? _self.categoryId
-          : categoryId // ignore: cast_nullable_to_non_nullable
-              as String,
-      subcategories: null == subcategories
-          ? _self._subcategories
-          : subcategories // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      experience: null == experience
-          ? _self.experience
-          : experience // ignore: cast_nullable_to_non_nullable
-              as int,
-      priceType: null == priceType
-          ? _self.priceType
-          : priceType // ignore: cast_nullable_to_non_nullable
-              as PriceType,
-      basePrice: freezed == basePrice
-          ? _self.basePrice
-          : basePrice // ignore: cast_nullable_to_non_nullable
-              as double?,
-      description: freezed == description
-          ? _self.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String?,
-      category: freezed == category
-          ? _self._category
-          : category // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>?,
-    ));
-  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ServiceInfoImplCopyWith<_$ServiceInfoImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+WorkingHour _$WorkingHourFromJson(Map<String, dynamic> json) {
+  return _WorkingHour.fromJson(json);
 }
 
 /// @nodoc
 mixin _$WorkingHour {
-  int get day;
-  bool get isWorking;
-  String get start;
-  String get end;
+  int get day => throw _privateConstructorUsedError;
+  bool get isWorking => throw _privateConstructorUsedError;
+  String get start => throw _privateConstructorUsedError;
+  String get end => throw _privateConstructorUsedError;
+
+  /// Serializes this WorkingHour to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
   /// Create a copy of WorkingHour
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
   $WorkingHourCopyWith<WorkingHour> get copyWith =>
-      _$WorkingHourCopyWithImpl<WorkingHour>(this as WorkingHour, _$identity);
-
-  /// Serializes this WorkingHour to a JSON map.
-  Map<String, dynamic> toJson();
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is WorkingHour &&
-            (identical(other.day, day) || other.day == day) &&
-            (identical(other.isWorking, isWorking) ||
-                other.isWorking == isWorking) &&
-            (identical(other.start, start) || other.start == start) &&
-            (identical(other.end, end) || other.end == end));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(runtimeType, day, isWorking, start, end);
-
-  @override
-  String toString() {
-    return 'WorkingHour(day: $day, isWorking: $isWorking, start: $start, end: $end)';
-  }
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract mixin class $WorkingHourCopyWith<$Res> {
+abstract class $WorkingHourCopyWith<$Res> {
   factory $WorkingHourCopyWith(
-          WorkingHour value, $Res Function(WorkingHour) _then) =
-      _$WorkingHourCopyWithImpl;
+          WorkingHour value, $Res Function(WorkingHour) then) =
+      _$WorkingHourCopyWithImpl<$Res, WorkingHour>;
   @useResult
   $Res call({int day, bool isWorking, String start, String end});
 }
 
 /// @nodoc
-class _$WorkingHourCopyWithImpl<$Res> implements $WorkingHourCopyWith<$Res> {
-  _$WorkingHourCopyWithImpl(this._self, this._then);
+class _$WorkingHourCopyWithImpl<$Res, $Val extends WorkingHour>
+    implements $WorkingHourCopyWith<$Res> {
+  _$WorkingHourCopyWithImpl(this._value, this._then);
 
-  final WorkingHour _self;
-  final $Res Function(WorkingHour) _then;
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
   /// Create a copy of WorkingHour
   /// with the given fields replaced by the non-null parameter values.
@@ -378,21 +372,71 @@ class _$WorkingHourCopyWithImpl<$Res> implements $WorkingHourCopyWith<$Res> {
     Object? start = null,
     Object? end = null,
   }) {
-    return _then(_self.copyWith(
+    return _then(_value.copyWith(
       day: null == day
-          ? _self.day
+          ? _value.day
           : day // ignore: cast_nullable_to_non_nullable
               as int,
       isWorking: null == isWorking
-          ? _self.isWorking
+          ? _value.isWorking
           : isWorking // ignore: cast_nullable_to_non_nullable
               as bool,
       start: null == start
-          ? _self.start
+          ? _value.start
           : start // ignore: cast_nullable_to_non_nullable
               as String,
       end: null == end
-          ? _self.end
+          ? _value.end
+          : end // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$WorkingHourImplCopyWith<$Res>
+    implements $WorkingHourCopyWith<$Res> {
+  factory _$$WorkingHourImplCopyWith(
+          _$WorkingHourImpl value, $Res Function(_$WorkingHourImpl) then) =
+      __$$WorkingHourImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({int day, bool isWorking, String start, String end});
+}
+
+/// @nodoc
+class __$$WorkingHourImplCopyWithImpl<$Res>
+    extends _$WorkingHourCopyWithImpl<$Res, _$WorkingHourImpl>
+    implements _$$WorkingHourImplCopyWith<$Res> {
+  __$$WorkingHourImplCopyWithImpl(
+      _$WorkingHourImpl _value, $Res Function(_$WorkingHourImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of WorkingHour
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? day = null,
+    Object? isWorking = null,
+    Object? start = null,
+    Object? end = null,
+  }) {
+    return _then(_$WorkingHourImpl(
+      day: null == day
+          ? _value.day
+          : day // ignore: cast_nullable_to_non_nullable
+              as int,
+      isWorking: null == isWorking
+          ? _value.isWorking
+          : isWorking // ignore: cast_nullable_to_non_nullable
+              as bool,
+      start: null == start
+          ? _value.start
+          : start // ignore: cast_nullable_to_non_nullable
+              as String,
+      end: null == end
+          ? _value.end
           : end // ignore: cast_nullable_to_non_nullable
               as String,
     ));
@@ -401,14 +445,15 @@ class _$WorkingHourCopyWithImpl<$Res> implements $WorkingHourCopyWith<$Res> {
 
 /// @nodoc
 @JsonSerializable()
-class _WorkingHour implements WorkingHour {
-  const _WorkingHour(
+class _$WorkingHourImpl implements _WorkingHour {
+  const _$WorkingHourImpl(
       {required this.day,
       this.isWorking = true,
       this.start = '08:00',
       this.end = '20:00'});
-  factory _WorkingHour.fromJson(Map<String, dynamic> json) =>
-      _$WorkingHourFromJson(json);
+
+  factory _$WorkingHourImpl.fromJson(Map<String, dynamic> json) =>
+      _$$WorkingHourImplFromJson(json);
 
   @override
   final int day;
@@ -422,26 +467,16 @@ class _WorkingHour implements WorkingHour {
   @JsonKey()
   final String end;
 
-  /// Create a copy of WorkingHour
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  _$WorkingHourCopyWith<_WorkingHour> get copyWith =>
-      __$WorkingHourCopyWithImpl<_WorkingHour>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$WorkingHourToJson(
-      this,
-    );
+  String toString() {
+    return 'WorkingHour(day: $day, isWorking: $isWorking, start: $start, end: $end)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _WorkingHour &&
+            other is _$WorkingHourImpl &&
             (identical(other.day, day) || other.day == day) &&
             (identical(other.isWorking, isWorking) ||
                 other.isWorking == isWorking) &&
@@ -453,118 +488,76 @@ class _WorkingHour implements WorkingHour {
   @override
   int get hashCode => Object.hash(runtimeType, day, isWorking, start, end);
 
+  /// Create a copy of WorkingHour
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  String toString() {
-    return 'WorkingHour(day: $day, isWorking: $isWorking, start: $start, end: $end)';
+  @pragma('vm:prefer-inline')
+  _$$WorkingHourImplCopyWith<_$WorkingHourImpl> get copyWith =>
+      __$$WorkingHourImplCopyWithImpl<_$WorkingHourImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$WorkingHourImplToJson(
+      this,
+    );
   }
 }
 
-/// @nodoc
-abstract mixin class _$WorkingHourCopyWith<$Res>
-    implements $WorkingHourCopyWith<$Res> {
-  factory _$WorkingHourCopyWith(
-          _WorkingHour value, $Res Function(_WorkingHour) _then) =
-      __$WorkingHourCopyWithImpl;
+abstract class _WorkingHour implements WorkingHour {
+  const factory _WorkingHour(
+      {required final int day,
+      final bool isWorking,
+      final String start,
+      final String end}) = _$WorkingHourImpl;
+
+  factory _WorkingHour.fromJson(Map<String, dynamic> json) =
+      _$WorkingHourImpl.fromJson;
+
   @override
-  @useResult
-  $Res call({int day, bool isWorking, String start, String end});
-}
-
-/// @nodoc
-class __$WorkingHourCopyWithImpl<$Res> implements _$WorkingHourCopyWith<$Res> {
-  __$WorkingHourCopyWithImpl(this._self, this._then);
-
-  final _WorkingHour _self;
-  final $Res Function(_WorkingHour) _then;
+  int get day;
+  @override
+  bool get isWorking;
+  @override
+  String get start;
+  @override
+  String get end;
 
   /// Create a copy of WorkingHour
   /// with the given fields replaced by the non-null parameter values.
   @override
-  @pragma('vm:prefer-inline')
-  $Res call({
-    Object? day = null,
-    Object? isWorking = null,
-    Object? start = null,
-    Object? end = null,
-  }) {
-    return _then(_WorkingHour(
-      day: null == day
-          ? _self.day
-          : day // ignore: cast_nullable_to_non_nullable
-              as int,
-      isWorking: null == isWorking
-          ? _self.isWorking
-          : isWorking // ignore: cast_nullable_to_non_nullable
-              as bool,
-      start: null == start
-          ? _self.start
-          : start // ignore: cast_nullable_to_non_nullable
-              as String,
-      end: null == end
-          ? _self.end
-          : end // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
-  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$WorkingHourImplCopyWith<_$WorkingHourImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+CraftsmanDocuments _$CraftsmanDocumentsFromJson(Map<String, dynamic> json) {
+  return _CraftsmanDocuments.fromJson(json);
 }
 
 /// @nodoc
 mixin _$CraftsmanDocuments {
-  String? get nationalIdFront;
-  String? get nationalIdBack;
-  String? get nationalIdNumber;
-  List<String> get certificates;
-  String? get commercialRegister;
+  String? get nationalIdFront => throw _privateConstructorUsedError;
+  String? get nationalIdBack => throw _privateConstructorUsedError;
+  String? get nationalIdNumber => throw _privateConstructorUsedError;
+  List<String> get certificates => throw _privateConstructorUsedError;
+  String? get commercialRegister => throw _privateConstructorUsedError;
+
+  /// Serializes this CraftsmanDocuments to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
   /// Create a copy of CraftsmanDocuments
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
   $CraftsmanDocumentsCopyWith<CraftsmanDocuments> get copyWith =>
-      _$CraftsmanDocumentsCopyWithImpl<CraftsmanDocuments>(
-          this as CraftsmanDocuments, _$identity);
-
-  /// Serializes this CraftsmanDocuments to a JSON map.
-  Map<String, dynamic> toJson();
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is CraftsmanDocuments &&
-            (identical(other.nationalIdFront, nationalIdFront) ||
-                other.nationalIdFront == nationalIdFront) &&
-            (identical(other.nationalIdBack, nationalIdBack) ||
-                other.nationalIdBack == nationalIdBack) &&
-            (identical(other.nationalIdNumber, nationalIdNumber) ||
-                other.nationalIdNumber == nationalIdNumber) &&
-            const DeepCollectionEquality()
-                .equals(other.certificates, certificates) &&
-            (identical(other.commercialRegister, commercialRegister) ||
-                other.commercialRegister == commercialRegister));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      nationalIdFront,
-      nationalIdBack,
-      nationalIdNumber,
-      const DeepCollectionEquality().hash(certificates),
-      commercialRegister);
-
-  @override
-  String toString() {
-    return 'CraftsmanDocuments(nationalIdFront: $nationalIdFront, nationalIdBack: $nationalIdBack, nationalIdNumber: $nationalIdNumber, certificates: $certificates, commercialRegister: $commercialRegister)';
-  }
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract mixin class $CraftsmanDocumentsCopyWith<$Res> {
+abstract class $CraftsmanDocumentsCopyWith<$Res> {
   factory $CraftsmanDocumentsCopyWith(
-          CraftsmanDocuments value, $Res Function(CraftsmanDocuments) _then) =
-      _$CraftsmanDocumentsCopyWithImpl;
+          CraftsmanDocuments value, $Res Function(CraftsmanDocuments) then) =
+      _$CraftsmanDocumentsCopyWithImpl<$Res, CraftsmanDocuments>;
   @useResult
   $Res call(
       {String? nationalIdFront,
@@ -575,12 +568,14 @@ abstract mixin class $CraftsmanDocumentsCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$CraftsmanDocumentsCopyWithImpl<$Res>
+class _$CraftsmanDocumentsCopyWithImpl<$Res, $Val extends CraftsmanDocuments>
     implements $CraftsmanDocumentsCopyWith<$Res> {
-  _$CraftsmanDocumentsCopyWithImpl(this._self, this._then);
+  _$CraftsmanDocumentsCopyWithImpl(this._value, this._then);
 
-  final CraftsmanDocuments _self;
-  final $Res Function(CraftsmanDocuments) _then;
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
   /// Create a copy of CraftsmanDocuments
   /// with the given fields replaced by the non-null parameter values.
@@ -593,25 +588,85 @@ class _$CraftsmanDocumentsCopyWithImpl<$Res>
     Object? certificates = null,
     Object? commercialRegister = freezed,
   }) {
-    return _then(_self.copyWith(
+    return _then(_value.copyWith(
       nationalIdFront: freezed == nationalIdFront
-          ? _self.nationalIdFront
+          ? _value.nationalIdFront
           : nationalIdFront // ignore: cast_nullable_to_non_nullable
               as String?,
       nationalIdBack: freezed == nationalIdBack
-          ? _self.nationalIdBack
+          ? _value.nationalIdBack
           : nationalIdBack // ignore: cast_nullable_to_non_nullable
               as String?,
       nationalIdNumber: freezed == nationalIdNumber
-          ? _self.nationalIdNumber
+          ? _value.nationalIdNumber
           : nationalIdNumber // ignore: cast_nullable_to_non_nullable
               as String?,
       certificates: null == certificates
-          ? _self.certificates
+          ? _value.certificates
           : certificates // ignore: cast_nullable_to_non_nullable
               as List<String>,
       commercialRegister: freezed == commercialRegister
-          ? _self.commercialRegister
+          ? _value.commercialRegister
+          : commercialRegister // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$CraftsmanDocumentsImplCopyWith<$Res>
+    implements $CraftsmanDocumentsCopyWith<$Res> {
+  factory _$$CraftsmanDocumentsImplCopyWith(_$CraftsmanDocumentsImpl value,
+          $Res Function(_$CraftsmanDocumentsImpl) then) =
+      __$$CraftsmanDocumentsImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String? nationalIdFront,
+      String? nationalIdBack,
+      String? nationalIdNumber,
+      List<String> certificates,
+      String? commercialRegister});
+}
+
+/// @nodoc
+class __$$CraftsmanDocumentsImplCopyWithImpl<$Res>
+    extends _$CraftsmanDocumentsCopyWithImpl<$Res, _$CraftsmanDocumentsImpl>
+    implements _$$CraftsmanDocumentsImplCopyWith<$Res> {
+  __$$CraftsmanDocumentsImplCopyWithImpl(_$CraftsmanDocumentsImpl _value,
+      $Res Function(_$CraftsmanDocumentsImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of CraftsmanDocuments
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? nationalIdFront = freezed,
+    Object? nationalIdBack = freezed,
+    Object? nationalIdNumber = freezed,
+    Object? certificates = null,
+    Object? commercialRegister = freezed,
+  }) {
+    return _then(_$CraftsmanDocumentsImpl(
+      nationalIdFront: freezed == nationalIdFront
+          ? _value.nationalIdFront
+          : nationalIdFront // ignore: cast_nullable_to_non_nullable
+              as String?,
+      nationalIdBack: freezed == nationalIdBack
+          ? _value.nationalIdBack
+          : nationalIdBack // ignore: cast_nullable_to_non_nullable
+              as String?,
+      nationalIdNumber: freezed == nationalIdNumber
+          ? _value.nationalIdNumber
+          : nationalIdNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      certificates: null == certificates
+          ? _value._certificates
+          : certificates // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      commercialRegister: freezed == commercialRegister
+          ? _value.commercialRegister
           : commercialRegister // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
@@ -620,16 +675,17 @@ class _$CraftsmanDocumentsCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _CraftsmanDocuments implements CraftsmanDocuments {
-  const _CraftsmanDocuments(
+class _$CraftsmanDocumentsImpl implements _CraftsmanDocuments {
+  const _$CraftsmanDocumentsImpl(
       {this.nationalIdFront,
       this.nationalIdBack,
       this.nationalIdNumber,
       final List<String> certificates = const [],
       this.commercialRegister})
       : _certificates = certificates;
-  factory _CraftsmanDocuments.fromJson(Map<String, dynamic> json) =>
-      _$CraftsmanDocumentsFromJson(json);
+
+  factory _$CraftsmanDocumentsImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CraftsmanDocumentsImplFromJson(json);
 
   @override
   final String? nationalIdFront;
@@ -649,26 +705,16 @@ class _CraftsmanDocuments implements CraftsmanDocuments {
   @override
   final String? commercialRegister;
 
-  /// Create a copy of CraftsmanDocuments
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  _$CraftsmanDocumentsCopyWith<_CraftsmanDocuments> get copyWith =>
-      __$CraftsmanDocumentsCopyWithImpl<_CraftsmanDocuments>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$CraftsmanDocumentsToJson(
-      this,
-    );
+  String toString() {
+    return 'CraftsmanDocuments(nationalIdFront: $nationalIdFront, nationalIdBack: $nationalIdBack, nationalIdNumber: $nationalIdNumber, certificates: $certificates, commercialRegister: $commercialRegister)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _CraftsmanDocuments &&
+            other is _$CraftsmanDocumentsImpl &&
             (identical(other.nationalIdFront, nationalIdFront) ||
                 other.nationalIdFront == nationalIdFront) &&
             (identical(other.nationalIdBack, nationalIdBack) ||
@@ -691,123 +737,90 @@ class _CraftsmanDocuments implements CraftsmanDocuments {
       const DeepCollectionEquality().hash(_certificates),
       commercialRegister);
 
+  /// Create a copy of CraftsmanDocuments
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  String toString() {
-    return 'CraftsmanDocuments(nationalIdFront: $nationalIdFront, nationalIdBack: $nationalIdBack, nationalIdNumber: $nationalIdNumber, certificates: $certificates, commercialRegister: $commercialRegister)';
+  @pragma('vm:prefer-inline')
+  _$$CraftsmanDocumentsImplCopyWith<_$CraftsmanDocumentsImpl> get copyWith =>
+      __$$CraftsmanDocumentsImplCopyWithImpl<_$CraftsmanDocumentsImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$CraftsmanDocumentsImplToJson(
+      this,
+    );
   }
 }
 
-/// @nodoc
-abstract mixin class _$CraftsmanDocumentsCopyWith<$Res>
-    implements $CraftsmanDocumentsCopyWith<$Res> {
-  factory _$CraftsmanDocumentsCopyWith(
-          _CraftsmanDocuments value, $Res Function(_CraftsmanDocuments) _then) =
-      __$CraftsmanDocumentsCopyWithImpl;
+abstract class _CraftsmanDocuments implements CraftsmanDocuments {
+  const factory _CraftsmanDocuments(
+      {final String? nationalIdFront,
+      final String? nationalIdBack,
+      final String? nationalIdNumber,
+      final List<String> certificates,
+      final String? commercialRegister}) = _$CraftsmanDocumentsImpl;
+
+  factory _CraftsmanDocuments.fromJson(Map<String, dynamic> json) =
+      _$CraftsmanDocumentsImpl.fromJson;
+
   @override
-  @useResult
-  $Res call(
-      {String? nationalIdFront,
-      String? nationalIdBack,
-      String? nationalIdNumber,
-      List<String> certificates,
-      String? commercialRegister});
-}
-
-/// @nodoc
-class __$CraftsmanDocumentsCopyWithImpl<$Res>
-    implements _$CraftsmanDocumentsCopyWith<$Res> {
-  __$CraftsmanDocumentsCopyWithImpl(this._self, this._then);
-
-  final _CraftsmanDocuments _self;
-  final $Res Function(_CraftsmanDocuments) _then;
+  String? get nationalIdFront;
+  @override
+  String? get nationalIdBack;
+  @override
+  String? get nationalIdNumber;
+  @override
+  List<String> get certificates;
+  @override
+  String? get commercialRegister;
 
   /// Create a copy of CraftsmanDocuments
   /// with the given fields replaced by the non-null parameter values.
   @override
-  @pragma('vm:prefer-inline')
-  $Res call({
-    Object? nationalIdFront = freezed,
-    Object? nationalIdBack = freezed,
-    Object? nationalIdNumber = freezed,
-    Object? certificates = null,
-    Object? commercialRegister = freezed,
-  }) {
-    return _then(_CraftsmanDocuments(
-      nationalIdFront: freezed == nationalIdFront
-          ? _self.nationalIdFront
-          : nationalIdFront // ignore: cast_nullable_to_non_nullable
-              as String?,
-      nationalIdBack: freezed == nationalIdBack
-          ? _self.nationalIdBack
-          : nationalIdBack // ignore: cast_nullable_to_non_nullable
-              as String?,
-      nationalIdNumber: freezed == nationalIdNumber
-          ? _self.nationalIdNumber
-          : nationalIdNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      certificates: null == certificates
-          ? _self._certificates
-          : certificates // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      commercialRegister: freezed == commercialRegister
-          ? _self.commercialRegister
-          : commercialRegister // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
-  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$CraftsmanDocumentsImplCopyWith<_$CraftsmanDocumentsImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+GeoLocation _$GeoLocationFromJson(Map<String, dynamic> json) {
+  return _GeoLocation.fromJson(json);
 }
 
 /// @nodoc
 mixin _$GeoLocation {
-  String get type;
-  List<double> get coordinates;
+  String get type => throw _privateConstructorUsedError;
+  List<double> get coordinates => throw _privateConstructorUsedError;
+
+  /// Serializes this GeoLocation to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
   /// Create a copy of GeoLocation
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
   $GeoLocationCopyWith<GeoLocation> get copyWith =>
-      _$GeoLocationCopyWithImpl<GeoLocation>(this as GeoLocation, _$identity);
-
-  /// Serializes this GeoLocation to a JSON map.
-  Map<String, dynamic> toJson();
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is GeoLocation &&
-            (identical(other.type, type) || other.type == type) &&
-            const DeepCollectionEquality()
-                .equals(other.coordinates, coordinates));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(
-      runtimeType, type, const DeepCollectionEquality().hash(coordinates));
-
-  @override
-  String toString() {
-    return 'GeoLocation(type: $type, coordinates: $coordinates)';
-  }
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract mixin class $GeoLocationCopyWith<$Res> {
+abstract class $GeoLocationCopyWith<$Res> {
   factory $GeoLocationCopyWith(
-          GeoLocation value, $Res Function(GeoLocation) _then) =
-      _$GeoLocationCopyWithImpl;
+          GeoLocation value, $Res Function(GeoLocation) then) =
+      _$GeoLocationCopyWithImpl<$Res, GeoLocation>;
   @useResult
   $Res call({String type, List<double> coordinates});
 }
 
 /// @nodoc
-class _$GeoLocationCopyWithImpl<$Res> implements $GeoLocationCopyWith<$Res> {
-  _$GeoLocationCopyWithImpl(this._self, this._then);
+class _$GeoLocationCopyWithImpl<$Res, $Val extends GeoLocation>
+    implements $GeoLocationCopyWith<$Res> {
+  _$GeoLocationCopyWithImpl(this._value, this._then);
 
-  final GeoLocation _self;
-  final $Res Function(GeoLocation) _then;
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
   /// Create a copy of GeoLocation
   /// with the given fields replaced by the non-null parameter values.
@@ -817,13 +830,53 @@ class _$GeoLocationCopyWithImpl<$Res> implements $GeoLocationCopyWith<$Res> {
     Object? type = null,
     Object? coordinates = null,
   }) {
-    return _then(_self.copyWith(
+    return _then(_value.copyWith(
       type: null == type
-          ? _self.type
+          ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String,
       coordinates: null == coordinates
-          ? _self.coordinates
+          ? _value.coordinates
+          : coordinates // ignore: cast_nullable_to_non_nullable
+              as List<double>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$GeoLocationImplCopyWith<$Res>
+    implements $GeoLocationCopyWith<$Res> {
+  factory _$$GeoLocationImplCopyWith(
+          _$GeoLocationImpl value, $Res Function(_$GeoLocationImpl) then) =
+      __$$GeoLocationImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String type, List<double> coordinates});
+}
+
+/// @nodoc
+class __$$GeoLocationImplCopyWithImpl<$Res>
+    extends _$GeoLocationCopyWithImpl<$Res, _$GeoLocationImpl>
+    implements _$$GeoLocationImplCopyWith<$Res> {
+  __$$GeoLocationImplCopyWithImpl(
+      _$GeoLocationImpl _value, $Res Function(_$GeoLocationImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of GeoLocation
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? type = null,
+    Object? coordinates = null,
+  }) {
+    return _then(_$GeoLocationImpl(
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String,
+      coordinates: null == coordinates
+          ? _value._coordinates
           : coordinates // ignore: cast_nullable_to_non_nullable
               as List<double>,
     ));
@@ -832,12 +885,13 @@ class _$GeoLocationCopyWithImpl<$Res> implements $GeoLocationCopyWith<$Res> {
 
 /// @nodoc
 @JsonSerializable()
-class _GeoLocation implements GeoLocation {
-  const _GeoLocation(
+class _$GeoLocationImpl implements _GeoLocation {
+  const _$GeoLocationImpl(
       {this.type = 'Point', final List<double> coordinates = const []})
       : _coordinates = coordinates;
-  factory _GeoLocation.fromJson(Map<String, dynamic> json) =>
-      _$GeoLocationFromJson(json);
+
+  factory _$GeoLocationImpl.fromJson(Map<String, dynamic> json) =>
+      _$$GeoLocationImplFromJson(json);
 
   @override
   @JsonKey()
@@ -851,26 +905,16 @@ class _GeoLocation implements GeoLocation {
     return EqualUnmodifiableListView(_coordinates);
   }
 
-  /// Create a copy of GeoLocation
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  _$GeoLocationCopyWith<_GeoLocation> get copyWith =>
-      __$GeoLocationCopyWithImpl<_GeoLocation>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$GeoLocationToJson(
-      this,
-    );
+  String toString() {
+    return 'GeoLocation(type: $type, coordinates: $coordinates)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _GeoLocation &&
+            other is _$GeoLocationImpl &&
             (identical(other.type, type) || other.type == type) &&
             const DeepCollectionEquality()
                 .equals(other._coordinates, _coordinates));
@@ -881,240 +925,106 @@ class _GeoLocation implements GeoLocation {
   int get hashCode => Object.hash(
       runtimeType, type, const DeepCollectionEquality().hash(_coordinates));
 
+  /// Create a copy of GeoLocation
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  String toString() {
-    return 'GeoLocation(type: $type, coordinates: $coordinates)';
+  @pragma('vm:prefer-inline')
+  _$$GeoLocationImplCopyWith<_$GeoLocationImpl> get copyWith =>
+      __$$GeoLocationImplCopyWithImpl<_$GeoLocationImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$GeoLocationImplToJson(
+      this,
+    );
   }
 }
 
-/// @nodoc
-abstract mixin class _$GeoLocationCopyWith<$Res>
-    implements $GeoLocationCopyWith<$Res> {
-  factory _$GeoLocationCopyWith(
-          _GeoLocation value, $Res Function(_GeoLocation) _then) =
-      __$GeoLocationCopyWithImpl;
+abstract class _GeoLocation implements GeoLocation {
+  const factory _GeoLocation(
+      {final String type, final List<double> coordinates}) = _$GeoLocationImpl;
+
+  factory _GeoLocation.fromJson(Map<String, dynamic> json) =
+      _$GeoLocationImpl.fromJson;
+
   @override
-  @useResult
-  $Res call({String type, List<double> coordinates});
-}
-
-/// @nodoc
-class __$GeoLocationCopyWithImpl<$Res> implements _$GeoLocationCopyWith<$Res> {
-  __$GeoLocationCopyWithImpl(this._self, this._then);
-
-  final _GeoLocation _self;
-  final $Res Function(_GeoLocation) _then;
+  String get type;
+  @override
+  List<double> get coordinates;
 
   /// Create a copy of GeoLocation
   /// with the given fields replaced by the non-null parameter values.
   @override
-  @pragma('vm:prefer-inline')
-  $Res call({
-    Object? type = null,
-    Object? coordinates = null,
-  }) {
-    return _then(_GeoLocation(
-      type: null == type
-          ? _self.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      coordinates: null == coordinates
-          ? _self._coordinates
-          : coordinates // ignore: cast_nullable_to_non_nullable
-              as List<double>,
-    ));
-  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$GeoLocationImplCopyWith<_$GeoLocationImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+Craftsman _$CraftsmanFromJson(Map<String, dynamic> json) {
+  return _Craftsman.fromJson(json);
 }
 
 /// @nodoc
 mixin _$Craftsman {
   @JsonKey(name: '_id')
-  String get id;
-  String get userId;
-  String get displayName;
-  String? get bio;
-  String? get profileImage;
-  String? get coverImage;
-  List<String> get workPhotos;
-  String? get whatsapp;
-  String? get alternatePhone;
-  List<ServiceInfo> get services;
-  CraftsmanDocuments? get documents;
-  String? get address;
-  GeoLocation? get location;
-  double get serviceRadius;
-  List<String> get serviceZones;
-  bool get isOnline;
-  bool get isAvailable;
-  List<WorkingHour> get workingHours;
-  CraftsmanStatus get status;
-  DateTime? get approvedAt;
-  String? get approvedBy;
-  String? get rejectionReason;
-  String? get suspensionReason;
-  double get rating;
-  int get totalRatings;
-  int get totalJobs;
-  int get completedJobs;
-  int get cancelledJobs;
-  double get responseRate;
-  int get responseTime;
-  double get totalEarnings;
-  double get currentBalance;
-  int get commission;
-  List<String> get badges;
-  bool get isFeatured;
-  DateTime? get featuredUntil;
-  DateTime? get createdAt;
-  DateTime? get updatedAt; // Populated user details
-  User?
-      get user; // Distance from current location (populated in nearby queries)
-  double? get distance;
+  String get id => throw _privateConstructorUsedError;
+  String get userId => throw _privateConstructorUsedError;
+  String get displayName => throw _privateConstructorUsedError;
+  String? get bio => throw _privateConstructorUsedError;
+  String? get profileImage => throw _privateConstructorUsedError;
+  String? get coverImage => throw _privateConstructorUsedError;
+  List<String> get workPhotos => throw _privateConstructorUsedError;
+  String? get whatsapp => throw _privateConstructorUsedError;
+  String? get alternatePhone => throw _privateConstructorUsedError;
+  List<ServiceInfo> get services => throw _privateConstructorUsedError;
+  CraftsmanDocuments? get documents => throw _privateConstructorUsedError;
+  String? get address => throw _privateConstructorUsedError;
+  GeoLocation? get location => throw _privateConstructorUsedError;
+  double get serviceRadius => throw _privateConstructorUsedError;
+  List<String> get serviceZones => throw _privateConstructorUsedError;
+  bool get isOnline => throw _privateConstructorUsedError;
+  bool get isAvailable => throw _privateConstructorUsedError;
+  List<WorkingHour> get workingHours => throw _privateConstructorUsedError;
+  CraftsmanStatus get status => throw _privateConstructorUsedError;
+  DateTime? get approvedAt => throw _privateConstructorUsedError;
+  String? get approvedBy => throw _privateConstructorUsedError;
+  String? get rejectionReason => throw _privateConstructorUsedError;
+  String? get suspensionReason => throw _privateConstructorUsedError;
+  double get rating => throw _privateConstructorUsedError;
+  int get totalRatings => throw _privateConstructorUsedError;
+  int get totalJobs => throw _privateConstructorUsedError;
+  int get completedJobs => throw _privateConstructorUsedError;
+  int get cancelledJobs => throw _privateConstructorUsedError;
+  double get responseRate => throw _privateConstructorUsedError;
+  int get responseTime => throw _privateConstructorUsedError;
+  double get totalEarnings => throw _privateConstructorUsedError;
+  double get currentBalance => throw _privateConstructorUsedError;
+  int get commission => throw _privateConstructorUsedError;
+  List<String> get badges => throw _privateConstructorUsedError;
+  bool get isFeatured => throw _privateConstructorUsedError;
+  DateTime? get featuredUntil => throw _privateConstructorUsedError;
+  DateTime? get createdAt => throw _privateConstructorUsedError;
+  DateTime? get updatedAt =>
+      throw _privateConstructorUsedError; // Populated user details
+  User? get user =>
+      throw _privateConstructorUsedError; // Distance from current location (populated in nearby queries)
+  double? get distance => throw _privateConstructorUsedError;
+
+  /// Serializes this Craftsman to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
   /// Create a copy of Craftsman
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
   $CraftsmanCopyWith<Craftsman> get copyWith =>
-      _$CraftsmanCopyWithImpl<Craftsman>(this as Craftsman, _$identity);
-
-  /// Serializes this Craftsman to a JSON map.
-  Map<String, dynamic> toJson();
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is Craftsman &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.userId, userId) || other.userId == userId) &&
-            (identical(other.displayName, displayName) ||
-                other.displayName == displayName) &&
-            (identical(other.bio, bio) || other.bio == bio) &&
-            (identical(other.profileImage, profileImage) ||
-                other.profileImage == profileImage) &&
-            (identical(other.coverImage, coverImage) ||
-                other.coverImage == coverImage) &&
-            const DeepCollectionEquality()
-                .equals(other.workPhotos, workPhotos) &&
-            (identical(other.whatsapp, whatsapp) ||
-                other.whatsapp == whatsapp) &&
-            (identical(other.alternatePhone, alternatePhone) ||
-                other.alternatePhone == alternatePhone) &&
-            const DeepCollectionEquality().equals(other.services, services) &&
-            (identical(other.documents, documents) ||
-                other.documents == documents) &&
-            (identical(other.address, address) || other.address == address) &&
-            (identical(other.location, location) ||
-                other.location == location) &&
-            (identical(other.serviceRadius, serviceRadius) ||
-                other.serviceRadius == serviceRadius) &&
-            const DeepCollectionEquality()
-                .equals(other.serviceZones, serviceZones) &&
-            (identical(other.isOnline, isOnline) ||
-                other.isOnline == isOnline) &&
-            (identical(other.isAvailable, isAvailable) ||
-                other.isAvailable == isAvailable) &&
-            const DeepCollectionEquality()
-                .equals(other.workingHours, workingHours) &&
-            (identical(other.status, status) || other.status == status) &&
-            (identical(other.approvedAt, approvedAt) ||
-                other.approvedAt == approvedAt) &&
-            (identical(other.approvedBy, approvedBy) ||
-                other.approvedBy == approvedBy) &&
-            (identical(other.rejectionReason, rejectionReason) ||
-                other.rejectionReason == rejectionReason) &&
-            (identical(other.suspensionReason, suspensionReason) ||
-                other.suspensionReason == suspensionReason) &&
-            (identical(other.rating, rating) || other.rating == rating) &&
-            (identical(other.totalRatings, totalRatings) ||
-                other.totalRatings == totalRatings) &&
-            (identical(other.totalJobs, totalJobs) ||
-                other.totalJobs == totalJobs) &&
-            (identical(other.completedJobs, completedJobs) ||
-                other.completedJobs == completedJobs) &&
-            (identical(other.cancelledJobs, cancelledJobs) ||
-                other.cancelledJobs == cancelledJobs) &&
-            (identical(other.responseRate, responseRate) ||
-                other.responseRate == responseRate) &&
-            (identical(other.responseTime, responseTime) ||
-                other.responseTime == responseTime) &&
-            (identical(other.totalEarnings, totalEarnings) ||
-                other.totalEarnings == totalEarnings) &&
-            (identical(other.currentBalance, currentBalance) ||
-                other.currentBalance == currentBalance) &&
-            (identical(other.commission, commission) ||
-                other.commission == commission) &&
-            const DeepCollectionEquality().equals(other.badges, badges) &&
-            (identical(other.isFeatured, isFeatured) ||
-                other.isFeatured == isFeatured) &&
-            (identical(other.featuredUntil, featuredUntil) ||
-                other.featuredUntil == featuredUntil) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt) &&
-            (identical(other.updatedAt, updatedAt) ||
-                other.updatedAt == updatedAt) &&
-            (identical(other.user, user) || other.user == user) &&
-            (identical(other.distance, distance) ||
-                other.distance == distance));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hashAll([
-        runtimeType,
-        id,
-        userId,
-        displayName,
-        bio,
-        profileImage,
-        coverImage,
-        const DeepCollectionEquality().hash(workPhotos),
-        whatsapp,
-        alternatePhone,
-        const DeepCollectionEquality().hash(services),
-        documents,
-        address,
-        location,
-        serviceRadius,
-        const DeepCollectionEquality().hash(serviceZones),
-        isOnline,
-        isAvailable,
-        const DeepCollectionEquality().hash(workingHours),
-        status,
-        approvedAt,
-        approvedBy,
-        rejectionReason,
-        suspensionReason,
-        rating,
-        totalRatings,
-        totalJobs,
-        completedJobs,
-        cancelledJobs,
-        responseRate,
-        responseTime,
-        totalEarnings,
-        currentBalance,
-        commission,
-        const DeepCollectionEquality().hash(badges),
-        isFeatured,
-        featuredUntil,
-        createdAt,
-        updatedAt,
-        user,
-        distance
-      ]);
-
-  @override
-  String toString() {
-    return 'Craftsman(id: $id, userId: $userId, displayName: $displayName, bio: $bio, profileImage: $profileImage, coverImage: $coverImage, workPhotos: $workPhotos, whatsapp: $whatsapp, alternatePhone: $alternatePhone, services: $services, documents: $documents, address: $address, location: $location, serviceRadius: $serviceRadius, serviceZones: $serviceZones, isOnline: $isOnline, isAvailable: $isAvailable, workingHours: $workingHours, status: $status, approvedAt: $approvedAt, approvedBy: $approvedBy, rejectionReason: $rejectionReason, suspensionReason: $suspensionReason, rating: $rating, totalRatings: $totalRatings, totalJobs: $totalJobs, completedJobs: $completedJobs, cancelledJobs: $cancelledJobs, responseRate: $responseRate, responseTime: $responseTime, totalEarnings: $totalEarnings, currentBalance: $currentBalance, commission: $commission, badges: $badges, isFeatured: $isFeatured, featuredUntil: $featuredUntil, createdAt: $createdAt, updatedAt: $updatedAt, user: $user, distance: $distance)';
-  }
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract mixin class $CraftsmanCopyWith<$Res> {
-  factory $CraftsmanCopyWith(Craftsman value, $Res Function(Craftsman) _then) =
-      _$CraftsmanCopyWithImpl;
+abstract class $CraftsmanCopyWith<$Res> {
+  factory $CraftsmanCopyWith(Craftsman value, $Res Function(Craftsman) then) =
+      _$CraftsmanCopyWithImpl<$Res, Craftsman>;
   @useResult
   $Res call(
       {@JsonKey(name: '_id') String id,
@@ -1164,11 +1074,14 @@ abstract mixin class $CraftsmanCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$CraftsmanCopyWithImpl<$Res> implements $CraftsmanCopyWith<$Res> {
-  _$CraftsmanCopyWithImpl(this._self, this._then);
+class _$CraftsmanCopyWithImpl<$Res, $Val extends Craftsman>
+    implements $CraftsmanCopyWith<$Res> {
+  _$CraftsmanCopyWithImpl(this._value, this._then);
 
-  final Craftsman _self;
-  final $Res Function(Craftsman) _then;
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
   /// Create a copy of Craftsman
   /// with the given fields replaced by the non-null parameter values.
@@ -1216,168 +1129,168 @@ class _$CraftsmanCopyWithImpl<$Res> implements $CraftsmanCopyWith<$Res> {
     Object? user = freezed,
     Object? distance = freezed,
   }) {
-    return _then(_self.copyWith(
+    return _then(_value.copyWith(
       id: null == id
-          ? _self.id
+          ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
       userId: null == userId
-          ? _self.userId
+          ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
       displayName: null == displayName
-          ? _self.displayName
+          ? _value.displayName
           : displayName // ignore: cast_nullable_to_non_nullable
               as String,
       bio: freezed == bio
-          ? _self.bio
+          ? _value.bio
           : bio // ignore: cast_nullable_to_non_nullable
               as String?,
       profileImage: freezed == profileImage
-          ? _self.profileImage
+          ? _value.profileImage
           : profileImage // ignore: cast_nullable_to_non_nullable
               as String?,
       coverImage: freezed == coverImage
-          ? _self.coverImage
+          ? _value.coverImage
           : coverImage // ignore: cast_nullable_to_non_nullable
               as String?,
       workPhotos: null == workPhotos
-          ? _self.workPhotos
+          ? _value.workPhotos
           : workPhotos // ignore: cast_nullable_to_non_nullable
               as List<String>,
       whatsapp: freezed == whatsapp
-          ? _self.whatsapp
+          ? _value.whatsapp
           : whatsapp // ignore: cast_nullable_to_non_nullable
               as String?,
       alternatePhone: freezed == alternatePhone
-          ? _self.alternatePhone
+          ? _value.alternatePhone
           : alternatePhone // ignore: cast_nullable_to_non_nullable
               as String?,
       services: null == services
-          ? _self.services
+          ? _value.services
           : services // ignore: cast_nullable_to_non_nullable
               as List<ServiceInfo>,
       documents: freezed == documents
-          ? _self.documents
+          ? _value.documents
           : documents // ignore: cast_nullable_to_non_nullable
               as CraftsmanDocuments?,
       address: freezed == address
-          ? _self.address
+          ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
               as String?,
       location: freezed == location
-          ? _self.location
+          ? _value.location
           : location // ignore: cast_nullable_to_non_nullable
               as GeoLocation?,
       serviceRadius: null == serviceRadius
-          ? _self.serviceRadius
+          ? _value.serviceRadius
           : serviceRadius // ignore: cast_nullable_to_non_nullable
               as double,
       serviceZones: null == serviceZones
-          ? _self.serviceZones
+          ? _value.serviceZones
           : serviceZones // ignore: cast_nullable_to_non_nullable
               as List<String>,
       isOnline: null == isOnline
-          ? _self.isOnline
+          ? _value.isOnline
           : isOnline // ignore: cast_nullable_to_non_nullable
               as bool,
       isAvailable: null == isAvailable
-          ? _self.isAvailable
+          ? _value.isAvailable
           : isAvailable // ignore: cast_nullable_to_non_nullable
               as bool,
       workingHours: null == workingHours
-          ? _self.workingHours
+          ? _value.workingHours
           : workingHours // ignore: cast_nullable_to_non_nullable
               as List<WorkingHour>,
       status: null == status
-          ? _self.status
+          ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as CraftsmanStatus,
       approvedAt: freezed == approvedAt
-          ? _self.approvedAt
+          ? _value.approvedAt
           : approvedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       approvedBy: freezed == approvedBy
-          ? _self.approvedBy
+          ? _value.approvedBy
           : approvedBy // ignore: cast_nullable_to_non_nullable
               as String?,
       rejectionReason: freezed == rejectionReason
-          ? _self.rejectionReason
+          ? _value.rejectionReason
           : rejectionReason // ignore: cast_nullable_to_non_nullable
               as String?,
       suspensionReason: freezed == suspensionReason
-          ? _self.suspensionReason
+          ? _value.suspensionReason
           : suspensionReason // ignore: cast_nullable_to_non_nullable
               as String?,
       rating: null == rating
-          ? _self.rating
+          ? _value.rating
           : rating // ignore: cast_nullable_to_non_nullable
               as double,
       totalRatings: null == totalRatings
-          ? _self.totalRatings
+          ? _value.totalRatings
           : totalRatings // ignore: cast_nullable_to_non_nullable
               as int,
       totalJobs: null == totalJobs
-          ? _self.totalJobs
+          ? _value.totalJobs
           : totalJobs // ignore: cast_nullable_to_non_nullable
               as int,
       completedJobs: null == completedJobs
-          ? _self.completedJobs
+          ? _value.completedJobs
           : completedJobs // ignore: cast_nullable_to_non_nullable
               as int,
       cancelledJobs: null == cancelledJobs
-          ? _self.cancelledJobs
+          ? _value.cancelledJobs
           : cancelledJobs // ignore: cast_nullable_to_non_nullable
               as int,
       responseRate: null == responseRate
-          ? _self.responseRate
+          ? _value.responseRate
           : responseRate // ignore: cast_nullable_to_non_nullable
               as double,
       responseTime: null == responseTime
-          ? _self.responseTime
+          ? _value.responseTime
           : responseTime // ignore: cast_nullable_to_non_nullable
               as int,
       totalEarnings: null == totalEarnings
-          ? _self.totalEarnings
+          ? _value.totalEarnings
           : totalEarnings // ignore: cast_nullable_to_non_nullable
               as double,
       currentBalance: null == currentBalance
-          ? _self.currentBalance
+          ? _value.currentBalance
           : currentBalance // ignore: cast_nullable_to_non_nullable
               as double,
       commission: null == commission
-          ? _self.commission
+          ? _value.commission
           : commission // ignore: cast_nullable_to_non_nullable
               as int,
       badges: null == badges
-          ? _self.badges
+          ? _value.badges
           : badges // ignore: cast_nullable_to_non_nullable
               as List<String>,
       isFeatured: null == isFeatured
-          ? _self.isFeatured
+          ? _value.isFeatured
           : isFeatured // ignore: cast_nullable_to_non_nullable
               as bool,
       featuredUntil: freezed == featuredUntil
-          ? _self.featuredUntil
+          ? _value.featuredUntil
           : featuredUntil // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       createdAt: freezed == createdAt
-          ? _self.createdAt
+          ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       updatedAt: freezed == updatedAt
-          ? _self.updatedAt
+          ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       user: freezed == user
-          ? _self.user
+          ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
               as User?,
       distance: freezed == distance
-          ? _self.distance
+          ? _value.distance
           : distance // ignore: cast_nullable_to_non_nullable
               as double?,
-    ));
+    ) as $Val);
   }
 
   /// Create a copy of Craftsman
@@ -1385,12 +1298,12 @@ class _$CraftsmanCopyWithImpl<$Res> implements $CraftsmanCopyWith<$Res> {
   @override
   @pragma('vm:prefer-inline')
   $CraftsmanDocumentsCopyWith<$Res>? get documents {
-    if (_self.documents == null) {
+    if (_value.documents == null) {
       return null;
     }
 
-    return $CraftsmanDocumentsCopyWith<$Res>(_self.documents!, (value) {
-      return _then(_self.copyWith(documents: value));
+    return $CraftsmanDocumentsCopyWith<$Res>(_value.documents!, (value) {
+      return _then(_value.copyWith(documents: value) as $Val);
     });
   }
 
@@ -1399,12 +1312,12 @@ class _$CraftsmanCopyWithImpl<$Res> implements $CraftsmanCopyWith<$Res> {
   @override
   @pragma('vm:prefer-inline')
   $GeoLocationCopyWith<$Res>? get location {
-    if (_self.location == null) {
+    if (_value.location == null) {
       return null;
     }
 
-    return $GeoLocationCopyWith<$Res>(_self.location!, (value) {
-      return _then(_self.copyWith(location: value));
+    return $GeoLocationCopyWith<$Res>(_value.location!, (value) {
+      return _then(_value.copyWith(location: value) as $Val);
     });
   }
 
@@ -1413,20 +1326,297 @@ class _$CraftsmanCopyWithImpl<$Res> implements $CraftsmanCopyWith<$Res> {
   @override
   @pragma('vm:prefer-inline')
   $UserCopyWith<$Res>? get user {
-    if (_self.user == null) {
+    if (_value.user == null) {
       return null;
     }
 
-    return $UserCopyWith<$Res>(_self.user!, (value) {
-      return _then(_self.copyWith(user: value));
+    return $UserCopyWith<$Res>(_value.user!, (value) {
+      return _then(_value.copyWith(user: value) as $Val);
     });
   }
 }
 
 /// @nodoc
+abstract class _$$CraftsmanImplCopyWith<$Res>
+    implements $CraftsmanCopyWith<$Res> {
+  factory _$$CraftsmanImplCopyWith(
+          _$CraftsmanImpl value, $Res Function(_$CraftsmanImpl) then) =
+      __$$CraftsmanImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: '_id') String id,
+      String userId,
+      String displayName,
+      String? bio,
+      String? profileImage,
+      String? coverImage,
+      List<String> workPhotos,
+      String? whatsapp,
+      String? alternatePhone,
+      List<ServiceInfo> services,
+      CraftsmanDocuments? documents,
+      String? address,
+      GeoLocation? location,
+      double serviceRadius,
+      List<String> serviceZones,
+      bool isOnline,
+      bool isAvailable,
+      List<WorkingHour> workingHours,
+      CraftsmanStatus status,
+      DateTime? approvedAt,
+      String? approvedBy,
+      String? rejectionReason,
+      String? suspensionReason,
+      double rating,
+      int totalRatings,
+      int totalJobs,
+      int completedJobs,
+      int cancelledJobs,
+      double responseRate,
+      int responseTime,
+      double totalEarnings,
+      double currentBalance,
+      int commission,
+      List<String> badges,
+      bool isFeatured,
+      DateTime? featuredUntil,
+      DateTime? createdAt,
+      DateTime? updatedAt,
+      User? user,
+      double? distance});
+
+  @override
+  $CraftsmanDocumentsCopyWith<$Res>? get documents;
+  @override
+  $GeoLocationCopyWith<$Res>? get location;
+  @override
+  $UserCopyWith<$Res>? get user;
+}
+
+/// @nodoc
+class __$$CraftsmanImplCopyWithImpl<$Res>
+    extends _$CraftsmanCopyWithImpl<$Res, _$CraftsmanImpl>
+    implements _$$CraftsmanImplCopyWith<$Res> {
+  __$$CraftsmanImplCopyWithImpl(
+      _$CraftsmanImpl _value, $Res Function(_$CraftsmanImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of Craftsman
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? userId = null,
+    Object? displayName = null,
+    Object? bio = freezed,
+    Object? profileImage = freezed,
+    Object? coverImage = freezed,
+    Object? workPhotos = null,
+    Object? whatsapp = freezed,
+    Object? alternatePhone = freezed,
+    Object? services = null,
+    Object? documents = freezed,
+    Object? address = freezed,
+    Object? location = freezed,
+    Object? serviceRadius = null,
+    Object? serviceZones = null,
+    Object? isOnline = null,
+    Object? isAvailable = null,
+    Object? workingHours = null,
+    Object? status = null,
+    Object? approvedAt = freezed,
+    Object? approvedBy = freezed,
+    Object? rejectionReason = freezed,
+    Object? suspensionReason = freezed,
+    Object? rating = null,
+    Object? totalRatings = null,
+    Object? totalJobs = null,
+    Object? completedJobs = null,
+    Object? cancelledJobs = null,
+    Object? responseRate = null,
+    Object? responseTime = null,
+    Object? totalEarnings = null,
+    Object? currentBalance = null,
+    Object? commission = null,
+    Object? badges = null,
+    Object? isFeatured = null,
+    Object? featuredUntil = freezed,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
+    Object? user = freezed,
+    Object? distance = freezed,
+  }) {
+    return _then(_$CraftsmanImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      userId: null == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
+      displayName: null == displayName
+          ? _value.displayName
+          : displayName // ignore: cast_nullable_to_non_nullable
+              as String,
+      bio: freezed == bio
+          ? _value.bio
+          : bio // ignore: cast_nullable_to_non_nullable
+              as String?,
+      profileImage: freezed == profileImage
+          ? _value.profileImage
+          : profileImage // ignore: cast_nullable_to_non_nullable
+              as String?,
+      coverImage: freezed == coverImage
+          ? _value.coverImage
+          : coverImage // ignore: cast_nullable_to_non_nullable
+              as String?,
+      workPhotos: null == workPhotos
+          ? _value._workPhotos
+          : workPhotos // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      whatsapp: freezed == whatsapp
+          ? _value.whatsapp
+          : whatsapp // ignore: cast_nullable_to_non_nullable
+              as String?,
+      alternatePhone: freezed == alternatePhone
+          ? _value.alternatePhone
+          : alternatePhone // ignore: cast_nullable_to_non_nullable
+              as String?,
+      services: null == services
+          ? _value._services
+          : services // ignore: cast_nullable_to_non_nullable
+              as List<ServiceInfo>,
+      documents: freezed == documents
+          ? _value.documents
+          : documents // ignore: cast_nullable_to_non_nullable
+              as CraftsmanDocuments?,
+      address: freezed == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String?,
+      location: freezed == location
+          ? _value.location
+          : location // ignore: cast_nullable_to_non_nullable
+              as GeoLocation?,
+      serviceRadius: null == serviceRadius
+          ? _value.serviceRadius
+          : serviceRadius // ignore: cast_nullable_to_non_nullable
+              as double,
+      serviceZones: null == serviceZones
+          ? _value._serviceZones
+          : serviceZones // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      isOnline: null == isOnline
+          ? _value.isOnline
+          : isOnline // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isAvailable: null == isAvailable
+          ? _value.isAvailable
+          : isAvailable // ignore: cast_nullable_to_non_nullable
+              as bool,
+      workingHours: null == workingHours
+          ? _value._workingHours
+          : workingHours // ignore: cast_nullable_to_non_nullable
+              as List<WorkingHour>,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as CraftsmanStatus,
+      approvedAt: freezed == approvedAt
+          ? _value.approvedAt
+          : approvedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      approvedBy: freezed == approvedBy
+          ? _value.approvedBy
+          : approvedBy // ignore: cast_nullable_to_non_nullable
+              as String?,
+      rejectionReason: freezed == rejectionReason
+          ? _value.rejectionReason
+          : rejectionReason // ignore: cast_nullable_to_non_nullable
+              as String?,
+      suspensionReason: freezed == suspensionReason
+          ? _value.suspensionReason
+          : suspensionReason // ignore: cast_nullable_to_non_nullable
+              as String?,
+      rating: null == rating
+          ? _value.rating
+          : rating // ignore: cast_nullable_to_non_nullable
+              as double,
+      totalRatings: null == totalRatings
+          ? _value.totalRatings
+          : totalRatings // ignore: cast_nullable_to_non_nullable
+              as int,
+      totalJobs: null == totalJobs
+          ? _value.totalJobs
+          : totalJobs // ignore: cast_nullable_to_non_nullable
+              as int,
+      completedJobs: null == completedJobs
+          ? _value.completedJobs
+          : completedJobs // ignore: cast_nullable_to_non_nullable
+              as int,
+      cancelledJobs: null == cancelledJobs
+          ? _value.cancelledJobs
+          : cancelledJobs // ignore: cast_nullable_to_non_nullable
+              as int,
+      responseRate: null == responseRate
+          ? _value.responseRate
+          : responseRate // ignore: cast_nullable_to_non_nullable
+              as double,
+      responseTime: null == responseTime
+          ? _value.responseTime
+          : responseTime // ignore: cast_nullable_to_non_nullable
+              as int,
+      totalEarnings: null == totalEarnings
+          ? _value.totalEarnings
+          : totalEarnings // ignore: cast_nullable_to_non_nullable
+              as double,
+      currentBalance: null == currentBalance
+          ? _value.currentBalance
+          : currentBalance // ignore: cast_nullable_to_non_nullable
+              as double,
+      commission: null == commission
+          ? _value.commission
+          : commission // ignore: cast_nullable_to_non_nullable
+              as int,
+      badges: null == badges
+          ? _value._badges
+          : badges // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      isFeatured: null == isFeatured
+          ? _value.isFeatured
+          : isFeatured // ignore: cast_nullable_to_non_nullable
+              as bool,
+      featuredUntil: freezed == featuredUntil
+          ? _value.featuredUntil
+          : featuredUntil // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      user: freezed == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as User?,
+      distance: freezed == distance
+          ? _value.distance
+          : distance // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ));
+  }
+}
+
+/// @nodoc
 @JsonSerializable()
-class _Craftsman extends Craftsman {
-  const _Craftsman(
+class _$CraftsmanImpl extends _Craftsman {
+  const _$CraftsmanImpl(
       {@JsonKey(name: '_id') required this.id,
       required this.userId,
       required this.displayName,
@@ -1473,8 +1663,9 @@ class _Craftsman extends Craftsman {
         _workingHours = workingHours,
         _badges = badges,
         super._();
-  factory _Craftsman.fromJson(Map<String, dynamic> json) =>
-      _$CraftsmanFromJson(json);
+
+  factory _$CraftsmanImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CraftsmanImplFromJson(json);
 
   @override
   @JsonKey(name: '_id')
@@ -1610,26 +1801,16 @@ class _Craftsman extends Craftsman {
   @override
   final double? distance;
 
-  /// Create a copy of Craftsman
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  _$CraftsmanCopyWith<_Craftsman> get copyWith =>
-      __$CraftsmanCopyWithImpl<_Craftsman>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$CraftsmanToJson(
-      this,
-    );
+  String toString() {
+    return 'Craftsman(id: $id, userId: $userId, displayName: $displayName, bio: $bio, profileImage: $profileImage, coverImage: $coverImage, workPhotos: $workPhotos, whatsapp: $whatsapp, alternatePhone: $alternatePhone, services: $services, documents: $documents, address: $address, location: $location, serviceRadius: $serviceRadius, serviceZones: $serviceZones, isOnline: $isOnline, isAvailable: $isAvailable, workingHours: $workingHours, status: $status, approvedAt: $approvedAt, approvedBy: $approvedBy, rejectionReason: $rejectionReason, suspensionReason: $suspensionReason, rating: $rating, totalRatings: $totalRatings, totalJobs: $totalJobs, completedJobs: $completedJobs, cancelledJobs: $cancelledJobs, responseRate: $responseRate, responseTime: $responseTime, totalEarnings: $totalEarnings, currentBalance: $currentBalance, commission: $commission, badges: $badges, isFeatured: $isFeatured, featuredUntil: $featuredUntil, createdAt: $createdAt, updatedAt: $updatedAt, user: $user, distance: $distance)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _Craftsman &&
+            other is _$CraftsmanImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.displayName, displayName) ||
@@ -1749,395 +1930,203 @@ class _Craftsman extends Craftsman {
         distance
       ]);
 
+  /// Create a copy of Craftsman
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  String toString() {
-    return 'Craftsman(id: $id, userId: $userId, displayName: $displayName, bio: $bio, profileImage: $profileImage, coverImage: $coverImage, workPhotos: $workPhotos, whatsapp: $whatsapp, alternatePhone: $alternatePhone, services: $services, documents: $documents, address: $address, location: $location, serviceRadius: $serviceRadius, serviceZones: $serviceZones, isOnline: $isOnline, isAvailable: $isAvailable, workingHours: $workingHours, status: $status, approvedAt: $approvedAt, approvedBy: $approvedBy, rejectionReason: $rejectionReason, suspensionReason: $suspensionReason, rating: $rating, totalRatings: $totalRatings, totalJobs: $totalJobs, completedJobs: $completedJobs, cancelledJobs: $cancelledJobs, responseRate: $responseRate, responseTime: $responseTime, totalEarnings: $totalEarnings, currentBalance: $currentBalance, commission: $commission, badges: $badges, isFeatured: $isFeatured, featuredUntil: $featuredUntil, createdAt: $createdAt, updatedAt: $updatedAt, user: $user, distance: $distance)';
+  @pragma('vm:prefer-inline')
+  _$$CraftsmanImplCopyWith<_$CraftsmanImpl> get copyWith =>
+      __$$CraftsmanImplCopyWithImpl<_$CraftsmanImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$CraftsmanImplToJson(
+      this,
+    );
   }
 }
 
-/// @nodoc
-abstract mixin class _$CraftsmanCopyWith<$Res>
-    implements $CraftsmanCopyWith<$Res> {
-  factory _$CraftsmanCopyWith(
-          _Craftsman value, $Res Function(_Craftsman) _then) =
-      __$CraftsmanCopyWithImpl;
-  @override
-  @useResult
-  $Res call(
-      {@JsonKey(name: '_id') String id,
-      String userId,
-      String displayName,
-      String? bio,
-      String? profileImage,
-      String? coverImage,
-      List<String> workPhotos,
-      String? whatsapp,
-      String? alternatePhone,
-      List<ServiceInfo> services,
-      CraftsmanDocuments? documents,
-      String? address,
-      GeoLocation? location,
-      double serviceRadius,
-      List<String> serviceZones,
-      bool isOnline,
-      bool isAvailable,
-      List<WorkingHour> workingHours,
-      CraftsmanStatus status,
-      DateTime? approvedAt,
-      String? approvedBy,
-      String? rejectionReason,
-      String? suspensionReason,
-      double rating,
-      int totalRatings,
-      int totalJobs,
-      int completedJobs,
-      int cancelledJobs,
-      double responseRate,
-      int responseTime,
-      double totalEarnings,
-      double currentBalance,
-      int commission,
-      List<String> badges,
-      bool isFeatured,
-      DateTime? featuredUntil,
-      DateTime? createdAt,
-      DateTime? updatedAt,
-      User? user,
-      double? distance});
+abstract class _Craftsman extends Craftsman {
+  const factory _Craftsman(
+      {@JsonKey(name: '_id') required final String id,
+      required final String userId,
+      required final String displayName,
+      final String? bio,
+      final String? profileImage,
+      final String? coverImage,
+      final List<String> workPhotos,
+      final String? whatsapp,
+      final String? alternatePhone,
+      final List<ServiceInfo> services,
+      final CraftsmanDocuments? documents,
+      final String? address,
+      final GeoLocation? location,
+      final double serviceRadius,
+      final List<String> serviceZones,
+      final bool isOnline,
+      final bool isAvailable,
+      final List<WorkingHour> workingHours,
+      final CraftsmanStatus status,
+      final DateTime? approvedAt,
+      final String? approvedBy,
+      final String? rejectionReason,
+      final String? suspensionReason,
+      final double rating,
+      final int totalRatings,
+      final int totalJobs,
+      final int completedJobs,
+      final int cancelledJobs,
+      final double responseRate,
+      final int responseTime,
+      final double totalEarnings,
+      final double currentBalance,
+      final int commission,
+      final List<String> badges,
+      final bool isFeatured,
+      final DateTime? featuredUntil,
+      final DateTime? createdAt,
+      final DateTime? updatedAt,
+      final User? user,
+      final double? distance}) = _$CraftsmanImpl;
+  const _Craftsman._() : super._();
+
+  factory _Craftsman.fromJson(Map<String, dynamic> json) =
+      _$CraftsmanImpl.fromJson;
 
   @override
-  $CraftsmanDocumentsCopyWith<$Res>? get documents;
+  @JsonKey(name: '_id')
+  String get id;
   @override
-  $GeoLocationCopyWith<$Res>? get location;
+  String get userId;
   @override
-  $UserCopyWith<$Res>? get user;
+  String get displayName;
+  @override
+  String? get bio;
+  @override
+  String? get profileImage;
+  @override
+  String? get coverImage;
+  @override
+  List<String> get workPhotos;
+  @override
+  String? get whatsapp;
+  @override
+  String? get alternatePhone;
+  @override
+  List<ServiceInfo> get services;
+  @override
+  CraftsmanDocuments? get documents;
+  @override
+  String? get address;
+  @override
+  GeoLocation? get location;
+  @override
+  double get serviceRadius;
+  @override
+  List<String> get serviceZones;
+  @override
+  bool get isOnline;
+  @override
+  bool get isAvailable;
+  @override
+  List<WorkingHour> get workingHours;
+  @override
+  CraftsmanStatus get status;
+  @override
+  DateTime? get approvedAt;
+  @override
+  String? get approvedBy;
+  @override
+  String? get rejectionReason;
+  @override
+  String? get suspensionReason;
+  @override
+  double get rating;
+  @override
+  int get totalRatings;
+  @override
+  int get totalJobs;
+  @override
+  int get completedJobs;
+  @override
+  int get cancelledJobs;
+  @override
+  double get responseRate;
+  @override
+  int get responseTime;
+  @override
+  double get totalEarnings;
+  @override
+  double get currentBalance;
+  @override
+  int get commission;
+  @override
+  List<String> get badges;
+  @override
+  bool get isFeatured;
+  @override
+  DateTime? get featuredUntil;
+  @override
+  DateTime? get createdAt;
+  @override
+  DateTime? get updatedAt; // Populated user details
+  @override
+  User?
+      get user; // Distance from current location (populated in nearby queries)
+  @override
+  double? get distance;
+
+  /// Create a copy of Craftsman
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$CraftsmanImplCopyWith<_$CraftsmanImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
-/// @nodoc
-class __$CraftsmanCopyWithImpl<$Res> implements _$CraftsmanCopyWith<$Res> {
-  __$CraftsmanCopyWithImpl(this._self, this._then);
-
-  final _Craftsman _self;
-  final $Res Function(_Craftsman) _then;
-
-  /// Create a copy of Craftsman
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $Res call({
-    Object? id = null,
-    Object? userId = null,
-    Object? displayName = null,
-    Object? bio = freezed,
-    Object? profileImage = freezed,
-    Object? coverImage = freezed,
-    Object? workPhotos = null,
-    Object? whatsapp = freezed,
-    Object? alternatePhone = freezed,
-    Object? services = null,
-    Object? documents = freezed,
-    Object? address = freezed,
-    Object? location = freezed,
-    Object? serviceRadius = null,
-    Object? serviceZones = null,
-    Object? isOnline = null,
-    Object? isAvailable = null,
-    Object? workingHours = null,
-    Object? status = null,
-    Object? approvedAt = freezed,
-    Object? approvedBy = freezed,
-    Object? rejectionReason = freezed,
-    Object? suspensionReason = freezed,
-    Object? rating = null,
-    Object? totalRatings = null,
-    Object? totalJobs = null,
-    Object? completedJobs = null,
-    Object? cancelledJobs = null,
-    Object? responseRate = null,
-    Object? responseTime = null,
-    Object? totalEarnings = null,
-    Object? currentBalance = null,
-    Object? commission = null,
-    Object? badges = null,
-    Object? isFeatured = null,
-    Object? featuredUntil = freezed,
-    Object? createdAt = freezed,
-    Object? updatedAt = freezed,
-    Object? user = freezed,
-    Object? distance = freezed,
-  }) {
-    return _then(_Craftsman(
-      id: null == id
-          ? _self.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      userId: null == userId
-          ? _self.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      displayName: null == displayName
-          ? _self.displayName
-          : displayName // ignore: cast_nullable_to_non_nullable
-              as String,
-      bio: freezed == bio
-          ? _self.bio
-          : bio // ignore: cast_nullable_to_non_nullable
-              as String?,
-      profileImage: freezed == profileImage
-          ? _self.profileImage
-          : profileImage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      coverImage: freezed == coverImage
-          ? _self.coverImage
-          : coverImage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      workPhotos: null == workPhotos
-          ? _self._workPhotos
-          : workPhotos // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      whatsapp: freezed == whatsapp
-          ? _self.whatsapp
-          : whatsapp // ignore: cast_nullable_to_non_nullable
-              as String?,
-      alternatePhone: freezed == alternatePhone
-          ? _self.alternatePhone
-          : alternatePhone // ignore: cast_nullable_to_non_nullable
-              as String?,
-      services: null == services
-          ? _self._services
-          : services // ignore: cast_nullable_to_non_nullable
-              as List<ServiceInfo>,
-      documents: freezed == documents
-          ? _self.documents
-          : documents // ignore: cast_nullable_to_non_nullable
-              as CraftsmanDocuments?,
-      address: freezed == address
-          ? _self.address
-          : address // ignore: cast_nullable_to_non_nullable
-              as String?,
-      location: freezed == location
-          ? _self.location
-          : location // ignore: cast_nullable_to_non_nullable
-              as GeoLocation?,
-      serviceRadius: null == serviceRadius
-          ? _self.serviceRadius
-          : serviceRadius // ignore: cast_nullable_to_non_nullable
-              as double,
-      serviceZones: null == serviceZones
-          ? _self._serviceZones
-          : serviceZones // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      isOnline: null == isOnline
-          ? _self.isOnline
-          : isOnline // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isAvailable: null == isAvailable
-          ? _self.isAvailable
-          : isAvailable // ignore: cast_nullable_to_non_nullable
-              as bool,
-      workingHours: null == workingHours
-          ? _self._workingHours
-          : workingHours // ignore: cast_nullable_to_non_nullable
-              as List<WorkingHour>,
-      status: null == status
-          ? _self.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as CraftsmanStatus,
-      approvedAt: freezed == approvedAt
-          ? _self.approvedAt
-          : approvedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      approvedBy: freezed == approvedBy
-          ? _self.approvedBy
-          : approvedBy // ignore: cast_nullable_to_non_nullable
-              as String?,
-      rejectionReason: freezed == rejectionReason
-          ? _self.rejectionReason
-          : rejectionReason // ignore: cast_nullable_to_non_nullable
-              as String?,
-      suspensionReason: freezed == suspensionReason
-          ? _self.suspensionReason
-          : suspensionReason // ignore: cast_nullable_to_non_nullable
-              as String?,
-      rating: null == rating
-          ? _self.rating
-          : rating // ignore: cast_nullable_to_non_nullable
-              as double,
-      totalRatings: null == totalRatings
-          ? _self.totalRatings
-          : totalRatings // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalJobs: null == totalJobs
-          ? _self.totalJobs
-          : totalJobs // ignore: cast_nullable_to_non_nullable
-              as int,
-      completedJobs: null == completedJobs
-          ? _self.completedJobs
-          : completedJobs // ignore: cast_nullable_to_non_nullable
-              as int,
-      cancelledJobs: null == cancelledJobs
-          ? _self.cancelledJobs
-          : cancelledJobs // ignore: cast_nullable_to_non_nullable
-              as int,
-      responseRate: null == responseRate
-          ? _self.responseRate
-          : responseRate // ignore: cast_nullable_to_non_nullable
-              as double,
-      responseTime: null == responseTime
-          ? _self.responseTime
-          : responseTime // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalEarnings: null == totalEarnings
-          ? _self.totalEarnings
-          : totalEarnings // ignore: cast_nullable_to_non_nullable
-              as double,
-      currentBalance: null == currentBalance
-          ? _self.currentBalance
-          : currentBalance // ignore: cast_nullable_to_non_nullable
-              as double,
-      commission: null == commission
-          ? _self.commission
-          : commission // ignore: cast_nullable_to_non_nullable
-              as int,
-      badges: null == badges
-          ? _self._badges
-          : badges // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      isFeatured: null == isFeatured
-          ? _self.isFeatured
-          : isFeatured // ignore: cast_nullable_to_non_nullable
-              as bool,
-      featuredUntil: freezed == featuredUntil
-          ? _self.featuredUntil
-          : featuredUntil // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      createdAt: freezed == createdAt
-          ? _self.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      updatedAt: freezed == updatedAt
-          ? _self.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      user: freezed == user
-          ? _self.user
-          : user // ignore: cast_nullable_to_non_nullable
-              as User?,
-      distance: freezed == distance
-          ? _self.distance
-          : distance // ignore: cast_nullable_to_non_nullable
-              as double?,
-    ));
-  }
-
-  /// Create a copy of Craftsman
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $CraftsmanDocumentsCopyWith<$Res>? get documents {
-    if (_self.documents == null) {
-      return null;
-    }
-
-    return $CraftsmanDocumentsCopyWith<$Res>(_self.documents!, (value) {
-      return _then(_self.copyWith(documents: value));
-    });
-  }
-
-  /// Create a copy of Craftsman
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $GeoLocationCopyWith<$Res>? get location {
-    if (_self.location == null) {
-      return null;
-    }
-
-    return $GeoLocationCopyWith<$Res>(_self.location!, (value) {
-      return _then(_self.copyWith(location: value));
-    });
-  }
-
-  /// Create a copy of Craftsman
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $UserCopyWith<$Res>? get user {
-    if (_self.user == null) {
-      return null;
-    }
-
-    return $UserCopyWith<$Res>(_self.user!, (value) {
-      return _then(_self.copyWith(user: value));
-    });
-  }
+CraftsmanListResponse _$CraftsmanListResponseFromJson(
+    Map<String, dynamic> json) {
+  return _CraftsmanListResponse.fromJson(json);
 }
 
 /// @nodoc
 mixin _$CraftsmanListResponse {
-  List<Craftsman> get data;
-  int get page;
-  int get limit;
-  int get total;
-  int get totalPages;
+  List<Craftsman> get data => throw _privateConstructorUsedError;
+  int get page => throw _privateConstructorUsedError;
+  int get limit => throw _privateConstructorUsedError;
+  int get total => throw _privateConstructorUsedError;
+  int get totalPages => throw _privateConstructorUsedError;
+
+  /// Serializes this CraftsmanListResponse to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
   /// Create a copy of CraftsmanListResponse
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
   $CraftsmanListResponseCopyWith<CraftsmanListResponse> get copyWith =>
-      _$CraftsmanListResponseCopyWithImpl<CraftsmanListResponse>(
-          this as CraftsmanListResponse, _$identity);
-
-  /// Serializes this CraftsmanListResponse to a JSON map.
-  Map<String, dynamic> toJson();
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is CraftsmanListResponse &&
-            const DeepCollectionEquality().equals(other.data, data) &&
-            (identical(other.page, page) || other.page == page) &&
-            (identical(other.limit, limit) || other.limit == limit) &&
-            (identical(other.total, total) || other.total == total) &&
-            (identical(other.totalPages, totalPages) ||
-                other.totalPages == totalPages));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(data),
-      page,
-      limit,
-      total,
-      totalPages);
-
-  @override
-  String toString() {
-    return 'CraftsmanListResponse(data: $data, page: $page, limit: $limit, total: $total, totalPages: $totalPages)';
-  }
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract mixin class $CraftsmanListResponseCopyWith<$Res> {
+abstract class $CraftsmanListResponseCopyWith<$Res> {
   factory $CraftsmanListResponseCopyWith(CraftsmanListResponse value,
-          $Res Function(CraftsmanListResponse) _then) =
-      _$CraftsmanListResponseCopyWithImpl;
+          $Res Function(CraftsmanListResponse) then) =
+      _$CraftsmanListResponseCopyWithImpl<$Res, CraftsmanListResponse>;
   @useResult
   $Res call(
       {List<Craftsman> data, int page, int limit, int total, int totalPages});
 }
 
 /// @nodoc
-class _$CraftsmanListResponseCopyWithImpl<$Res>
+class _$CraftsmanListResponseCopyWithImpl<$Res,
+        $Val extends CraftsmanListResponse>
     implements $CraftsmanListResponseCopyWith<$Res> {
-  _$CraftsmanListResponseCopyWithImpl(this._self, this._then);
+  _$CraftsmanListResponseCopyWithImpl(this._value, this._then);
 
-  final CraftsmanListResponse _self;
-  final $Res Function(CraftsmanListResponse) _then;
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
   /// Create a copy of CraftsmanListResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -2150,25 +2139,83 @@ class _$CraftsmanListResponseCopyWithImpl<$Res>
     Object? total = null,
     Object? totalPages = null,
   }) {
-    return _then(_self.copyWith(
+    return _then(_value.copyWith(
       data: null == data
-          ? _self.data
+          ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
               as List<Craftsman>,
       page: null == page
-          ? _self.page
+          ? _value.page
           : page // ignore: cast_nullable_to_non_nullable
               as int,
       limit: null == limit
-          ? _self.limit
+          ? _value.limit
           : limit // ignore: cast_nullable_to_non_nullable
               as int,
       total: null == total
-          ? _self.total
+          ? _value.total
           : total // ignore: cast_nullable_to_non_nullable
               as int,
       totalPages: null == totalPages
-          ? _self.totalPages
+          ? _value.totalPages
+          : totalPages // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$CraftsmanListResponseImplCopyWith<$Res>
+    implements $CraftsmanListResponseCopyWith<$Res> {
+  factory _$$CraftsmanListResponseImplCopyWith(
+          _$CraftsmanListResponseImpl value,
+          $Res Function(_$CraftsmanListResponseImpl) then) =
+      __$$CraftsmanListResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {List<Craftsman> data, int page, int limit, int total, int totalPages});
+}
+
+/// @nodoc
+class __$$CraftsmanListResponseImplCopyWithImpl<$Res>
+    extends _$CraftsmanListResponseCopyWithImpl<$Res,
+        _$CraftsmanListResponseImpl>
+    implements _$$CraftsmanListResponseImplCopyWith<$Res> {
+  __$$CraftsmanListResponseImplCopyWithImpl(_$CraftsmanListResponseImpl _value,
+      $Res Function(_$CraftsmanListResponseImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of CraftsmanListResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? data = null,
+    Object? page = null,
+    Object? limit = null,
+    Object? total = null,
+    Object? totalPages = null,
+  }) {
+    return _then(_$CraftsmanListResponseImpl(
+      data: null == data
+          ? _value._data
+          : data // ignore: cast_nullable_to_non_nullable
+              as List<Craftsman>,
+      page: null == page
+          ? _value.page
+          : page // ignore: cast_nullable_to_non_nullable
+              as int,
+      limit: null == limit
+          ? _value.limit
+          : limit // ignore: cast_nullable_to_non_nullable
+              as int,
+      total: null == total
+          ? _value.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as int,
+      totalPages: null == totalPages
+          ? _value.totalPages
           : totalPages // ignore: cast_nullable_to_non_nullable
               as int,
     ));
@@ -2177,16 +2224,17 @@ class _$CraftsmanListResponseCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _CraftsmanListResponse implements CraftsmanListResponse {
-  const _CraftsmanListResponse(
+class _$CraftsmanListResponseImpl implements _CraftsmanListResponse {
+  const _$CraftsmanListResponseImpl(
       {required final List<Craftsman> data,
       required this.page,
       required this.limit,
       required this.total,
       required this.totalPages})
       : _data = data;
-  factory _CraftsmanListResponse.fromJson(Map<String, dynamic> json) =>
-      _$CraftsmanListResponseFromJson(json);
+
+  factory _$CraftsmanListResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CraftsmanListResponseImplFromJson(json);
 
   final List<Craftsman> _data;
   @override
@@ -2205,27 +2253,16 @@ class _CraftsmanListResponse implements CraftsmanListResponse {
   @override
   final int totalPages;
 
-  /// Create a copy of CraftsmanListResponse
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  _$CraftsmanListResponseCopyWith<_CraftsmanListResponse> get copyWith =>
-      __$CraftsmanListResponseCopyWithImpl<_CraftsmanListResponse>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$CraftsmanListResponseToJson(
-      this,
-    );
+  String toString() {
+    return 'CraftsmanListResponse(data: $data, page: $page, limit: $limit, total: $total, totalPages: $totalPages)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _CraftsmanListResponse &&
+            other is _$CraftsmanListResponseImpl &&
             const DeepCollectionEquality().equals(other._data, _data) &&
             (identical(other.page, page) || other.page == page) &&
             (identical(other.limit, limit) || other.limit == limit) &&
@@ -2244,66 +2281,49 @@ class _CraftsmanListResponse implements CraftsmanListResponse {
       total,
       totalPages);
 
+  /// Create a copy of CraftsmanListResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  String toString() {
-    return 'CraftsmanListResponse(data: $data, page: $page, limit: $limit, total: $total, totalPages: $totalPages)';
+  @pragma('vm:prefer-inline')
+  _$$CraftsmanListResponseImplCopyWith<_$CraftsmanListResponseImpl>
+      get copyWith => __$$CraftsmanListResponseImplCopyWithImpl<
+          _$CraftsmanListResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$CraftsmanListResponseImplToJson(
+      this,
+    );
   }
 }
 
-/// @nodoc
-abstract mixin class _$CraftsmanListResponseCopyWith<$Res>
-    implements $CraftsmanListResponseCopyWith<$Res> {
-  factory _$CraftsmanListResponseCopyWith(_CraftsmanListResponse value,
-          $Res Function(_CraftsmanListResponse) _then) =
-      __$CraftsmanListResponseCopyWithImpl;
+abstract class _CraftsmanListResponse implements CraftsmanListResponse {
+  const factory _CraftsmanListResponse(
+      {required final List<Craftsman> data,
+      required final int page,
+      required final int limit,
+      required final int total,
+      required final int totalPages}) = _$CraftsmanListResponseImpl;
+
+  factory _CraftsmanListResponse.fromJson(Map<String, dynamic> json) =
+      _$CraftsmanListResponseImpl.fromJson;
+
   @override
-  @useResult
-  $Res call(
-      {List<Craftsman> data, int page, int limit, int total, int totalPages});
-}
-
-/// @nodoc
-class __$CraftsmanListResponseCopyWithImpl<$Res>
-    implements _$CraftsmanListResponseCopyWith<$Res> {
-  __$CraftsmanListResponseCopyWithImpl(this._self, this._then);
-
-  final _CraftsmanListResponse _self;
-  final $Res Function(_CraftsmanListResponse) _then;
+  List<Craftsman> get data;
+  @override
+  int get page;
+  @override
+  int get limit;
+  @override
+  int get total;
+  @override
+  int get totalPages;
 
   /// Create a copy of CraftsmanListResponse
   /// with the given fields replaced by the non-null parameter values.
   @override
-  @pragma('vm:prefer-inline')
-  $Res call({
-    Object? data = null,
-    Object? page = null,
-    Object? limit = null,
-    Object? total = null,
-    Object? totalPages = null,
-  }) {
-    return _then(_CraftsmanListResponse(
-      data: null == data
-          ? _self._data
-          : data // ignore: cast_nullable_to_non_nullable
-              as List<Craftsman>,
-      page: null == page
-          ? _self.page
-          : page // ignore: cast_nullable_to_non_nullable
-              as int,
-      limit: null == limit
-          ? _self.limit
-          : limit // ignore: cast_nullable_to_non_nullable
-              as int,
-      total: null == total
-          ? _self.total
-          : total // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalPages: null == totalPages
-          ? _self.totalPages
-          : totalPages // ignore: cast_nullable_to_non_nullable
-              as int,
-    ));
-  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$CraftsmanListResponseImplCopyWith<_$CraftsmanListResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
-
-// dart format on

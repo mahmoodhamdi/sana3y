@@ -173,21 +173,20 @@ class SocketService {
 
     try {
       const craftsman = await Craftsman.findById(socket.craftsmanId)
-        .select('categories serviceAreas')
+        .select('services serviceZones')
         .lean();
 
       if (craftsman) {
-        // Join category rooms
-        craftsman.categories?.forEach((catId: any) => {
-          socket.join(`category:${catId.toString()}`);
+        // Join category rooms based on services
+        craftsman.services?.forEach((service: any) => {
+          if (service.categoryId) {
+            socket.join(`category:${service.categoryId.toString()}`);
+          }
         });
 
-        // Join area rooms
-        craftsman.serviceAreas?.forEach((area: any) => {
-          socket.join(`area:${area.governorate}`);
-          if (area.city) {
-            socket.join(`area:${area.governorate}:${area.city}`);
-          }
+        // Join service zone rooms
+        craftsman.serviceZones?.forEach((zoneId: any) => {
+          socket.join(`zone:${zoneId.toString()}`);
         });
       }
     } catch (error) {
@@ -269,6 +268,11 @@ class SocketService {
   // Emit to chat room
   emitToChat(chatId: string, event: string, data: any): void {
     this.io?.to(`chat:${chatId}`).emit(event, data);
+  }
+
+  // Emit to any room (generic)
+  emitToRoom(room: string, event: string, data: any): void {
+    this.io?.to(room).emit(event, data);
   }
 
   // Emit to all admins

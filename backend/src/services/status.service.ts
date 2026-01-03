@@ -1,42 +1,35 @@
-import mongoose from 'mongoose';
-import Request, { IRequest, RequestStatus } from '../models/Request';
+import { Types } from 'mongoose';
+import ServiceRequest, { IServiceRequest } from '../models/ServiceRequest';
 import Craftsman from '../models/Craftsman';
+import Customer from '../models/Customer';
+import { NotFoundError, BadRequestError, ForbiddenError } from '@utils/errors';
+import socketService from './socket.service';
 
-// Status transition rules - defines which transitions are allowed
+type RequestStatus = 'pending' | 'quoted' | 'accepted' | 'in_progress' | 'completed' | 'cancelled';
+
+// Status transition rules
 const STATUS_TRANSITIONS: Record<RequestStatus, RequestStatus[]> = {
-  [RequestStatus.PENDING]: [RequestStatus.QUOTED, RequestStatus.CANCELLED],
-  [RequestStatus.QUOTED]: [RequestStatus.ACCEPTED, RequestStatus.CANCELLED, RequestStatus.PENDING],
-  [RequestStatus.ACCEPTED]: [RequestStatus.IN_PROGRESS, RequestStatus.CANCELLED],
-  [RequestStatus.IN_PROGRESS]: [RequestStatus.ARRIVED, RequestStatus.CANCELLED],
-  [RequestStatus.ARRIVED]: [RequestStatus.COMPLETED, RequestStatus.CANCELLED],
-  [RequestStatus.COMPLETED]: [RequestStatus.DISPUTED],
-  [RequestStatus.CANCELLED]: [],
-  [RequestStatus.DISPUTED]: [RequestStatus.COMPLETED, RequestStatus.REFUNDED],
-  [RequestStatus.REFUNDED]: [],
+  pending: ['quoted', 'cancelled'],
+  quoted: ['accepted', 'cancelled', 'pending'],
+  accepted: ['in_progress', 'cancelled'],
+  in_progress: ['completed', 'cancelled'],
+  completed: [],
+  cancelled: [],
 };
 
 // Who can trigger which status transitions
-const TRANSITION_PERMISSIONS: Record<
-  string,
-  Array<{ from: RequestStatus; to: RequestStatus; role: 'customer' | 'craftsman' | 'admin' }>
-> = {
-  customer: [
-    { from: RequestStatus.PENDING, to: RequestStatus.CANCELLED, role: 'customer' },
-    { from: RequestStatus.QUOTED, to: RequestStatus.ACCEPTED, role: 'customer' },
-    { from: RequestStatus.QUOTED, to: RequestStatus.CANCELLED, role: 'customer' },
-    { from: RequestStatus.ACCEPTED, to: RequestStatus.CANCELLED, role: 'customer' },
-    { from: RequestStatus.COMPLETED, to: RequestStatus.DISPUTED, role: 'customer' },
-  ],
-  craftsman: [
-    { from: RequestStatus.ACCEPTED, to: RequestStatus.IN_PROGRESS, role: 'craftsman' },
-    { from: RequestStatus.IN_PROGRESS, to: RequestStatus.ARRIVED, role: 'craftsman' },
-    { from: RequestStatus.ARRIVED, to: RequestStatus.COMPLETED, role: 'craftsman' },
-    { from: RequestStatus.ACCEPTED, to: RequestStatus.CANCELLED, role: 'craftsman' },
-  ],
-  admin: [
-    // Admin can do any valid transition
-  ],
-};
+const CUSTOMER_TRANSITIONS = [
+  { from: 'pending', to: 'cancelled' },
+  { from: 'quoted', to: 'accepted' },
+  { from: 'quoted', to: 'cancelled' },
+  { from: 'accepted', to: 'cancelled' },
+];
+
+const CRAFTSMAN_TRANSITIONS = [
+  { from: 'accepted', to: 'in_progress' },
+  { from: 'in_progress', to: 'completed' },
+  { from: 'accepted', to: 'cancelled' },
+];
 
 class StatusService {
   // Check if a status transition is valid
@@ -55,10 +48,8 @@ class StatusService {
       return this.isValidTransition(from, to);
     }
 
-    const permissions = TRANSITION_PERMISSIONS[role] || [];
-    return permissions.some(
-      (p) => p.from === from && p.to === to
-    );
+    const transitions = role === 'customer' ? CUSTOMER_TRANSITIONS : CRAFTSMAN_TRANSITIONS;
+    return transitions.some((t) => t.from === from && t.to === to);
   }
 
   // Update request status
@@ -70,109 +61,125 @@ class StatusService {
     additionalData?: {
       cancellationReason?: string;
       completionNotes?: string;
-      disputeReason?: string;
       actualAmount?: number;
     }
-  ): Promise<IRequest> {
-    const request = await Request.findById(requestId);
+  ): Promise<IServiceRequest> {
+    const request = await ServiceRequest.findById(requestId);
     if (!request) {
-      throw new Error('Request not found');
+      throw new NotFoundError('الطلب غير موجود');
     }
 
     const currentStatus = request.status as RequestStatus;
 
     // Validate transition
     if (!this.isValidTransition(currentStatus, newStatus)) {
-      throw new Error(
-        `Invalid status transition from ${currentStatus} to ${newStatus}`
+      throw new BadRequestError(
+        `لا يمكن تغيير الحالة من ${currentStatus} إلى ${newStatus}`
       );
     }
 
     // Check permission
     if (!this.hasPermission(currentStatus, newStatus, role)) {
-      throw new Error(
-        `You don't have permission to change status from ${currentStatus} to ${newStatus}`
+      throw new ForbiddenError(
+        `ليس لديك صلاحية لتغيير الحالة من ${currentStatus} إلى ${newStatus}`
       );
     }
 
     // Verify user identity
-    if (role === 'customer' && request.customer.toString() !== userId) {
-      throw new Error('Not authorized');
+    if (role === 'customer') {
+      const customer = await Customer.findOne({ userId: new Types.ObjectId(userId) });
+      if (!customer || request.customerId.toString() !== customer._id.toString()) {
+        throw new ForbiddenError('غير مصرح');
+      }
     }
 
-    if (role === 'craftsman' && request.assignedCraftsman?.toString() !== userId) {
-      throw new Error('Not authorized');
+    if (role === 'craftsman') {
+      const craftsman = await Craftsman.findOne({ userId: new Types.ObjectId(userId) });
+      if (!craftsman || request.craftsmanId?.toString() !== craftsman._id.toString()) {
+        throw new ForbiddenError('غير مصرح');
+      }
     }
 
-    // Apply the status change with additional logic based on the new status
+    // Apply the status change
     request.status = newStatus;
 
     switch (newStatus) {
-      case RequestStatus.IN_PROGRESS:
+      case 'in_progress':
         request.startedAt = new Date();
         break;
 
-      case RequestStatus.ARRIVED:
-        request.arrivedAt = new Date();
-        break;
-
-      case RequestStatus.COMPLETED:
+      case 'completed':
         request.completedAt = new Date();
         if (additionalData?.completionNotes) {
           request.completionNotes = additionalData.completionNotes;
         }
         if (additionalData?.actualAmount) {
-          request.actualAmount = additionalData.actualAmount;
+          request.finalPrice = additionalData.actualAmount;
         }
         // Update craftsman stats
-        await this.updateCraftsmanStatsOnCompletion(
-          request.assignedCraftsman!.toString(),
-          additionalData?.actualAmount || request.acceptedQuote?.amount || 0
-        );
+        if (request.craftsmanId) {
+          await this.updateCraftsmanStatsOnCompletion(
+            request.craftsmanId.toString(),
+            additionalData?.actualAmount || request.quotedPrice || 0
+          );
+        }
         break;
 
-      case RequestStatus.CANCELLED:
+      case 'cancelled':
         request.cancelledAt = new Date();
-        request.cancelledBy = role;
+        request.isCancelled = true;
+        request.cancelledBy = role as 'customer' | 'craftsman';
         if (additionalData?.cancellationReason) {
-          request.cancellationReason = additionalData.cancellationReason;
+          request.cancelReason = additionalData.cancellationReason;
         }
-        break;
-
-      case RequestStatus.DISPUTED:
-        request.disputedAt = new Date();
-        if (additionalData?.disputeReason) {
-          request.disputeReason = additionalData.disputeReason;
-        }
-        break;
-
-      case RequestStatus.REFUNDED:
-        request.refundedAt = new Date();
         break;
     }
 
     // Add to status history
-    request.statusHistory = request.statusHistory || [];
     request.statusHistory.push({
       status: newStatus,
-      changedAt: new Date(),
-      changedBy: new mongoose.Types.ObjectId(userId),
-      notes: this.getStatusChangeNote(currentStatus, newStatus),
+      timestamp: new Date(),
+      note: this.getStatusChangeNote(currentStatus, newStatus),
+      by: new Types.ObjectId(userId),
     });
 
     await request.save();
+
+    // Notify relevant parties
+    this.notifyStatusChange(request, currentStatus, newStatus);
+
     return request;
+  }
+
+  // Notify about status change
+  private notifyStatusChange(
+    request: IServiceRequest,
+    oldStatus: string,
+    newStatus: string
+  ): void {
+    try {
+      socketService.notifyStatusChange(
+        request._id.toString(),
+        request.customerId.toString(),
+        request.craftsmanId?.toString(),
+        newStatus,
+        { oldStatus }
+      );
+    } catch (error) {
+      console.error('Error notifying status change:', error);
+    }
   }
 
   // Get human-readable status change note
   private getStatusChangeNote(from: RequestStatus, to: RequestStatus): string {
     const notes: Record<string, string> = {
-      [`${RequestStatus.PENDING}_${RequestStatus.QUOTED}`]: 'تم تقديم عرض سعر',
-      [`${RequestStatus.QUOTED}_${RequestStatus.ACCEPTED}`]: 'تم قبول العرض',
-      [`${RequestStatus.ACCEPTED}_${RequestStatus.IN_PROGRESS}`]: 'بدأ العمل',
-      [`${RequestStatus.IN_PROGRESS}_${RequestStatus.ARRIVED}`]: 'وصل الصنايعي',
-      [`${RequestStatus.ARRIVED}_${RequestStatus.COMPLETED}`]: 'تم إكمال العمل',
-      [`${RequestStatus.COMPLETED}_${RequestStatus.DISPUTED}`]: 'تم فتح نزاع',
+      pending_quoted: 'تم تقديم عرض سعر',
+      quoted_accepted: 'تم قبول العرض',
+      accepted_in_progress: 'بدأ العمل',
+      in_progress_completed: 'تم إكمال العمل',
+      pending_cancelled: 'تم إلغاء الطلب',
+      quoted_cancelled: 'تم إلغاء الطلب',
+      accepted_cancelled: 'تم إلغاء الطلب',
     };
 
     return notes[`${from}_${to}`] || `تغيرت الحالة من ${from} إلى ${to}`;
@@ -186,8 +193,8 @@ class StatusService {
     await Craftsman.findByIdAndUpdate(craftsmanId, {
       $inc: {
         completedJobs: 1,
-        'earnings.total': amount,
-        'earnings.pending': amount,
+        totalEarnings: amount,
+        currentBalance: amount,
       },
     });
   }
@@ -195,19 +202,21 @@ class StatusService {
   // Get status timeline for a request
   async getStatusTimeline(requestId: string): Promise<
     Array<{
-      status: RequestStatus;
+      status: string;
       timestamp: Date;
       note: string;
     }>
   > {
-    const request = await Request.findById(requestId).select('statusHistory status createdAt');
+    const request = await ServiceRequest.findById(requestId).select(
+      'statusHistory status createdAt'
+    );
     if (!request) {
-      throw new Error('Request not found');
+      throw new NotFoundError('الطلب غير موجود');
     }
 
     const timeline = [
       {
-        status: RequestStatus.PENDING,
+        status: 'pending',
         timestamp: request.createdAt,
         note: 'تم إنشاء الطلب',
       },
@@ -216,31 +225,14 @@ class StatusService {
     if (request.statusHistory) {
       request.statusHistory.forEach((entry) => {
         timeline.push({
-          status: entry.status as RequestStatus,
-          timestamp: entry.changedAt,
-          note: entry.notes || '',
+          status: entry.status,
+          timestamp: entry.timestamp,
+          note: entry.note || '',
         });
       });
     }
 
     return timeline;
-  }
-
-  // Get expected next status based on current status
-  getNextExpectedStatus(currentStatus: RequestStatus): RequestStatus | null {
-    const normalFlow: Record<RequestStatus, RequestStatus | null> = {
-      [RequestStatus.PENDING]: RequestStatus.QUOTED,
-      [RequestStatus.QUOTED]: RequestStatus.ACCEPTED,
-      [RequestStatus.ACCEPTED]: RequestStatus.IN_PROGRESS,
-      [RequestStatus.IN_PROGRESS]: RequestStatus.ARRIVED,
-      [RequestStatus.ARRIVED]: RequestStatus.COMPLETED,
-      [RequestStatus.COMPLETED]: null,
-      [RequestStatus.CANCELLED]: null,
-      [RequestStatus.DISPUTED]: RequestStatus.COMPLETED,
-      [RequestStatus.REFUNDED]: null,
-    };
-
-    return normalFlow[currentStatus];
   }
 
   // Get status display info
@@ -254,59 +246,41 @@ class StatusService {
       RequestStatus,
       { label: string; labelAr: string; color: string; icon: string }
     > = {
-      [RequestStatus.PENDING]: {
+      pending: {
         label: 'Pending',
         labelAr: 'في الانتظار',
         color: '#FFA500',
         icon: 'clock',
       },
-      [RequestStatus.QUOTED]: {
+      quoted: {
         label: 'Quoted',
         labelAr: 'تم التسعير',
         color: '#3498DB',
         icon: 'tag',
       },
-      [RequestStatus.ACCEPTED]: {
+      accepted: {
         label: 'Accepted',
         labelAr: 'مقبول',
         color: '#9B59B6',
         icon: 'check',
       },
-      [RequestStatus.IN_PROGRESS]: {
+      in_progress: {
         label: 'In Progress',
         labelAr: 'جاري العمل',
         color: '#1ABC9C',
         icon: 'hammer',
       },
-      [RequestStatus.ARRIVED]: {
-        label: 'Arrived',
-        labelAr: 'وصل الصنايعي',
-        color: '#2ECC71',
-        icon: 'location',
-      },
-      [RequestStatus.COMPLETED]: {
+      completed: {
         label: 'Completed',
         labelAr: 'مكتمل',
         color: '#27AE60',
         icon: 'check-circle',
       },
-      [RequestStatus.CANCELLED]: {
+      cancelled: {
         label: 'Cancelled',
         labelAr: 'ملغي',
         color: '#E74C3C',
         icon: 'x-circle',
-      },
-      [RequestStatus.DISPUTED]: {
-        label: 'Disputed',
-        labelAr: 'نزاع',
-        color: '#E67E22',
-        icon: 'alert-triangle',
-      },
-      [RequestStatus.REFUNDED]: {
-        label: 'Refunded',
-        labelAr: 'مسترد',
-        color: '#95A5A6',
-        icon: 'refresh',
       },
     };
 
@@ -328,7 +302,15 @@ class StatusService {
     color: string;
     icon: string;
   }> {
-    return Object.values(RequestStatus).map((status) => ({
+    const statuses: RequestStatus[] = [
+      'pending',
+      'quoted',
+      'accepted',
+      'in_progress',
+      'completed',
+      'cancelled',
+    ];
+    return statuses.map((status) => ({
       value: status,
       ...this.getStatusDisplayInfo(status),
     }));

@@ -4,6 +4,8 @@ import categoryRoutes from './category.routes';
 import craftsmanRoutes from './craftsman.routes';
 import uploadRoutes from './upload.routes';
 import requestRoutes from './request.routes';
+import chatRoutes from './chat.routes';
+import reviewRoutes from './review.routes';
 
 const router = Router();
 
@@ -25,6 +27,12 @@ router.use(`${API_VERSION}/upload`, uploadRoutes);
 // Request routes
 router.use(`${API_VERSION}/requests`, requestRoutes);
 
+// Chat routes
+router.use(`${API_VERSION}/chat`, chatRoutes);
+
+// Review routes
+router.use(`${API_VERSION}/reviews`, reviewRoutes);
+
 // Health check
 router.get('/health', (_req, res) => {
   res.json({
@@ -42,12 +50,12 @@ router.get(API_VERSION, (_req, res) => {
     version: 'v1',
     endpoints: {
       auth: `${API_VERSION}/auth`,
-      users: `${API_VERSION}/users`,
       craftsmen: `${API_VERSION}/craftsmen`,
       categories: `${API_VERSION}/categories`,
       requests: `${API_VERSION}/requests`,
-      reviews: `${API_VERSION}/reviews`,
       chat: `${API_VERSION}/chat`,
+      reviews: `${API_VERSION}/reviews`,
+      upload: `${API_VERSION}/upload`,
     },
   });
 });

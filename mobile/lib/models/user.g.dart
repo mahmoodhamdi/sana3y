@@ -6,7 +6,7 @@ part of 'user.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_User _$UserFromJson(Map<String, dynamic> json) => _User(
+_$UserImpl _$$UserImplFromJson(Map<String, dynamic> json) => _$UserImpl(
       id: json['_id'] as String,
       phone: json['phone'] as String,
       name: json['name'] as String,
@@ -31,7 +31,8 @@ _User _$UserFromJson(Map<String, dynamic> json) => _User(
           : DateTime.parse(json['updatedAt'] as String),
     );
 
-Map<String, dynamic> _$UserToJson(_User instance) => <String, dynamic>{
+Map<String, dynamic> _$$UserImplToJson(_$UserImpl instance) =>
+    <String, dynamic>{
       '_id': instance.id,
       'phone': instance.phone,
       'name': instance.name,
@@ -53,7 +54,8 @@ const _$UserRoleEnumMap = {
   UserRole.admin: 'admin',
 };
 
-_Address _$AddressFromJson(Map<String, dynamic> json) => _Address(
+_$AddressImpl _$$AddressImplFromJson(Map<String, dynamic> json) =>
+    _$AddressImpl(
       id: json['id'] as String?,
       label: json['label'] as String,
       address: json['address'] as String,
@@ -64,7 +66,8 @@ _Address _$AddressFromJson(Map<String, dynamic> json) => _Address(
       isDefault: json['isDefault'] as bool? ?? false,
     );
 
-Map<String, dynamic> _$AddressToJson(_Address instance) => <String, dynamic>{
+Map<String, dynamic> _$$AddressImplToJson(_$AddressImpl instance) =>
+    <String, dynamic>{
       'id': instance.id,
       'label': instance.label,
       'address': instance.address,
@@ -75,7 +78,8 @@ Map<String, dynamic> _$AddressToJson(_Address instance) => <String, dynamic>{
       'isDefault': instance.isDefault,
     };
 
-_Customer _$CustomerFromJson(Map<String, dynamic> json) => _Customer(
+_$CustomerImpl _$$CustomerImplFromJson(Map<String, dynamic> json) =>
+    _$CustomerImpl(
       id: json['_id'] as String,
       userId: json['userId'] as String,
       addresses: (json['addresses'] as List<dynamic>?)
@@ -94,7 +98,8 @@ _Customer _$CustomerFromJson(Map<String, dynamic> json) => _Customer(
           : DateTime.parse(json['updatedAt'] as String),
     );
 
-Map<String, dynamic> _$CustomerToJson(_Customer instance) => <String, dynamic>{
+Map<String, dynamic> _$$CustomerImplToJson(_$CustomerImpl instance) =>
+    <String, dynamic>{
       '_id': instance.id,
       'userId': instance.userId,
       'addresses': instance.addresses,

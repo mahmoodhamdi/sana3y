@@ -19,6 +19,10 @@ import '../screens/craftsman/manage_profile_screen.dart';
 import '../screens/craftsman/available_requests_screen.dart';
 import '../screens/craftsman/active_jobs_screen.dart';
 import '../screens/craftsman/earnings_screen.dart';
+import '../screens/shared/conversations_list_screen.dart';
+import '../screens/shared/chat_screen.dart';
+import '../screens/shared/craftsman_reviews_screen.dart';
+import '../screens/customer/rate_service_screen.dart';
 
 class AppRoutes {
   // Auth Routes
@@ -43,7 +47,8 @@ class AppRoutes {
   static const String notifications = '/notifications';
   static const String conversations = '/conversations';
   static const String chat = '/chat/:id';
-  static const String rateService = '/rate/:id';
+  static const String rateService = '/rate/:requestId';
+  static const String craftsmanReviews = '/craftsman/:id/reviews';
 
   // Craftsman Routes
   static const String craftsmanHome = '/craftsman';
@@ -210,10 +215,36 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.conversations,
-        builder: (context, state) => const _PlaceholderScreen(
-          title: 'المحادثات',
-          icon: Icons.chat,
-        ),
+        builder: (context, state) => const ConversationsListScreen(),
+      ),
+      GoRoute(
+        path: '/chat/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return ChatScreen(conversationId: id);
+        },
+      ),
+      GoRoute(
+        path: '/rate/:requestId',
+        builder: (context, state) {
+          final requestId = state.pathParameters['requestId'] ?? '';
+          final extra = state.extra as Map<String, dynamic>?;
+          return RateServiceScreen(
+            requestId: requestId,
+            craftsmanName: extra?['craftsmanName'] ?? 'الصنايعي',
+          );
+        },
+      ),
+      GoRoute(
+        path: '/craftsman/:id/reviews',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          final extra = state.extra as Map<String, dynamic>?;
+          return CraftsmanReviewsScreen(
+            craftsmanId: id,
+            craftsmanName: extra?['craftsmanName'] ?? 'الصنايعي',
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.customerProfile,

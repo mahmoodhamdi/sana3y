@@ -1,6 +1,6 @@
 import mongoose, { Schema, Model, Document, Types } from 'mongoose';
 
-interface ILastMessage {
+export interface ILastMessage {
   content: string;
   senderId: Types.ObjectId;
   createdAt: Date;

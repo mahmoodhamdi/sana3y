@@ -6,7 +6,8 @@ part of 'category.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_SubCategory _$SubCategoryFromJson(Map<String, dynamic> json) => _SubCategory(
+_$SubCategoryImpl _$$SubCategoryImplFromJson(Map<String, dynamic> json) =>
+    _$SubCategoryImpl(
       id: json['_id'] as String,
       name: json['name'] as String,
       nameAr: json['nameAr'] as String,
@@ -16,7 +17,7 @@ _SubCategory _$SubCategoryFromJson(Map<String, dynamic> json) => _SubCategory(
               json['suggestedPrice'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$SubCategoryToJson(_SubCategory instance) =>
+Map<String, dynamic> _$$SubCategoryImplToJson(_$SubCategoryImpl instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'name': instance.name,
@@ -24,19 +25,21 @@ Map<String, dynamic> _$SubCategoryToJson(_SubCategory instance) =>
       'suggestedPrice': instance.suggestedPrice,
     };
 
-_SuggestedPrice _$SuggestedPriceFromJson(Map<String, dynamic> json) =>
-    _SuggestedPrice(
+_$SuggestedPriceImpl _$$SuggestedPriceImplFromJson(Map<String, dynamic> json) =>
+    _$SuggestedPriceImpl(
       min: (json['min'] as num?)?.toDouble(),
       max: (json['max'] as num?)?.toDouble(),
     );
 
-Map<String, dynamic> _$SuggestedPriceToJson(_SuggestedPrice instance) =>
+Map<String, dynamic> _$$SuggestedPriceImplToJson(
+        _$SuggestedPriceImpl instance) =>
     <String, dynamic>{
       'min': instance.min,
       'max': instance.max,
     };
 
-_Category _$CategoryFromJson(Map<String, dynamic> json) => _Category(
+_$CategoryImpl _$$CategoryImplFromJson(Map<String, dynamic> json) =>
+    _$CategoryImpl(
       id: json['_id'] as String,
       name: json['name'] as String,
       nameAr: json['nameAr'] as String,
@@ -62,7 +65,8 @@ _Category _$CategoryFromJson(Map<String, dynamic> json) => _Category(
           : DateTime.parse(json['updatedAt'] as String),
     );
 
-Map<String, dynamic> _$CategoryToJson(_Category instance) => <String, dynamic>{
+Map<String, dynamic> _$$CategoryImplToJson(_$CategoryImpl instance) =>
+    <String, dynamic>{
       '_id': instance.id,
       'name': instance.name,
       'nameAr': instance.nameAr,

@@ -1,7 +1,12 @@
-import mongoose, { FilterQuery } from 'mongoose';
-import Request, { IRequest, RequestStatus } from '../models/Request';
+import { Types } from 'mongoose';
+import ServiceRequest, { IServiceRequest } from '../models/ServiceRequest';
 import User from '../models/User';
 import Craftsman from '../models/Craftsman';
+import Customer from '../models/Customer';
+import { NotFoundError, BadRequestError, ForbiddenError } from '@utils/errors';
+import socketService from './socket.service';
+
+type RequestStatus = 'pending' | 'quoted' | 'accepted' | 'in_progress' | 'completed' | 'cancelled';
 
 export interface CreateRequestData {
   customer: string;
@@ -26,7 +31,7 @@ export interface CreateRequestData {
     min: number;
     max: number;
   };
-  urgency?: 'normal' | 'urgent' | 'emergency';
+  urgency?: 'today' | 'urgent' | 'scheduled';
 }
 
 export interface RequestFilters {
@@ -52,48 +57,70 @@ export interface QuoteData {
 
 class RequestService {
   // Create a new service request
-  async createRequest(data: CreateRequestData): Promise<IRequest> {
-    // Verify customer exists
-    const customer = await User.findById(data.customer);
+  async createRequest(data: CreateRequestData): Promise<IServiceRequest> {
+    // Get customer
+    const customer = await Customer.findOne({ userId: new Types.ObjectId(data.customer) });
     if (!customer) {
-      throw new Error('Customer not found');
+      throw new NotFoundError('العميل غير موجود');
     }
 
-    const request = new Request({
-      ...data,
-      location: {
-        ...data.location,
-        type: 'Point',
-        coordinates: data.location.coordinates,
+    const request = new ServiceRequest({
+      customerId: customer._id,
+      categoryId: new Types.ObjectId(data.category),
+      subcategory: data.subcategory,
+      title: data.title,
+      description: data.description,
+      images: data.images || [],
+      address: {
+        address: data.location.address,
+        area: data.location.area || data.location.city,
+        city: data.location.city,
+        location: {
+          type: 'Point',
+          coordinates: data.location.coordinates,
+        },
       },
-      status: RequestStatus.PENDING,
-      requestNumber: await this.generateRequestNumber(),
+      urgency: data.urgency || 'today',
+      scheduledDate: data.preferredDate,
+      estimatedPrice: data.budget,
+      status: 'pending',
     });
 
     await request.save();
+
+    // Notify craftsmen in the area
+    this.notifyCraftsmen(request);
+
     return request.populate([
-      { path: 'customer', select: 'name phone avatar' },
-      { path: 'category', select: 'name nameAr icon' },
+      { path: 'customerId', select: 'userId', populate: { path: 'userId', select: 'name phone' } },
+      { path: 'categoryId', select: 'nameAr icon' },
     ]);
   }
 
-  // Generate unique request number
-  private async generateRequestNumber(): Promise<string> {
-    const date = new Date();
-    const year = date.getFullYear().toString().slice(-2);
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
+  // Notify nearby craftsmen about new request
+  private async notifyCraftsmen(request: IServiceRequest): Promise<void> {
+    try {
+      socketService.emitToCategory(
+        request.categoryId.toString(),
+        'request:new',
+        {
+          requestId: request._id.toString(),
+          title: request.title,
+          urgency: request.urgency,
+          location: request.address,
+        }
+      );
+    } catch (error) {
+      console.error('Error notifying craftsmen:', error);
+    }
+  }
 
-    // Count today's requests
-    const startOfDay = new Date(date.setHours(0, 0, 0, 0));
-    const endOfDay = new Date(date.setHours(23, 59, 59, 999));
-
-    const count = await Request.countDocuments({
-      createdAt: { $gte: startOfDay, $lte: endOfDay },
-    });
-
-    const sequence = (count + 1).toString().padStart(4, '0');
-    return `REQ-${year}${month}${day}-${sequence}`;
+  // Get single request by ID
+  async getRequestById(requestId: string): Promise<IServiceRequest | null> {
+    return ServiceRequest.findById(requestId)
+      .populate({ path: 'customerId', select: 'userId', populate: { path: 'userId', select: 'name phone avatar' } })
+      .populate({ path: 'craftsmanId', select: 'displayName userId profileImage rating', populate: { path: 'userId', select: 'name phone' } })
+      .populate({ path: 'categoryId', select: 'nameAr icon' });
   }
 
   // Get requests with filters and pagination
@@ -103,15 +130,9 @@ class RequestService {
     limit: number = 20,
     sortBy: string = 'createdAt',
     sortOrder: 'asc' | 'desc' = 'desc'
-  ): Promise<{
-    requests: IRequest[];
-    total: number;
-    page: number;
-    totalPages: number;
-  }> {
-    const query: FilterQuery<IRequest> = {};
+  ) {
+    const query: Record<string, unknown> = {};
 
-    // Apply filters
     if (filters.status) {
       query.status = Array.isArray(filters.status)
         ? { $in: filters.status }
@@ -119,23 +140,19 @@ class RequestService {
     }
 
     if (filters.category) {
-      query.category = filters.category;
+      query.categoryId = new Types.ObjectId(filters.category);
     }
 
     if (filters.customer) {
-      query.customer = filters.customer;
+      query.customerId = new Types.ObjectId(filters.customer);
     }
 
     if (filters.craftsman) {
-      query.assignedCraftsman = filters.craftsman;
+      query.craftsmanId = new Types.ObjectId(filters.craftsman);
     }
 
     if (filters.governorate) {
-      query['location.governorate'] = filters.governorate;
-    }
-
-    if (filters.city) {
-      query['location.city'] = filters.city;
+      query['address.city'] = filters.governorate;
     }
 
     if (filters.urgency) {
@@ -145,10 +162,10 @@ class RequestService {
     if (filters.dateFrom || filters.dateTo) {
       query.createdAt = {};
       if (filters.dateFrom) {
-        query.createdAt.$gte = filters.dateFrom;
+        (query.createdAt as Record<string, Date>).$gte = filters.dateFrom;
       }
       if (filters.dateTo) {
-        query.createdAt.$lte = filters.dateTo;
+        (query.createdAt as Record<string, Date>).$lte = filters.dateTo;
       }
     }
 
@@ -164,52 +181,45 @@ class RequestService {
     const sort: Record<string, 1 | -1> = { [sortBy]: sortOrder === 'asc' ? 1 : -1 };
 
     const [requests, total] = await Promise.all([
-      Request.find(query)
-        .populate('customer', 'name phone avatar')
-        .populate('category', 'name nameAr icon')
-        .populate('assignedCraftsman', 'displayName rating')
+      ServiceRequest.find(query)
         .sort(sort)
         .skip(skip)
         .limit(limit)
-        .lean(),
-      Request.countDocuments(query),
+        .populate({ path: 'customerId', select: 'userId', populate: { path: 'userId', select: 'name phone' } })
+        .populate({ path: 'craftsmanId', select: 'displayName profileImage rating' })
+        .populate({ path: 'categoryId', select: 'nameAr icon' }),
+      ServiceRequest.countDocuments(query),
     ]);
 
     return {
-      requests: requests as IRequest[],
-      total,
+      requests,
       page,
       totalPages: Math.ceil(total / limit),
+      total,
     };
   }
 
-  // Get request by ID
-  async getRequestById(id: string): Promise<IRequest | null> {
-    return Request.findById(id)
-      .populate('customer', 'name phone avatar')
-      .populate('category', 'name nameAr icon')
-      .populate('assignedCraftsman')
-      .populate({
-        path: 'quotes.craftsman',
-        select: 'displayName rating profileImage completedJobs',
-      });
-  }
-
-  // Get requests by customer
+  // Get customer's requests
   async getCustomerRequests(
-    customerId: string,
+    userId: string,
     status?: RequestStatus | RequestStatus[],
     page: number = 1,
     limit: number = 20
   ) {
-    return this.getRequests(
-      { customer: customerId, status },
-      page,
-      limit
-    );
+    const customer = await Customer.findOne({ userId: new Types.ObjectId(userId) });
+    if (!customer) {
+      return { requests: [], page: 1, totalPages: 0, total: 0 };
+    }
+
+    const filters: RequestFilters = { customer: customer._id.toString() };
+    if (status) {
+      filters.status = status;
+    }
+
+    return this.getRequests(filters, page, limit);
   }
 
-  // Get available requests for craftsman (matching their categories and location)
+  // Get available requests for craftsman
   async getAvailableRequestsForCraftsman(
     craftsmanId: string,
     page: number = 1,
@@ -217,46 +227,35 @@ class RequestService {
   ) {
     const craftsman = await Craftsman.findById(craftsmanId);
     if (!craftsman) {
-      throw new Error('Craftsman not found');
+      throw new NotFoundError('الصنايعي غير موجود');
     }
 
-    // Get craftsman's categories and service areas
-    const categoryIds = craftsman.categories;
-    const serviceAreas = craftsman.serviceAreas || [];
+    // Get category IDs from craftsman's services
+    const categoryIds = craftsman.services.map((s) => s.categoryId);
 
-    const query: FilterQuery<IRequest> = {
-      status: RequestStatus.PENDING,
-      category: { $in: categoryIds },
-      // Don't show requests where this craftsman already quoted
-      'quotes.craftsman': { $ne: craftsmanId },
+    const query: Record<string, unknown> = {
+      status: 'pending',
+      categoryId: { $in: categoryIds },
+      craftsmanId: { $exists: false },
     };
-
-    // Filter by service areas if defined
-    if (serviceAreas.length > 0) {
-      query.$or = serviceAreas.map((area: any) => ({
-        'location.governorate': area.governorate,
-        ...(area.city && { 'location.city': area.city }),
-      }));
-    }
 
     const skip = (page - 1) * limit;
 
     const [requests, total] = await Promise.all([
-      Request.find(query)
-        .populate('customer', 'name avatar')
-        .populate('category', 'name nameAr icon')
-        .sort({ urgency: -1, createdAt: -1 }) // Urgent first, then newest
+      ServiceRequest.find(query)
+        .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
-        .lean(),
-      Request.countDocuments(query),
+        .populate({ path: 'customerId', select: 'userId', populate: { path: 'userId', select: 'name' } })
+        .populate({ path: 'categoryId', select: 'nameAr icon' }),
+      ServiceRequest.countDocuments(query),
     ]);
 
     return {
       requests,
-      total,
       page,
       totalPages: Math.ceil(total / limit),
+      total,
     };
   }
 
@@ -266,18 +265,29 @@ class RequestService {
     page: number = 1,
     limit: number = 20
   ) {
-    return this.getRequests(
-      {
-        craftsman: craftsmanId,
-        status: [
-          RequestStatus.ACCEPTED,
-          RequestStatus.IN_PROGRESS,
-          RequestStatus.ARRIVED,
-        ],
-      },
+    const query = {
+      craftsmanId: new Types.ObjectId(craftsmanId),
+      status: { $in: ['accepted', 'in_progress'] },
+    };
+
+    const skip = (page - 1) * limit;
+
+    const [requests, total] = await Promise.all([
+      ServiceRequest.find(query)
+        .sort({ updatedAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate({ path: 'customerId', select: 'userId', populate: { path: 'userId', select: 'name phone' } })
+        .populate({ path: 'categoryId', select: 'nameAr icon' }),
+      ServiceRequest.countDocuments(query),
+    ]);
+
+    return {
+      requests,
       page,
-      limit
-    );
+      totalPages: Math.ceil(total / limit),
+      total,
+    };
   }
 
   // Get craftsman's completed jobs
@@ -286,260 +296,254 @@ class RequestService {
     page: number = 1,
     limit: number = 20
   ) {
-    return this.getRequests(
-      {
-        craftsman: craftsmanId,
-        status: RequestStatus.COMPLETED,
-      },
+    const query = {
+      craftsmanId: new Types.ObjectId(craftsmanId),
+      status: 'completed',
+    };
+
+    const skip = (page - 1) * limit;
+
+    const [requests, total] = await Promise.all([
+      ServiceRequest.find(query)
+        .sort({ completedAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate({ path: 'customerId', select: 'userId', populate: { path: 'userId', select: 'name' } })
+        .populate({ path: 'categoryId', select: 'nameAr icon' }),
+      ServiceRequest.countDocuments(query),
+    ]);
+
+    return {
+      requests,
       page,
-      limit,
-      'completedAt',
-      'desc'
-    );
+      totalPages: Math.ceil(total / limit),
+      total,
+    };
   }
 
-  // Submit a quote for a request
-  async submitQuote(requestId: string, quoteData: QuoteData): Promise<IRequest> {
-    const request = await Request.findById(requestId);
+  // Submit a quote
+  async submitQuote(requestId: string, quoteData: QuoteData): Promise<IServiceRequest> {
+    const request = await ServiceRequest.findById(requestId);
     if (!request) {
-      throw new Error('Request not found');
+      throw new NotFoundError('الطلب غير موجود');
     }
 
-    if (request.status !== RequestStatus.PENDING) {
-      throw new Error('Can only quote on pending requests');
+    if (request.status !== 'pending' && request.status !== 'quoted') {
+      throw new BadRequestError('لا يمكن تقديم عرض لهذا الطلب');
     }
 
-    // Check if craftsman already quoted
-    const existingQuote = request.quotes?.find(
-      (q) => q.craftsman.toString() === quoteData.craftsman
+    // Check if craftsman already submitted a quote
+    const existingQuote = request.quotesReceived.find(
+      (q) => q.craftsmanId.toString() === quoteData.craftsman
     );
     if (existingQuote) {
-      throw new Error('You have already submitted a quote for this request');
+      throw new BadRequestError('لقد قدمت عرضاً مسبقاً لهذا الطلب');
     }
 
-    // Verify craftsman exists and is approved
-    const craftsman = await Craftsman.findById(quoteData.craftsman);
-    if (!craftsman || craftsman.status !== 'approved') {
-      throw new Error('Invalid craftsman');
-    }
-
-    // Add the quote
-    request.quotes = request.quotes || [];
-    request.quotes.push({
-      craftsman: new mongoose.Types.ObjectId(quoteData.craftsman),
-      amount: quoteData.amount,
+    request.quotesReceived.push({
+      craftsmanId: new Types.ObjectId(quoteData.craftsman),
+      price: quoteData.amount,
+      note: quoteData.notes,
       estimatedDuration: quoteData.estimatedDuration,
-      notes: quoteData.notes,
-      validUntil: quoteData.validUntil,
-      status: 'pending',
-      submittedAt: new Date(),
+      createdAt: new Date(),
     });
 
-    // Update request status to quoted if it was pending
-    if (request.status === RequestStatus.PENDING) {
-      request.status = RequestStatus.QUOTED;
+    if (request.status === 'pending') {
+      request.status = 'quoted';
     }
 
     await request.save();
-    return request.populate({
-      path: 'quotes.craftsman',
-      select: 'displayName rating profileImage completedJobs',
-    });
+
+    // Notify customer
+    socketService.emitToUser(
+      request.customerId.toString(),
+      'request:quote',
+      {
+        requestId: request._id.toString(),
+        quoteCount: request.quotesReceived.length,
+      }
+    );
+
+    return this.getRequestById(requestId) as Promise<IServiceRequest>;
   }
 
   // Accept a quote
-  async acceptQuote(requestId: string, quoteId: string, customerId: string): Promise<IRequest> {
-    const request = await Request.findById(requestId);
+  async acceptQuote(
+    requestId: string,
+    quoteId: string,
+    userId: string
+  ): Promise<IServiceRequest> {
+    const request = await ServiceRequest.findById(requestId);
     if (!request) {
-      throw new Error('Request not found');
+      throw new NotFoundError('الطلب غير موجود');
     }
 
-    if (request.customer.toString() !== customerId) {
-      throw new Error('Not authorized to accept quotes for this request');
+    // Verify ownership
+    const customer = await Customer.findOne({ userId: new Types.ObjectId(userId) });
+    if (!customer || request.customerId.toString() !== customer._id.toString()) {
+      throw new ForbiddenError('ليس لديك صلاحية لقبول هذا العرض');
     }
 
-    if (![RequestStatus.PENDING, RequestStatus.QUOTED].includes(request.status as RequestStatus)) {
-      throw new Error('Request is not in a state to accept quotes');
-    }
-
-    const quote = request.quotes?.find((q) => q._id?.toString() === quoteId);
+    // Find the quote
+    const quote = request.quotesReceived.find(
+      (q) => (q as any)._id?.toString() === quoteId || q.craftsmanId.toString() === quoteId
+    );
     if (!quote) {
-      throw new Error('Quote not found');
+      throw new NotFoundError('العرض غير موجود');
     }
 
-    // Mark the accepted quote
-    quote.status = 'accepted';
-
-    // Reject other quotes
-    request.quotes?.forEach((q) => {
-      if (q._id?.toString() !== quoteId) {
-        q.status = 'rejected';
-      }
-    });
-
-    // Assign the craftsman
-    request.assignedCraftsman = quote.craftsman;
-    request.status = RequestStatus.ACCEPTED;
-    request.acceptedQuote = {
-      amount: quote.amount,
-      estimatedDuration: quote.estimatedDuration,
-    };
-
+    request.craftsmanId = quote.craftsmanId;
+    request.quotedPrice = quote.price;
+    request.status = 'accepted';
     await request.save();
-    return this.getRequestById(requestId) as Promise<IRequest>;
+
+    // Notify craftsman
+    socketService.emitToCraftsman(
+      quote.craftsmanId.toString(),
+      'request:accepted',
+      {
+        requestId: request._id.toString(),
+        title: request.title,
+      }
+    );
+
+    return this.getRequestById(requestId) as Promise<IServiceRequest>;
   }
 
   // Reject a quote
-  async rejectQuote(requestId: string, quoteId: string, customerId: string): Promise<IRequest> {
-    const request = await Request.findById(requestId);
+  async rejectQuote(
+    requestId: string,
+    quoteId: string,
+    userId: string
+  ): Promise<IServiceRequest> {
+    const request = await ServiceRequest.findById(requestId);
     if (!request) {
-      throw new Error('Request not found');
+      throw new NotFoundError('الطلب غير موجود');
     }
 
-    if (request.customer.toString() !== customerId) {
-      throw new Error('Not authorized to reject quotes for this request');
+    // Verify ownership
+    const customer = await Customer.findOne({ userId: new Types.ObjectId(userId) });
+    if (!customer || request.customerId.toString() !== customer._id.toString()) {
+      throw new ForbiddenError('ليس لديك صلاحية');
     }
 
-    const quote = request.quotes?.find((q) => q._id?.toString() === quoteId);
-    if (!quote) {
-      throw new Error('Quote not found');
-    }
+    // Remove the quote
+    request.quotesReceived = request.quotesReceived.filter(
+      (q) => (q as any)._id?.toString() !== quoteId && q.craftsmanId.toString() !== quoteId
+    );
 
-    quote.status = 'rejected';
     await request.save();
-
-    return this.getRequestById(requestId) as Promise<IRequest>;
+    return this.getRequestById(requestId) as Promise<IServiceRequest>;
   }
 
-  // Update request (for customers)
+  // Update request
   async updateRequest(
     requestId: string,
-    customerId: string,
+    userId: string,
     updates: Partial<CreateRequestData>
-  ): Promise<IRequest> {
-    const request = await Request.findById(requestId);
+  ): Promise<IServiceRequest> {
+    const request = await ServiceRequest.findById(requestId);
     if (!request) {
-      throw new Error('Request not found');
+      throw new NotFoundError('الطلب غير موجود');
     }
 
-    if (request.customer.toString() !== customerId) {
-      throw new Error('Not authorized to update this request');
+    // Verify ownership
+    const customer = await Customer.findOne({ userId: new Types.ObjectId(userId) });
+    if (!customer || request.customerId.toString() !== customer._id.toString()) {
+      throw new ForbiddenError('ليس لديك صلاحية لتعديل هذا الطلب');
     }
 
-    if (request.status !== RequestStatus.PENDING) {
-      throw new Error('Can only update pending requests');
+    if (request.status !== 'pending') {
+      throw new BadRequestError('لا يمكن تعديل الطلب في هذه الحالة');
     }
 
-    // Apply updates
     if (updates.title) request.title = updates.title;
     if (updates.description) request.description = updates.description;
-    if (updates.preferredDate) request.preferredDate = updates.preferredDate;
-    if (updates.preferredTime) request.preferredTime = updates.preferredTime;
     if (updates.images) request.images = updates.images;
-    if (updates.budget) request.budget = updates.budget;
     if (updates.urgency) request.urgency = updates.urgency;
+    if (updates.preferredDate) request.scheduledDate = updates.preferredDate;
+    if (updates.budget) request.estimatedPrice = updates.budget;
 
     await request.save();
-    return this.getRequestById(requestId) as Promise<IRequest>;
+    return this.getRequestById(requestId) as Promise<IServiceRequest>;
   }
 
-  // Cancel request (by customer)
-  async cancelRequest(requestId: string, customerId: string, reason?: string): Promise<IRequest> {
-    const request = await Request.findById(requestId);
+  // Cancel request
+  async cancelRequest(
+    requestId: string,
+    userId: string,
+    reason?: string
+  ): Promise<IServiceRequest> {
+    const request = await ServiceRequest.findById(requestId);
     if (!request) {
-      throw new Error('Request not found');
+      throw new NotFoundError('الطلب غير موجود');
     }
 
-    if (request.customer.toString() !== customerId) {
-      throw new Error('Not authorized to cancel this request');
+    // Verify ownership or craftsman
+    const customer = await Customer.findOne({ userId: new Types.ObjectId(userId) });
+    const craftsman = await Craftsman.findOne({ userId: new Types.ObjectId(userId) });
+
+    let cancelledBy: 'customer' | 'craftsman' = 'customer';
+    if (customer && request.customerId.toString() === customer._id.toString()) {
+      cancelledBy = 'customer';
+    } else if (craftsman && request.craftsmanId?.toString() === craftsman._id.toString()) {
+      cancelledBy = 'craftsman';
+    } else {
+      throw new ForbiddenError('ليس لديك صلاحية لإلغاء هذا الطلب');
     }
 
-    const cancellableStatuses = [
-      RequestStatus.PENDING,
-      RequestStatus.QUOTED,
-      RequestStatus.ACCEPTED,
-    ];
-
-    if (!cancellableStatuses.includes(request.status as RequestStatus)) {
-      throw new Error('Request cannot be cancelled in its current state');
+    if (['completed', 'cancelled'].includes(request.status)) {
+      throw new BadRequestError('لا يمكن إلغاء هذا الطلب');
     }
 
-    request.status = RequestStatus.CANCELLED;
-    request.cancellationReason = reason;
+    request.status = 'cancelled';
+    request.isCancelled = true;
+    request.cancelledBy = cancelledBy;
+    request.cancelReason = reason;
     request.cancelledAt = new Date();
-    request.cancelledBy = 'customer';
-
     await request.save();
-    return this.getRequestById(requestId) as Promise<IRequest>;
+
+    return this.getRequestById(requestId) as Promise<IServiceRequest>;
   }
 
-  // Get request statistics for admin dashboard
-  async getRequestStats(): Promise<{
-    total: number;
-    byStatus: Record<string, number>;
-    byCategory: Array<{ category: string; count: number }>;
-    todayCount: number;
-    weekCount: number;
-    monthCount: number;
-  }> {
-    const now = new Date();
-    const startOfDay = new Date(now.setHours(0, 0, 0, 0));
-    const startOfWeek = new Date(now);
-    startOfWeek.setDate(startOfWeek.getDate() - 7);
-    const startOfMonth = new Date(now);
-    startOfMonth.setDate(startOfMonth.getDate() - 30);
-
-    const [total, byStatus, byCategory, todayCount, weekCount, monthCount] =
-      await Promise.all([
-        Request.countDocuments(),
-        Request.aggregate([
-          { $group: { _id: '$status', count: { $sum: 1 } } },
-        ]),
-        Request.aggregate([
-          { $group: { _id: '$category', count: { $sum: 1 } } },
-          {
-            $lookup: {
-              from: 'categories',
-              localField: '_id',
-              foreignField: '_id',
-              as: 'categoryInfo',
+  // Get request statistics
+  async getRequestStats() {
+    const stats = await ServiceRequest.aggregate([
+      {
+        $facet: {
+          byStatus: [{ $group: { _id: '$status', count: { $sum: 1 } } }],
+          byUrgency: [{ $group: { _id: '$urgency', count: { $sum: 1 } } }],
+          total: [{ $count: 'count' }],
+          today: [
+            {
+              $match: {
+                createdAt: { $gte: new Date(new Date().setHours(0, 0, 0, 0)) },
+              },
             },
-          },
-          { $unwind: '$categoryInfo' },
-          {
-            $project: {
-              category: '$categoryInfo.nameAr',
-              count: 1,
+            { $count: 'count' },
+          ],
+          thisWeek: [
+            {
+              $match: {
+                createdAt: {
+                  $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+                },
+              },
             },
-          },
-          { $sort: { count: -1 } },
-          { $limit: 10 },
-        ]),
-        Request.countDocuments({ createdAt: { $gte: startOfDay } }),
-        Request.countDocuments({ createdAt: { $gte: startOfWeek } }),
-        Request.countDocuments({ createdAt: { $gte: startOfMonth } }),
-      ]);
+            { $count: 'count' },
+          ],
+        },
+      },
+    ]);
 
-    const statusMap: Record<string, number> = {};
-    byStatus.forEach((s) => {
-      statusMap[s._id] = s.count;
-    });
-
-    return {
-      total,
-      byStatus: statusMap,
-      byCategory,
-      todayCount,
-      weekCount,
-      monthCount,
-    };
+    return stats[0];
   }
 
   // Delete request (admin only)
   async deleteRequest(requestId: string): Promise<void> {
-    const result = await Request.findByIdAndDelete(requestId);
-    if (!result) {
-      throw new Error('Request not found');
+    const request = await ServiceRequest.findByIdAndDelete(requestId);
+    if (!request) {
+      throw new NotFoundError('الطلب غير موجود');
     }
   }
 }

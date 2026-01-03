@@ -18,7 +18,7 @@ import {
   getStatuses,
   deleteRequest,
 } from '../controllers/request.controller';
-import { authenticate, authorize } from '../middleware/auth';
+import { authenticate, requireRole, requireCustomer, requireCraftsman, requireAdmin } from '../middleware/auth';
 import {
   validateCreateRequest,
   validateUpdateRequest,
@@ -37,7 +37,7 @@ router.get('/statuses', getStatuses);
 router.post(
   '/',
   authenticate,
-  authorize('customer'),
+  requireCustomer,
   validateCreateRequest,
   createRequest
 );
@@ -47,7 +47,7 @@ router.get('/my', authenticate, validateGetRequestsQuery, getMyRequests);
 router.put(
   '/:id',
   authenticate,
-  authorize('customer'),
+  requireCustomer,
   validateUpdateRequest,
   updateRequest
 );
@@ -62,14 +62,14 @@ router.post(
 router.post(
   '/:id/quotes/:quoteId/accept',
   authenticate,
-  authorize('customer'),
+  requireCustomer,
   acceptQuote
 );
 
 router.post(
   '/:id/quotes/:quoteId/reject',
   authenticate,
-  authorize('customer'),
+  requireCustomer,
   rejectQuote
 );
 
@@ -77,7 +77,7 @@ router.post(
 router.get(
   '/available',
   authenticate,
-  authorize('craftsman'),
+  requireCraftsman,
   validateGetRequestsQuery,
   getAvailableRequests
 );
@@ -85,7 +85,7 @@ router.get(
 router.get(
   '/my-jobs/active',
   authenticate,
-  authorize('craftsman'),
+  requireCraftsman,
   validateGetRequestsQuery,
   getMyActiveJobs
 );
@@ -93,7 +93,7 @@ router.get(
 router.get(
   '/my-jobs/completed',
   authenticate,
-  authorize('craftsman'),
+  requireCraftsman,
   validateGetRequestsQuery,
   getMyCompletedJobs
 );
@@ -101,7 +101,7 @@ router.get(
 router.post(
   '/:id/quotes',
   authenticate,
-  authorize('craftsman'),
+  requireCraftsman,
   validateSubmitQuote,
   submitQuote
 );
@@ -124,7 +124,7 @@ router.get('/:id/timeline', authenticate, getStatusTimeline);
 router.get(
   '/',
   authenticate,
-  authorize('admin'),
+  requireAdmin,
   validateGetRequestsQuery,
   getAllRequests
 );
@@ -132,14 +132,14 @@ router.get(
 router.get(
   '/stats',
   authenticate,
-  authorize('admin'),
+  requireAdmin,
   getRequestStats
 );
 
 router.delete(
   '/:id',
   authenticate,
-  authorize('admin'),
+  requireAdmin,
   deleteRequest
 );
 

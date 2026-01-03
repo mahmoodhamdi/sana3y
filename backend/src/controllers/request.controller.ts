@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import requestService from '../services/request.service';
 import statusService from '../services/status.service';
-import { RequestStatus } from '../models/Request';
+
+type RequestStatus = 'pending' | 'quoted' | 'accepted' | 'in_progress' | 'completed' | 'cancelled';
 
 // Create a new service request
 export const createRequest = async (
@@ -355,7 +356,7 @@ export const updateRequestStatus = async (
 ) => {
   try {
     const { id } = req.params;
-    const { status, cancellationReason, completionNotes, disputeReason, actualAmount } = req.body;
+    const { status, cancellationReason, completionNotes, actualAmount } = req.body;
     const userId = (req as any).user.id;
     const userRole = (req as any).user.role;
 
@@ -372,7 +373,7 @@ export const updateRequestStatus = async (
       status as RequestStatus,
       role === 'craftsman' ? (req as any).craftsman.id : userId,
       role,
-      { cancellationReason, completionNotes, disputeReason, actualAmount }
+      { cancellationReason, completionNotes, actualAmount }
     );
 
     res.json({

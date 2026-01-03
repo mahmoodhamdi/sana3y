@@ -6,11 +6,11 @@ part of 'api_response.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_ApiResponse<T> _$ApiResponseFromJson<T>(
+_$ApiResponseImpl<T> _$$ApiResponseImplFromJson<T>(
   Map<String, dynamic> json,
   T Function(Object? json) fromJsonT,
 ) =>
-    _ApiResponse<T>(
+    _$ApiResponseImpl<T>(
       success: json['success'] as bool,
       message: json['message'] as String?,
       data: _$nullableGenericFromJson(json['data'], fromJsonT),
@@ -22,8 +22,8 @@ _ApiResponse<T> _$ApiResponseFromJson<T>(
           : PaginationMeta.fromJson(json['meta'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$ApiResponseToJson<T>(
-  _ApiResponse<T> instance,
+Map<String, dynamic> _$$ApiResponseImplToJson<T>(
+  _$ApiResponseImpl<T> instance,
   Object? Function(T value) toJsonT,
 ) =>
     <String, dynamic>{
@@ -46,27 +46,30 @@ Object? _$nullableGenericToJson<T>(
 ) =>
     input == null ? null : toJson(input);
 
-_ApiError _$ApiErrorFromJson(Map<String, dynamic> json) => _ApiError(
+_$ApiErrorImpl _$$ApiErrorImplFromJson(Map<String, dynamic> json) =>
+    _$ApiErrorImpl(
       field: json['field'] as String?,
       message: json['message'] as String,
       code: json['code'] as String?,
     );
 
-Map<String, dynamic> _$ApiErrorToJson(_ApiError instance) => <String, dynamic>{
+Map<String, dynamic> _$$ApiErrorImplToJson(_$ApiErrorImpl instance) =>
+    <String, dynamic>{
       'field': instance.field,
       'message': instance.message,
       'code': instance.code,
     };
 
-_PaginationMeta _$PaginationMetaFromJson(Map<String, dynamic> json) =>
-    _PaginationMeta(
+_$PaginationMetaImpl _$$PaginationMetaImplFromJson(Map<String, dynamic> json) =>
+    _$PaginationMetaImpl(
       page: (json['page'] as num).toInt(),
       limit: (json['limit'] as num).toInt(),
       total: (json['total'] as num).toInt(),
       totalPages: (json['totalPages'] as num).toInt(),
     );
 
-Map<String, dynamic> _$PaginationMetaToJson(_PaginationMeta instance) =>
+Map<String, dynamic> _$$PaginationMetaImplToJson(
+        _$PaginationMetaImpl instance) =>
     <String, dynamic>{
       'page': instance.page,
       'limit': instance.limit,

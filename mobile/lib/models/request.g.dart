@@ -6,8 +6,9 @@ part of 'request.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_RequestLocation _$RequestLocationFromJson(Map<String, dynamic> json) =>
-    _RequestLocation(
+_$RequestLocationImpl _$$RequestLocationImplFromJson(
+        Map<String, dynamic> json) =>
+    _$RequestLocationImpl(
       address: json['address'] as String,
       coordinates: (json['coordinates'] as List<dynamic>)
           .map((e) => (e as num).toDouble())
@@ -17,7 +18,8 @@ _RequestLocation _$RequestLocationFromJson(Map<String, dynamic> json) =>
       area: json['area'] as String?,
     );
 
-Map<String, dynamic> _$RequestLocationToJson(_RequestLocation instance) =>
+Map<String, dynamic> _$$RequestLocationImplToJson(
+        _$RequestLocationImpl instance) =>
     <String, dynamic>{
       'address': instance.address,
       'coordinates': instance.coordinates,
@@ -26,31 +28,31 @@ Map<String, dynamic> _$RequestLocationToJson(_RequestLocation instance) =>
       'area': instance.area,
     };
 
-_RequestBudget _$RequestBudgetFromJson(Map<String, dynamic> json) =>
-    _RequestBudget(
+_$RequestBudgetImpl _$$RequestBudgetImplFromJson(Map<String, dynamic> json) =>
+    _$RequestBudgetImpl(
       min: (json['min'] as num).toDouble(),
       max: (json['max'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$RequestBudgetToJson(_RequestBudget instance) =>
+Map<String, dynamic> _$$RequestBudgetImplToJson(_$RequestBudgetImpl instance) =>
     <String, dynamic>{
       'min': instance.min,
       'max': instance.max,
     };
 
-_PreferredTime _$PreferredTimeFromJson(Map<String, dynamic> json) =>
-    _PreferredTime(
+_$PreferredTimeImpl _$$PreferredTimeImplFromJson(Map<String, dynamic> json) =>
+    _$PreferredTimeImpl(
       start: json['start'] as String,
       end: json['end'] as String,
     );
 
-Map<String, dynamic> _$PreferredTimeToJson(_PreferredTime instance) =>
+Map<String, dynamic> _$$PreferredTimeImplToJson(_$PreferredTimeImpl instance) =>
     <String, dynamic>{
       'start': instance.start,
       'end': instance.end,
     };
 
-_Quote _$QuoteFromJson(Map<String, dynamic> json) => _Quote(
+_$QuoteImpl _$$QuoteImplFromJson(Map<String, dynamic> json) => _$QuoteImpl(
       id: json['_id'] as String,
       craftsman:
           CraftsmanSummary.fromJson(json['craftsman'] as Map<String, dynamic>),
@@ -64,7 +66,8 @@ _Quote _$QuoteFromJson(Map<String, dynamic> json) => _Quote(
       submittedAt: DateTime.parse(json['submittedAt'] as String),
     );
 
-Map<String, dynamic> _$QuoteToJson(_Quote instance) => <String, dynamic>{
+Map<String, dynamic> _$$QuoteImplToJson(_$QuoteImpl instance) =>
+    <String, dynamic>{
       '_id': instance.id,
       'craftsman': instance.craftsman,
       'amount': instance.amount,
@@ -75,8 +78,9 @@ Map<String, dynamic> _$QuoteToJson(_Quote instance) => <String, dynamic>{
       'submittedAt': instance.submittedAt.toIso8601String(),
     };
 
-_CraftsmanSummary _$CraftsmanSummaryFromJson(Map<String, dynamic> json) =>
-    _CraftsmanSummary(
+_$CraftsmanSummaryImpl _$$CraftsmanSummaryImplFromJson(
+        Map<String, dynamic> json) =>
+    _$CraftsmanSummaryImpl(
       id: json['_id'] as String,
       displayName: json['displayName'] as String,
       rating: (json['rating'] as num?)?.toDouble(),
@@ -84,7 +88,8 @@ _CraftsmanSummary _$CraftsmanSummaryFromJson(Map<String, dynamic> json) =>
       completedJobs: (json['completedJobs'] as num?)?.toInt(),
     );
 
-Map<String, dynamic> _$CraftsmanSummaryToJson(_CraftsmanSummary instance) =>
+Map<String, dynamic> _$$CraftsmanSummaryImplToJson(
+        _$CraftsmanSummaryImpl instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'displayName': instance.displayName,
@@ -93,15 +98,17 @@ Map<String, dynamic> _$CraftsmanSummaryToJson(_CraftsmanSummary instance) =>
       'completedJobs': instance.completedJobs,
     };
 
-_CustomerSummary _$CustomerSummaryFromJson(Map<String, dynamic> json) =>
-    _CustomerSummary(
+_$CustomerSummaryImpl _$$CustomerSummaryImplFromJson(
+        Map<String, dynamic> json) =>
+    _$CustomerSummaryImpl(
       id: json['_id'] as String,
       name: json['name'] as String,
       phone: json['phone'] as String?,
       avatar: json['avatar'] as String?,
     );
 
-Map<String, dynamic> _$CustomerSummaryToJson(_CustomerSummary instance) =>
+Map<String, dynamic> _$$CustomerSummaryImplToJson(
+        _$CustomerSummaryImpl instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'name': instance.name,
@@ -109,15 +116,17 @@ Map<String, dynamic> _$CustomerSummaryToJson(_CustomerSummary instance) =>
       'avatar': instance.avatar,
     };
 
-_CategorySummary _$CategorySummaryFromJson(Map<String, dynamic> json) =>
-    _CategorySummary(
+_$CategorySummaryImpl _$$CategorySummaryImplFromJson(
+        Map<String, dynamic> json) =>
+    _$CategorySummaryImpl(
       id: json['_id'] as String,
       name: json['name'] as String,
       nameAr: json['nameAr'] as String,
       icon: json['icon'] as String?,
     );
 
-Map<String, dynamic> _$CategorySummaryToJson(_CategorySummary instance) =>
+Map<String, dynamic> _$$CategorySummaryImplToJson(
+        _$CategorySummaryImpl instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'name': instance.name,
@@ -125,34 +134,36 @@ Map<String, dynamic> _$CategorySummaryToJson(_CategorySummary instance) =>
       'icon': instance.icon,
     };
 
-_AcceptedQuote _$AcceptedQuoteFromJson(Map<String, dynamic> json) =>
-    _AcceptedQuote(
+_$AcceptedQuoteImpl _$$AcceptedQuoteImplFromJson(Map<String, dynamic> json) =>
+    _$AcceptedQuoteImpl(
       amount: (json['amount'] as num).toDouble(),
       estimatedDuration: json['estimatedDuration'] as String?,
     );
 
-Map<String, dynamic> _$AcceptedQuoteToJson(_AcceptedQuote instance) =>
+Map<String, dynamic> _$$AcceptedQuoteImplToJson(_$AcceptedQuoteImpl instance) =>
     <String, dynamic>{
       'amount': instance.amount,
       'estimatedDuration': instance.estimatedDuration,
     };
 
-_StatusHistoryEntry _$StatusHistoryEntryFromJson(Map<String, dynamic> json) =>
-    _StatusHistoryEntry(
+_$StatusHistoryEntryImpl _$$StatusHistoryEntryImplFromJson(
+        Map<String, dynamic> json) =>
+    _$StatusHistoryEntryImpl(
       status: json['status'] as String,
       changedAt: DateTime.parse(json['changedAt'] as String),
       notes: json['notes'] as String?,
     );
 
-Map<String, dynamic> _$StatusHistoryEntryToJson(_StatusHistoryEntry instance) =>
+Map<String, dynamic> _$$StatusHistoryEntryImplToJson(
+        _$StatusHistoryEntryImpl instance) =>
     <String, dynamic>{
       'status': instance.status,
       'changedAt': instance.changedAt.toIso8601String(),
       'notes': instance.notes,
     };
 
-_ServiceRequest _$ServiceRequestFromJson(Map<String, dynamic> json) =>
-    _ServiceRequest(
+_$ServiceRequestImpl _$$ServiceRequestImplFromJson(Map<String, dynamic> json) =>
+    _$ServiceRequestImpl(
       id: json['_id'] as String,
       requestNumber: json['requestNumber'] as String,
       customer:
@@ -219,7 +230,8 @@ _ServiceRequest _$ServiceRequestFromJson(Map<String, dynamic> json) =>
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
 
-Map<String, dynamic> _$ServiceRequestToJson(_ServiceRequest instance) =>
+Map<String, dynamic> _$$ServiceRequestImplToJson(
+        _$ServiceRequestImpl instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'requestNumber': instance.requestNumber,
@@ -269,8 +281,9 @@ const _$RequestStatusEnumMap = {
   RequestStatus.refunded: 'refunded',
 };
 
-_CreateRequestData _$CreateRequestDataFromJson(Map<String, dynamic> json) =>
-    _CreateRequestData(
+_$CreateRequestDataImpl _$$CreateRequestDataImplFromJson(
+        Map<String, dynamic> json) =>
+    _$CreateRequestDataImpl(
       title: json['title'] as String,
       description: json['description'] as String,
       category: json['category'] as String,
@@ -295,7 +308,8 @@ _CreateRequestData _$CreateRequestDataFromJson(Map<String, dynamic> json) =>
           RequestUrgency.normal,
     );
 
-Map<String, dynamic> _$CreateRequestDataToJson(_CreateRequestData instance) =>
+Map<String, dynamic> _$$CreateRequestDataImplToJson(
+        _$CreateRequestDataImpl instance) =>
     <String, dynamic>{
       'title': instance.title,
       'description': instance.description,
@@ -309,8 +323,9 @@ Map<String, dynamic> _$CreateRequestDataToJson(_CreateRequestData instance) =>
       'urgency': _$RequestUrgencyEnumMap[instance.urgency]!,
     };
 
-_SubmitQuoteData _$SubmitQuoteDataFromJson(Map<String, dynamic> json) =>
-    _SubmitQuoteData(
+_$SubmitQuoteDataImpl _$$SubmitQuoteDataImplFromJson(
+        Map<String, dynamic> json) =>
+    _$SubmitQuoteDataImpl(
       amount: (json['amount'] as num).toDouble(),
       estimatedDuration: json['estimatedDuration'] as String?,
       notes: json['notes'] as String?,
@@ -319,7 +334,8 @@ _SubmitQuoteData _$SubmitQuoteDataFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['validUntil'] as String),
     );
 
-Map<String, dynamic> _$SubmitQuoteDataToJson(_SubmitQuoteData instance) =>
+Map<String, dynamic> _$$SubmitQuoteDataImplToJson(
+        _$SubmitQuoteDataImpl instance) =>
     <String, dynamic>{
       'amount': instance.amount,
       'estimatedDuration': instance.estimatedDuration,
@@ -327,8 +343,9 @@ Map<String, dynamic> _$SubmitQuoteDataToJson(_SubmitQuoteData instance) =>
       'validUntil': instance.validUntil?.toIso8601String(),
     };
 
-_RequestListResponse _$RequestListResponseFromJson(Map<String, dynamic> json) =>
-    _RequestListResponse(
+_$RequestListResponseImpl _$$RequestListResponseImplFromJson(
+        Map<String, dynamic> json) =>
+    _$RequestListResponseImpl(
       data: (json['data'] as List<dynamic>)
           .map((e) => ServiceRequest.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -338,8 +355,8 @@ _RequestListResponse _$RequestListResponseFromJson(Map<String, dynamic> json) =>
       limit: (json['limit'] as num).toInt(),
     );
 
-Map<String, dynamic> _$RequestListResponseToJson(
-        _RequestListResponse instance) =>
+Map<String, dynamic> _$$RequestListResponseImplToJson(
+        _$RequestListResponseImpl instance) =>
     <String, dynamic>{
       'data': instance.data,
       'page': instance.page,

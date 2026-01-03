@@ -6,7 +6,8 @@ part of 'craftsman.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_ServiceInfo _$ServiceInfoFromJson(Map<String, dynamic> json) => _ServiceInfo(
+_$ServiceInfoImpl _$$ServiceInfoImplFromJson(Map<String, dynamic> json) =>
+    _$ServiceInfoImpl(
       categoryId: json['categoryId'] as String,
       subcategories: (json['subcategories'] as List<dynamic>?)
               ?.map((e) => e as String)
@@ -20,7 +21,7 @@ _ServiceInfo _$ServiceInfoFromJson(Map<String, dynamic> json) => _ServiceInfo(
       category: json['category'] as Map<String, dynamic>?,
     );
 
-Map<String, dynamic> _$ServiceInfoToJson(_ServiceInfo instance) =>
+Map<String, dynamic> _$$ServiceInfoImplToJson(_$ServiceInfoImpl instance) =>
     <String, dynamic>{
       'categoryId': instance.categoryId,
       'subcategories': instance.subcategories,
@@ -37,14 +38,15 @@ const _$PriceTypeEnumMap = {
   PriceType.quote: 'quote',
 };
 
-_WorkingHour _$WorkingHourFromJson(Map<String, dynamic> json) => _WorkingHour(
+_$WorkingHourImpl _$$WorkingHourImplFromJson(Map<String, dynamic> json) =>
+    _$WorkingHourImpl(
       day: (json['day'] as num).toInt(),
       isWorking: json['isWorking'] as bool? ?? true,
       start: json['start'] as String? ?? '08:00',
       end: json['end'] as String? ?? '20:00',
     );
 
-Map<String, dynamic> _$WorkingHourToJson(_WorkingHour instance) =>
+Map<String, dynamic> _$$WorkingHourImplToJson(_$WorkingHourImpl instance) =>
     <String, dynamic>{
       'day': instance.day,
       'isWorking': instance.isWorking,
@@ -52,8 +54,9 @@ Map<String, dynamic> _$WorkingHourToJson(_WorkingHour instance) =>
       'end': instance.end,
     };
 
-_CraftsmanDocuments _$CraftsmanDocumentsFromJson(Map<String, dynamic> json) =>
-    _CraftsmanDocuments(
+_$CraftsmanDocumentsImpl _$$CraftsmanDocumentsImplFromJson(
+        Map<String, dynamic> json) =>
+    _$CraftsmanDocumentsImpl(
       nationalIdFront: json['nationalIdFront'] as String?,
       nationalIdBack: json['nationalIdBack'] as String?,
       nationalIdNumber: json['nationalIdNumber'] as String?,
@@ -64,7 +67,8 @@ _CraftsmanDocuments _$CraftsmanDocumentsFromJson(Map<String, dynamic> json) =>
       commercialRegister: json['commercialRegister'] as String?,
     );
 
-Map<String, dynamic> _$CraftsmanDocumentsToJson(_CraftsmanDocuments instance) =>
+Map<String, dynamic> _$$CraftsmanDocumentsImplToJson(
+        _$CraftsmanDocumentsImpl instance) =>
     <String, dynamic>{
       'nationalIdFront': instance.nationalIdFront,
       'nationalIdBack': instance.nationalIdBack,
@@ -73,7 +77,8 @@ Map<String, dynamic> _$CraftsmanDocumentsToJson(_CraftsmanDocuments instance) =>
       'commercialRegister': instance.commercialRegister,
     };
 
-_GeoLocation _$GeoLocationFromJson(Map<String, dynamic> json) => _GeoLocation(
+_$GeoLocationImpl _$$GeoLocationImplFromJson(Map<String, dynamic> json) =>
+    _$GeoLocationImpl(
       type: json['type'] as String? ?? 'Point',
       coordinates: (json['coordinates'] as List<dynamic>?)
               ?.map((e) => (e as num).toDouble())
@@ -81,13 +86,14 @@ _GeoLocation _$GeoLocationFromJson(Map<String, dynamic> json) => _GeoLocation(
           const [],
     );
 
-Map<String, dynamic> _$GeoLocationToJson(_GeoLocation instance) =>
+Map<String, dynamic> _$$GeoLocationImplToJson(_$GeoLocationImpl instance) =>
     <String, dynamic>{
       'type': instance.type,
       'coordinates': instance.coordinates,
     };
 
-_Craftsman _$CraftsmanFromJson(Map<String, dynamic> json) => _Craftsman(
+_$CraftsmanImpl _$$CraftsmanImplFromJson(Map<String, dynamic> json) =>
+    _$CraftsmanImpl(
       id: json['_id'] as String,
       userId: json['userId'] as String,
       displayName: json['displayName'] as String,
@@ -161,7 +167,7 @@ _Craftsman _$CraftsmanFromJson(Map<String, dynamic> json) => _Craftsman(
       distance: (json['distance'] as num?)?.toDouble(),
     );
 
-Map<String, dynamic> _$CraftsmanToJson(_Craftsman instance) =>
+Map<String, dynamic> _$$CraftsmanImplToJson(_$CraftsmanImpl instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'userId': instance.userId,
@@ -212,9 +218,9 @@ const _$CraftsmanStatusEnumMap = {
   CraftsmanStatus.suspended: 'suspended',
 };
 
-_CraftsmanListResponse _$CraftsmanListResponseFromJson(
+_$CraftsmanListResponseImpl _$$CraftsmanListResponseImplFromJson(
         Map<String, dynamic> json) =>
-    _CraftsmanListResponse(
+    _$CraftsmanListResponseImpl(
       data: (json['data'] as List<dynamic>)
           .map((e) => Craftsman.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -224,8 +230,8 @@ _CraftsmanListResponse _$CraftsmanListResponseFromJson(
       totalPages: (json['totalPages'] as num).toInt(),
     );
 
-Map<String, dynamic> _$CraftsmanListResponseToJson(
-        _CraftsmanListResponse instance) =>
+Map<String, dynamic> _$$CraftsmanListResponseImplToJson(
+        _$CraftsmanListResponseImpl instance) =>
     <String, dynamic>{
       'data': instance.data,
       'page': instance.page,

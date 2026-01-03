@@ -1,4 +1,3 @@
-// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -10,90 +9,45 @@ part of 'user.dart';
 // FreezedGenerator
 // **************************************************************************
 
-// dart format off
 T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+
+User _$UserFromJson(Map<String, dynamic> json) {
+  return _User.fromJson(json);
+}
 
 /// @nodoc
 mixin _$User {
   @JsonKey(name: '_id')
-  String get id;
-  String get phone;
-  String get name;
-  UserRole get role;
-  String? get email;
-  String? get avatar;
-  bool get isPhoneVerified;
-  bool get isEmailVerified;
-  bool get isActive;
-  List<String> get fcmTokens;
-  DateTime? get lastLoginAt;
-  DateTime? get createdAt;
-  DateTime? get updatedAt;
+  String get id => throw _privateConstructorUsedError;
+  String get phone => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  UserRole get role => throw _privateConstructorUsedError;
+  String? get email => throw _privateConstructorUsedError;
+  String? get avatar => throw _privateConstructorUsedError;
+  bool get isPhoneVerified => throw _privateConstructorUsedError;
+  bool get isEmailVerified => throw _privateConstructorUsedError;
+  bool get isActive => throw _privateConstructorUsedError;
+  List<String> get fcmTokens => throw _privateConstructorUsedError;
+  DateTime? get lastLoginAt => throw _privateConstructorUsedError;
+  DateTime? get createdAt => throw _privateConstructorUsedError;
+  DateTime? get updatedAt => throw _privateConstructorUsedError;
+
+  /// Serializes this User to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
   /// Create a copy of User
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  $UserCopyWith<User> get copyWith =>
-      _$UserCopyWithImpl<User>(this as User, _$identity);
-
-  /// Serializes this User to a JSON map.
-  Map<String, dynamic> toJson();
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is User &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.phone, phone) || other.phone == phone) &&
-            (identical(other.name, name) || other.name == name) &&
-            (identical(other.role, role) || other.role == role) &&
-            (identical(other.email, email) || other.email == email) &&
-            (identical(other.avatar, avatar) || other.avatar == avatar) &&
-            (identical(other.isPhoneVerified, isPhoneVerified) ||
-                other.isPhoneVerified == isPhoneVerified) &&
-            (identical(other.isEmailVerified, isEmailVerified) ||
-                other.isEmailVerified == isEmailVerified) &&
-            (identical(other.isActive, isActive) ||
-                other.isActive == isActive) &&
-            const DeepCollectionEquality().equals(other.fcmTokens, fcmTokens) &&
-            (identical(other.lastLoginAt, lastLoginAt) ||
-                other.lastLoginAt == lastLoginAt) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt) &&
-            (identical(other.updatedAt, updatedAt) ||
-                other.updatedAt == updatedAt));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      phone,
-      name,
-      role,
-      email,
-      avatar,
-      isPhoneVerified,
-      isEmailVerified,
-      isActive,
-      const DeepCollectionEquality().hash(fcmTokens),
-      lastLoginAt,
-      createdAt,
-      updatedAt);
-
-  @override
-  String toString() {
-    return 'User(id: $id, phone: $phone, name: $name, role: $role, email: $email, avatar: $avatar, isPhoneVerified: $isPhoneVerified, isEmailVerified: $isEmailVerified, isActive: $isActive, fcmTokens: $fcmTokens, lastLoginAt: $lastLoginAt, createdAt: $createdAt, updatedAt: $updatedAt)';
-  }
+  $UserCopyWith<User> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract mixin class $UserCopyWith<$Res> {
-  factory $UserCopyWith(User value, $Res Function(User) _then) =
-      _$UserCopyWithImpl;
+abstract class $UserCopyWith<$Res> {
+  factory $UserCopyWith(User value, $Res Function(User) then) =
+      _$UserCopyWithImpl<$Res, User>;
   @useResult
   $Res call(
       {@JsonKey(name: '_id') String id,
@@ -112,11 +66,14 @@ abstract mixin class $UserCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$UserCopyWithImpl<$Res> implements $UserCopyWith<$Res> {
-  _$UserCopyWithImpl(this._self, this._then);
+class _$UserCopyWithImpl<$Res, $Val extends User>
+    implements $UserCopyWith<$Res> {
+  _$UserCopyWithImpl(this._value, this._then);
 
-  final User _self;
-  final $Res Function(User) _then;
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
   /// Create a copy of User
   /// with the given fields replaced by the non-null parameter values.
@@ -137,57 +94,163 @@ class _$UserCopyWithImpl<$Res> implements $UserCopyWith<$Res> {
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
-    return _then(_self.copyWith(
+    return _then(_value.copyWith(
       id: null == id
-          ? _self.id
+          ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
       phone: null == phone
-          ? _self.phone
+          ? _value.phone
           : phone // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
-          ? _self.name
+          ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
       role: null == role
-          ? _self.role
+          ? _value.role
           : role // ignore: cast_nullable_to_non_nullable
               as UserRole,
       email: freezed == email
-          ? _self.email
+          ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as String?,
       avatar: freezed == avatar
-          ? _self.avatar
+          ? _value.avatar
           : avatar // ignore: cast_nullable_to_non_nullable
               as String?,
       isPhoneVerified: null == isPhoneVerified
-          ? _self.isPhoneVerified
+          ? _value.isPhoneVerified
           : isPhoneVerified // ignore: cast_nullable_to_non_nullable
               as bool,
       isEmailVerified: null == isEmailVerified
-          ? _self.isEmailVerified
+          ? _value.isEmailVerified
           : isEmailVerified // ignore: cast_nullable_to_non_nullable
               as bool,
       isActive: null == isActive
-          ? _self.isActive
+          ? _value.isActive
           : isActive // ignore: cast_nullable_to_non_nullable
               as bool,
       fcmTokens: null == fcmTokens
-          ? _self.fcmTokens
+          ? _value.fcmTokens
           : fcmTokens // ignore: cast_nullable_to_non_nullable
               as List<String>,
       lastLoginAt: freezed == lastLoginAt
-          ? _self.lastLoginAt
+          ? _value.lastLoginAt
           : lastLoginAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       createdAt: freezed == createdAt
-          ? _self.createdAt
+          ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       updatedAt: freezed == updatedAt
-          ? _self.updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
+  factory _$$UserImplCopyWith(
+          _$UserImpl value, $Res Function(_$UserImpl) then) =
+      __$$UserImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: '_id') String id,
+      String phone,
+      String name,
+      UserRole role,
+      String? email,
+      String? avatar,
+      bool isPhoneVerified,
+      bool isEmailVerified,
+      bool isActive,
+      List<String> fcmTokens,
+      DateTime? lastLoginAt,
+      DateTime? createdAt,
+      DateTime? updatedAt});
+}
+
+/// @nodoc
+class __$$UserImplCopyWithImpl<$Res>
+    extends _$UserCopyWithImpl<$Res, _$UserImpl>
+    implements _$$UserImplCopyWith<$Res> {
+  __$$UserImplCopyWithImpl(_$UserImpl _value, $Res Function(_$UserImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of User
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? phone = null,
+    Object? name = null,
+    Object? role = null,
+    Object? email = freezed,
+    Object? avatar = freezed,
+    Object? isPhoneVerified = null,
+    Object? isEmailVerified = null,
+    Object? isActive = null,
+    Object? fcmTokens = null,
+    Object? lastLoginAt = freezed,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
+  }) {
+    return _then(_$UserImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      phone: null == phone
+          ? _value.phone
+          : phone // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      role: null == role
+          ? _value.role
+          : role // ignore: cast_nullable_to_non_nullable
+              as UserRole,
+      email: freezed == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String?,
+      avatar: freezed == avatar
+          ? _value.avatar
+          : avatar // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isPhoneVerified: null == isPhoneVerified
+          ? _value.isPhoneVerified
+          : isPhoneVerified // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isEmailVerified: null == isEmailVerified
+          ? _value.isEmailVerified
+          : isEmailVerified // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isActive: null == isActive
+          ? _value.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool,
+      fcmTokens: null == fcmTokens
+          ? _value._fcmTokens
+          : fcmTokens // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      lastLoginAt: freezed == lastLoginAt
+          ? _value.lastLoginAt
+          : lastLoginAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
     ));
@@ -196,8 +259,8 @@ class _$UserCopyWithImpl<$Res> implements $UserCopyWith<$Res> {
 
 /// @nodoc
 @JsonSerializable()
-class _User implements User {
-  const _User(
+class _$UserImpl implements _User {
+  const _$UserImpl(
       {@JsonKey(name: '_id') required this.id,
       required this.phone,
       required this.name,
@@ -212,7 +275,9 @@ class _User implements User {
       this.createdAt,
       this.updatedAt})
       : _fcmTokens = fcmTokens;
-  factory _User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+
+  factory _$UserImpl.fromJson(Map<String, dynamic> json) =>
+      _$$UserImplFromJson(json);
 
   @override
   @JsonKey(name: '_id')
@@ -252,26 +317,16 @@ class _User implements User {
   @override
   final DateTime? updatedAt;
 
-  /// Create a copy of User
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  _$UserCopyWith<_User> get copyWith =>
-      __$UserCopyWithImpl<_User>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$UserToJson(
-      this,
-    );
+  String toString() {
+    return 'User(id: $id, phone: $phone, name: $name, role: $role, email: $email, avatar: $avatar, isPhoneVerified: $isPhoneVerified, isEmailVerified: $isEmailVerified, isActive: $isActive, fcmTokens: $fcmTokens, lastLoginAt: $lastLoginAt, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _User &&
+            other is _$UserImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.phone, phone) || other.phone == phone) &&
             (identical(other.name, name) || other.name == name) &&
@@ -312,170 +367,104 @@ class _User implements User {
       createdAt,
       updatedAt);
 
+  /// Create a copy of User
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  String toString() {
-    return 'User(id: $id, phone: $phone, name: $name, role: $role, email: $email, avatar: $avatar, isPhoneVerified: $isPhoneVerified, isEmailVerified: $isEmailVerified, isActive: $isActive, fcmTokens: $fcmTokens, lastLoginAt: $lastLoginAt, createdAt: $createdAt, updatedAt: $updatedAt)';
+  @pragma('vm:prefer-inline')
+  _$$UserImplCopyWith<_$UserImpl> get copyWith =>
+      __$$UserImplCopyWithImpl<_$UserImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$UserImplToJson(
+      this,
+    );
   }
 }
 
-/// @nodoc
-abstract mixin class _$UserCopyWith<$Res> implements $UserCopyWith<$Res> {
-  factory _$UserCopyWith(_User value, $Res Function(_User) _then) =
-      __$UserCopyWithImpl;
+abstract class _User implements User {
+  const factory _User(
+      {@JsonKey(name: '_id') required final String id,
+      required final String phone,
+      required final String name,
+      required final UserRole role,
+      final String? email,
+      final String? avatar,
+      final bool isPhoneVerified,
+      final bool isEmailVerified,
+      final bool isActive,
+      final List<String> fcmTokens,
+      final DateTime? lastLoginAt,
+      final DateTime? createdAt,
+      final DateTime? updatedAt}) = _$UserImpl;
+
+  factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
+
   @override
-  @useResult
-  $Res call(
-      {@JsonKey(name: '_id') String id,
-      String phone,
-      String name,
-      UserRole role,
-      String? email,
-      String? avatar,
-      bool isPhoneVerified,
-      bool isEmailVerified,
-      bool isActive,
-      List<String> fcmTokens,
-      DateTime? lastLoginAt,
-      DateTime? createdAt,
-      DateTime? updatedAt});
-}
-
-/// @nodoc
-class __$UserCopyWithImpl<$Res> implements _$UserCopyWith<$Res> {
-  __$UserCopyWithImpl(this._self, this._then);
-
-  final _User _self;
-  final $Res Function(_User) _then;
+  @JsonKey(name: '_id')
+  String get id;
+  @override
+  String get phone;
+  @override
+  String get name;
+  @override
+  UserRole get role;
+  @override
+  String? get email;
+  @override
+  String? get avatar;
+  @override
+  bool get isPhoneVerified;
+  @override
+  bool get isEmailVerified;
+  @override
+  bool get isActive;
+  @override
+  List<String> get fcmTokens;
+  @override
+  DateTime? get lastLoginAt;
+  @override
+  DateTime? get createdAt;
+  @override
+  DateTime? get updatedAt;
 
   /// Create a copy of User
   /// with the given fields replaced by the non-null parameter values.
   @override
-  @pragma('vm:prefer-inline')
-  $Res call({
-    Object? id = null,
-    Object? phone = null,
-    Object? name = null,
-    Object? role = null,
-    Object? email = freezed,
-    Object? avatar = freezed,
-    Object? isPhoneVerified = null,
-    Object? isEmailVerified = null,
-    Object? isActive = null,
-    Object? fcmTokens = null,
-    Object? lastLoginAt = freezed,
-    Object? createdAt = freezed,
-    Object? updatedAt = freezed,
-  }) {
-    return _then(_User(
-      id: null == id
-          ? _self.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      phone: null == phone
-          ? _self.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _self.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      role: null == role
-          ? _self.role
-          : role // ignore: cast_nullable_to_non_nullable
-              as UserRole,
-      email: freezed == email
-          ? _self.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String?,
-      avatar: freezed == avatar
-          ? _self.avatar
-          : avatar // ignore: cast_nullable_to_non_nullable
-              as String?,
-      isPhoneVerified: null == isPhoneVerified
-          ? _self.isPhoneVerified
-          : isPhoneVerified // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isEmailVerified: null == isEmailVerified
-          ? _self.isEmailVerified
-          : isEmailVerified // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isActive: null == isActive
-          ? _self.isActive
-          : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
-      fcmTokens: null == fcmTokens
-          ? _self._fcmTokens
-          : fcmTokens // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      lastLoginAt: freezed == lastLoginAt
-          ? _self.lastLoginAt
-          : lastLoginAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      createdAt: freezed == createdAt
-          ? _self.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      updatedAt: freezed == updatedAt
-          ? _self.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
-  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UserImplCopyWith<_$UserImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+Address _$AddressFromJson(Map<String, dynamic> json) {
+  return _Address.fromJson(json);
 }
 
 /// @nodoc
 mixin _$Address {
-  String? get id;
-  String get label;
-  String get address;
-  String? get area;
-  String? get landmark;
-  double get lat;
-  double get lng;
-  bool get isDefault;
+  String? get id => throw _privateConstructorUsedError;
+  String get label => throw _privateConstructorUsedError;
+  String get address => throw _privateConstructorUsedError;
+  String? get area => throw _privateConstructorUsedError;
+  String? get landmark => throw _privateConstructorUsedError;
+  double get lat => throw _privateConstructorUsedError;
+  double get lng => throw _privateConstructorUsedError;
+  bool get isDefault => throw _privateConstructorUsedError;
+
+  /// Serializes this Address to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
   /// Create a copy of Address
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  $AddressCopyWith<Address> get copyWith =>
-      _$AddressCopyWithImpl<Address>(this as Address, _$identity);
-
-  /// Serializes this Address to a JSON map.
-  Map<String, dynamic> toJson();
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is Address &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.label, label) || other.label == label) &&
-            (identical(other.address, address) || other.address == address) &&
-            (identical(other.area, area) || other.area == area) &&
-            (identical(other.landmark, landmark) ||
-                other.landmark == landmark) &&
-            (identical(other.lat, lat) || other.lat == lat) &&
-            (identical(other.lng, lng) || other.lng == lng) &&
-            (identical(other.isDefault, isDefault) ||
-                other.isDefault == isDefault));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(
-      runtimeType, id, label, address, area, landmark, lat, lng, isDefault);
-
-  @override
-  String toString() {
-    return 'Address(id: $id, label: $label, address: $address, area: $area, landmark: $landmark, lat: $lat, lng: $lng, isDefault: $isDefault)';
-  }
+  $AddressCopyWith<Address> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract mixin class $AddressCopyWith<$Res> {
-  factory $AddressCopyWith(Address value, $Res Function(Address) _then) =
-      _$AddressCopyWithImpl;
+abstract class $AddressCopyWith<$Res> {
+  factory $AddressCopyWith(Address value, $Res Function(Address) then) =
+      _$AddressCopyWithImpl<$Res, Address>;
   @useResult
   $Res call(
       {String? id,
@@ -489,11 +478,14 @@ abstract mixin class $AddressCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$AddressCopyWithImpl<$Res> implements $AddressCopyWith<$Res> {
-  _$AddressCopyWithImpl(this._self, this._then);
+class _$AddressCopyWithImpl<$Res, $Val extends Address>
+    implements $AddressCopyWith<$Res> {
+  _$AddressCopyWithImpl(this._value, this._then);
 
-  final Address _self;
-  final $Res Function(Address) _then;
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
   /// Create a copy of Address
   /// with the given fields replaced by the non-null parameter values.
@@ -509,37 +501,114 @@ class _$AddressCopyWithImpl<$Res> implements $AddressCopyWith<$Res> {
     Object? lng = null,
     Object? isDefault = null,
   }) {
-    return _then(_self.copyWith(
+    return _then(_value.copyWith(
       id: freezed == id
-          ? _self.id
+          ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String?,
       label: null == label
-          ? _self.label
+          ? _value.label
           : label // ignore: cast_nullable_to_non_nullable
               as String,
       address: null == address
-          ? _self.address
+          ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
               as String,
       area: freezed == area
-          ? _self.area
+          ? _value.area
           : area // ignore: cast_nullable_to_non_nullable
               as String?,
       landmark: freezed == landmark
-          ? _self.landmark
+          ? _value.landmark
           : landmark // ignore: cast_nullable_to_non_nullable
               as String?,
       lat: null == lat
-          ? _self.lat
+          ? _value.lat
           : lat // ignore: cast_nullable_to_non_nullable
               as double,
       lng: null == lng
-          ? _self.lng
+          ? _value.lng
           : lng // ignore: cast_nullable_to_non_nullable
               as double,
       isDefault: null == isDefault
-          ? _self.isDefault
+          ? _value.isDefault
+          : isDefault // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AddressImplCopyWith<$Res> implements $AddressCopyWith<$Res> {
+  factory _$$AddressImplCopyWith(
+          _$AddressImpl value, $Res Function(_$AddressImpl) then) =
+      __$$AddressImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String? id,
+      String label,
+      String address,
+      String? area,
+      String? landmark,
+      double lat,
+      double lng,
+      bool isDefault});
+}
+
+/// @nodoc
+class __$$AddressImplCopyWithImpl<$Res>
+    extends _$AddressCopyWithImpl<$Res, _$AddressImpl>
+    implements _$$AddressImplCopyWith<$Res> {
+  __$$AddressImplCopyWithImpl(
+      _$AddressImpl _value, $Res Function(_$AddressImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of Address
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? label = null,
+    Object? address = null,
+    Object? area = freezed,
+    Object? landmark = freezed,
+    Object? lat = null,
+    Object? lng = null,
+    Object? isDefault = null,
+  }) {
+    return _then(_$AddressImpl(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      label: null == label
+          ? _value.label
+          : label // ignore: cast_nullable_to_non_nullable
+              as String,
+      address: null == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String,
+      area: freezed == area
+          ? _value.area
+          : area // ignore: cast_nullable_to_non_nullable
+              as String?,
+      landmark: freezed == landmark
+          ? _value.landmark
+          : landmark // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lat: null == lat
+          ? _value.lat
+          : lat // ignore: cast_nullable_to_non_nullable
+              as double,
+      lng: null == lng
+          ? _value.lng
+          : lng // ignore: cast_nullable_to_non_nullable
+              as double,
+      isDefault: null == isDefault
+          ? _value.isDefault
           : isDefault // ignore: cast_nullable_to_non_nullable
               as bool,
     ));
@@ -548,8 +617,8 @@ class _$AddressCopyWithImpl<$Res> implements $AddressCopyWith<$Res> {
 
 /// @nodoc
 @JsonSerializable()
-class _Address implements Address {
-  const _Address(
+class _$AddressImpl implements _Address {
+  const _$AddressImpl(
       {this.id,
       required this.label,
       required this.address,
@@ -558,8 +627,9 @@ class _Address implements Address {
       required this.lat,
       required this.lng,
       this.isDefault = false});
-  factory _Address.fromJson(Map<String, dynamic> json) =>
-      _$AddressFromJson(json);
+
+  factory _$AddressImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AddressImplFromJson(json);
 
   @override
   final String? id;
@@ -579,26 +649,16 @@ class _Address implements Address {
   @JsonKey()
   final bool isDefault;
 
-  /// Create a copy of Address
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  _$AddressCopyWith<_Address> get copyWith =>
-      __$AddressCopyWithImpl<_Address>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$AddressToJson(
-      this,
-    );
+  String toString() {
+    return 'Address(id: $id, label: $label, address: $address, area: $area, landmark: $landmark, lat: $lat, lng: $lng, isDefault: $isDefault)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _Address &&
+            other is _$AddressImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.label, label) || other.label == label) &&
             (identical(other.address, address) || other.address == address) &&
@@ -616,144 +676,88 @@ class _Address implements Address {
   int get hashCode => Object.hash(
       runtimeType, id, label, address, area, landmark, lat, lng, isDefault);
 
+  /// Create a copy of Address
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  String toString() {
-    return 'Address(id: $id, label: $label, address: $address, area: $area, landmark: $landmark, lat: $lat, lng: $lng, isDefault: $isDefault)';
+  @pragma('vm:prefer-inline')
+  _$$AddressImplCopyWith<_$AddressImpl> get copyWith =>
+      __$$AddressImplCopyWithImpl<_$AddressImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AddressImplToJson(
+      this,
+    );
   }
 }
 
-/// @nodoc
-abstract mixin class _$AddressCopyWith<$Res> implements $AddressCopyWith<$Res> {
-  factory _$AddressCopyWith(_Address value, $Res Function(_Address) _then) =
-      __$AddressCopyWithImpl;
+abstract class _Address implements Address {
+  const factory _Address(
+      {final String? id,
+      required final String label,
+      required final String address,
+      final String? area,
+      final String? landmark,
+      required final double lat,
+      required final double lng,
+      final bool isDefault}) = _$AddressImpl;
+
+  factory _Address.fromJson(Map<String, dynamic> json) = _$AddressImpl.fromJson;
+
   @override
-  @useResult
-  $Res call(
-      {String? id,
-      String label,
-      String address,
-      String? area,
-      String? landmark,
-      double lat,
-      double lng,
-      bool isDefault});
-}
-
-/// @nodoc
-class __$AddressCopyWithImpl<$Res> implements _$AddressCopyWith<$Res> {
-  __$AddressCopyWithImpl(this._self, this._then);
-
-  final _Address _self;
-  final $Res Function(_Address) _then;
+  String? get id;
+  @override
+  String get label;
+  @override
+  String get address;
+  @override
+  String? get area;
+  @override
+  String? get landmark;
+  @override
+  double get lat;
+  @override
+  double get lng;
+  @override
+  bool get isDefault;
 
   /// Create a copy of Address
   /// with the given fields replaced by the non-null parameter values.
   @override
-  @pragma('vm:prefer-inline')
-  $Res call({
-    Object? id = freezed,
-    Object? label = null,
-    Object? address = null,
-    Object? area = freezed,
-    Object? landmark = freezed,
-    Object? lat = null,
-    Object? lng = null,
-    Object? isDefault = null,
-  }) {
-    return _then(_Address(
-      id: freezed == id
-          ? _self.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String?,
-      label: null == label
-          ? _self.label
-          : label // ignore: cast_nullable_to_non_nullable
-              as String,
-      address: null == address
-          ? _self.address
-          : address // ignore: cast_nullable_to_non_nullable
-              as String,
-      area: freezed == area
-          ? _self.area
-          : area // ignore: cast_nullable_to_non_nullable
-              as String?,
-      landmark: freezed == landmark
-          ? _self.landmark
-          : landmark // ignore: cast_nullable_to_non_nullable
-              as String?,
-      lat: null == lat
-          ? _self.lat
-          : lat // ignore: cast_nullable_to_non_nullable
-              as double,
-      lng: null == lng
-          ? _self.lng
-          : lng // ignore: cast_nullable_to_non_nullable
-              as double,
-      isDefault: null == isDefault
-          ? _self.isDefault
-          : isDefault // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ));
-  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$AddressImplCopyWith<_$AddressImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+Customer _$CustomerFromJson(Map<String, dynamic> json) {
+  return _Customer.fromJson(json);
 }
 
 /// @nodoc
 mixin _$Customer {
   @JsonKey(name: '_id')
-  String get id;
-  String get userId;
-  List<Address> get addresses;
-  List<String> get favoritesCraftsmen;
-  DateTime? get createdAt;
-  DateTime? get updatedAt;
+  String get id => throw _privateConstructorUsedError;
+  String get userId => throw _privateConstructorUsedError;
+  List<Address> get addresses => throw _privateConstructorUsedError;
+  List<String> get favoritesCraftsmen => throw _privateConstructorUsedError;
+  DateTime? get createdAt => throw _privateConstructorUsedError;
+  DateTime? get updatedAt => throw _privateConstructorUsedError;
+
+  /// Serializes this Customer to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
   /// Create a copy of Customer
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
   $CustomerCopyWith<Customer> get copyWith =>
-      _$CustomerCopyWithImpl<Customer>(this as Customer, _$identity);
-
-  /// Serializes this Customer to a JSON map.
-  Map<String, dynamic> toJson();
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is Customer &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.userId, userId) || other.userId == userId) &&
-            const DeepCollectionEquality().equals(other.addresses, addresses) &&
-            const DeepCollectionEquality()
-                .equals(other.favoritesCraftsmen, favoritesCraftsmen) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt) &&
-            (identical(other.updatedAt, updatedAt) ||
-                other.updatedAt == updatedAt));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      userId,
-      const DeepCollectionEquality().hash(addresses),
-      const DeepCollectionEquality().hash(favoritesCraftsmen),
-      createdAt,
-      updatedAt);
-
-  @override
-  String toString() {
-    return 'Customer(id: $id, userId: $userId, addresses: $addresses, favoritesCraftsmen: $favoritesCraftsmen, createdAt: $createdAt, updatedAt: $updatedAt)';
-  }
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract mixin class $CustomerCopyWith<$Res> {
-  factory $CustomerCopyWith(Customer value, $Res Function(Customer) _then) =
-      _$CustomerCopyWithImpl;
+abstract class $CustomerCopyWith<$Res> {
+  factory $CustomerCopyWith(Customer value, $Res Function(Customer) then) =
+      _$CustomerCopyWithImpl<$Res, Customer>;
   @useResult
   $Res call(
       {@JsonKey(name: '_id') String id,
@@ -765,11 +769,14 @@ abstract mixin class $CustomerCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$CustomerCopyWithImpl<$Res> implements $CustomerCopyWith<$Res> {
-  _$CustomerCopyWithImpl(this._self, this._then);
+class _$CustomerCopyWithImpl<$Res, $Val extends Customer>
+    implements $CustomerCopyWith<$Res> {
+  _$CustomerCopyWithImpl(this._value, this._then);
 
-  final Customer _self;
-  final $Res Function(Customer) _then;
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
 
   /// Create a copy of Customer
   /// with the given fields replaced by the non-null parameter values.
@@ -783,29 +790,95 @@ class _$CustomerCopyWithImpl<$Res> implements $CustomerCopyWith<$Res> {
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
-    return _then(_self.copyWith(
+    return _then(_value.copyWith(
       id: null == id
-          ? _self.id
+          ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
       userId: null == userId
-          ? _self.userId
+          ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
       addresses: null == addresses
-          ? _self.addresses
+          ? _value.addresses
           : addresses // ignore: cast_nullable_to_non_nullable
               as List<Address>,
       favoritesCraftsmen: null == favoritesCraftsmen
-          ? _self.favoritesCraftsmen
+          ? _value.favoritesCraftsmen
           : favoritesCraftsmen // ignore: cast_nullable_to_non_nullable
               as List<String>,
       createdAt: freezed == createdAt
-          ? _self.createdAt
+          ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       updatedAt: freezed == updatedAt
-          ? _self.updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$CustomerImplCopyWith<$Res>
+    implements $CustomerCopyWith<$Res> {
+  factory _$$CustomerImplCopyWith(
+          _$CustomerImpl value, $Res Function(_$CustomerImpl) then) =
+      __$$CustomerImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: '_id') String id,
+      String userId,
+      List<Address> addresses,
+      List<String> favoritesCraftsmen,
+      DateTime? createdAt,
+      DateTime? updatedAt});
+}
+
+/// @nodoc
+class __$$CustomerImplCopyWithImpl<$Res>
+    extends _$CustomerCopyWithImpl<$Res, _$CustomerImpl>
+    implements _$$CustomerImplCopyWith<$Res> {
+  __$$CustomerImplCopyWithImpl(
+      _$CustomerImpl _value, $Res Function(_$CustomerImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of Customer
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? userId = null,
+    Object? addresses = null,
+    Object? favoritesCraftsmen = null,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
+  }) {
+    return _then(_$CustomerImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      userId: null == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
+      addresses: null == addresses
+          ? _value._addresses
+          : addresses // ignore: cast_nullable_to_non_nullable
+              as List<Address>,
+      favoritesCraftsmen: null == favoritesCraftsmen
+          ? _value._favoritesCraftsmen
+          : favoritesCraftsmen // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
     ));
@@ -814,8 +887,8 @@ class _$CustomerCopyWithImpl<$Res> implements $CustomerCopyWith<$Res> {
 
 /// @nodoc
 @JsonSerializable()
-class _Customer implements Customer {
-  const _Customer(
+class _$CustomerImpl implements _Customer {
+  const _$CustomerImpl(
       {@JsonKey(name: '_id') required this.id,
       required this.userId,
       final List<Address> addresses = const [],
@@ -824,8 +897,9 @@ class _Customer implements Customer {
       this.updatedAt})
       : _addresses = addresses,
         _favoritesCraftsmen = favoritesCraftsmen;
-  factory _Customer.fromJson(Map<String, dynamic> json) =>
-      _$CustomerFromJson(json);
+
+  factory _$CustomerImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CustomerImplFromJson(json);
 
   @override
   @JsonKey(name: '_id')
@@ -856,26 +930,16 @@ class _Customer implements Customer {
   @override
   final DateTime? updatedAt;
 
-  /// Create a copy of Customer
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  _$CustomerCopyWith<_Customer> get copyWith =>
-      __$CustomerCopyWithImpl<_Customer>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$CustomerToJson(
-      this,
-    );
+  String toString() {
+    return 'Customer(id: $id, userId: $userId, addresses: $addresses, favoritesCraftsmen: $favoritesCraftsmen, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _Customer &&
+            other is _$CustomerImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.userId, userId) || other.userId == userId) &&
             const DeepCollectionEquality()
@@ -899,74 +963,52 @@ class _Customer implements Customer {
       createdAt,
       updatedAt);
 
+  /// Create a copy of Customer
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  String toString() {
-    return 'Customer(id: $id, userId: $userId, addresses: $addresses, favoritesCraftsmen: $favoritesCraftsmen, createdAt: $createdAt, updatedAt: $updatedAt)';
+  @pragma('vm:prefer-inline')
+  _$$CustomerImplCopyWith<_$CustomerImpl> get copyWith =>
+      __$$CustomerImplCopyWithImpl<_$CustomerImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$CustomerImplToJson(
+      this,
+    );
   }
 }
 
-/// @nodoc
-abstract mixin class _$CustomerCopyWith<$Res>
-    implements $CustomerCopyWith<$Res> {
-  factory _$CustomerCopyWith(_Customer value, $Res Function(_Customer) _then) =
-      __$CustomerCopyWithImpl;
+abstract class _Customer implements Customer {
+  const factory _Customer(
+      {@JsonKey(name: '_id') required final String id,
+      required final String userId,
+      final List<Address> addresses,
+      final List<String> favoritesCraftsmen,
+      final DateTime? createdAt,
+      final DateTime? updatedAt}) = _$CustomerImpl;
+
+  factory _Customer.fromJson(Map<String, dynamic> json) =
+      _$CustomerImpl.fromJson;
+
   @override
-  @useResult
-  $Res call(
-      {@JsonKey(name: '_id') String id,
-      String userId,
-      List<Address> addresses,
-      List<String> favoritesCraftsmen,
-      DateTime? createdAt,
-      DateTime? updatedAt});
-}
-
-/// @nodoc
-class __$CustomerCopyWithImpl<$Res> implements _$CustomerCopyWith<$Res> {
-  __$CustomerCopyWithImpl(this._self, this._then);
-
-  final _Customer _self;
-  final $Res Function(_Customer) _then;
+  @JsonKey(name: '_id')
+  String get id;
+  @override
+  String get userId;
+  @override
+  List<Address> get addresses;
+  @override
+  List<String> get favoritesCraftsmen;
+  @override
+  DateTime? get createdAt;
+  @override
+  DateTime? get updatedAt;
 
   /// Create a copy of Customer
   /// with the given fields replaced by the non-null parameter values.
   @override
-  @pragma('vm:prefer-inline')
-  $Res call({
-    Object? id = null,
-    Object? userId = null,
-    Object? addresses = null,
-    Object? favoritesCraftsmen = null,
-    Object? createdAt = freezed,
-    Object? updatedAt = freezed,
-  }) {
-    return _then(_Customer(
-      id: null == id
-          ? _self.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      userId: null == userId
-          ? _self.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      addresses: null == addresses
-          ? _self._addresses
-          : addresses // ignore: cast_nullable_to_non_nullable
-              as List<Address>,
-      favoritesCraftsmen: null == favoritesCraftsmen
-          ? _self._favoritesCraftsmen
-          : favoritesCraftsmen // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      createdAt: freezed == createdAt
-          ? _self.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      updatedAt: freezed == updatedAt
-          ? _self.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
-  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$CustomerImplCopyWith<_$CustomerImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
-
-// dart format on

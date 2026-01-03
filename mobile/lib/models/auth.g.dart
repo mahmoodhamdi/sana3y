@@ -6,39 +6,41 @@ part of 'auth.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_AuthTokens _$AuthTokensFromJson(Map<String, dynamic> json) => _AuthTokens(
+_$AuthTokensImpl _$$AuthTokensImplFromJson(Map<String, dynamic> json) =>
+    _$AuthTokensImpl(
       token: json['token'] as String,
       refreshToken: json['refreshToken'] as String,
       expiresIn: json['expiresIn'] as String,
     );
 
-Map<String, dynamic> _$AuthTokensToJson(_AuthTokens instance) =>
+Map<String, dynamic> _$$AuthTokensImplToJson(_$AuthTokensImpl instance) =>
     <String, dynamic>{
       'token': instance.token,
       'refreshToken': instance.refreshToken,
       'expiresIn': instance.expiresIn,
     };
 
-_AuthResult _$AuthResultFromJson(Map<String, dynamic> json) => _AuthResult(
+_$AuthResultImpl _$$AuthResultImplFromJson(Map<String, dynamic> json) =>
+    _$AuthResultImpl(
       user: User.fromJson(json['user'] as Map<String, dynamic>),
       tokens: AuthTokens.fromJson(json['tokens'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$AuthResultToJson(_AuthResult instance) =>
+Map<String, dynamic> _$$AuthResultImplToJson(_$AuthResultImpl instance) =>
     <String, dynamic>{
       'user': instance.user,
       'tokens': instance.tokens,
     };
 
-_OtpSendResult _$OtpSendResultFromJson(Map<String, dynamic> json) =>
-    _OtpSendResult(
+_$OtpSendResultImpl _$$OtpSendResultImplFromJson(Map<String, dynamic> json) =>
+    _$OtpSendResultImpl(
       success: json['success'] as bool,
       message: json['message'] as String,
       expiresAt: DateTime.parse(json['expiresAt'] as String),
       code: json['code'] as String?,
     );
 
-Map<String, dynamic> _$OtpSendResultToJson(_OtpSendResult instance) =>
+Map<String, dynamic> _$$OtpSendResultImplToJson(_$OtpSendResultImpl instance) =>
     <String, dynamic>{
       'success': instance.success,
       'message': instance.message,
@@ -46,34 +48,38 @@ Map<String, dynamic> _$OtpSendResultToJson(_OtpSendResult instance) =>
       'code': instance.code,
     };
 
-_SendOtpRequest _$SendOtpRequestFromJson(Map<String, dynamic> json) =>
-    _SendOtpRequest(
+_$SendOtpRequestImpl _$$SendOtpRequestImplFromJson(Map<String, dynamic> json) =>
+    _$SendOtpRequestImpl(
       phone: json['phone'] as String,
       type: json['type'] as String? ?? 'verification',
     );
 
-Map<String, dynamic> _$SendOtpRequestToJson(_SendOtpRequest instance) =>
+Map<String, dynamic> _$$SendOtpRequestImplToJson(
+        _$SendOtpRequestImpl instance) =>
     <String, dynamic>{
       'phone': instance.phone,
       'type': instance.type,
     };
 
-_VerifyOtpRequest _$VerifyOtpRequestFromJson(Map<String, dynamic> json) =>
-    _VerifyOtpRequest(
+_$VerifyOtpRequestImpl _$$VerifyOtpRequestImplFromJson(
+        Map<String, dynamic> json) =>
+    _$VerifyOtpRequestImpl(
       phone: json['phone'] as String,
       code: json['code'] as String,
       type: json['type'] as String? ?? 'verification',
     );
 
-Map<String, dynamic> _$VerifyOtpRequestToJson(_VerifyOtpRequest instance) =>
+Map<String, dynamic> _$$VerifyOtpRequestImplToJson(
+        _$VerifyOtpRequestImpl instance) =>
     <String, dynamic>{
       'phone': instance.phone,
       'code': instance.code,
       'type': instance.type,
     };
 
-_RegisterRequest _$RegisterRequestFromJson(Map<String, dynamic> json) =>
-    _RegisterRequest(
+_$RegisterRequestImpl _$$RegisterRequestImplFromJson(
+        Map<String, dynamic> json) =>
+    _$RegisterRequestImpl(
       phone: json['phone'] as String,
       name: json['name'] as String,
       role: json['role'] as String,
@@ -81,7 +87,8 @@ _RegisterRequest _$RegisterRequestFromJson(Map<String, dynamic> json) =>
       password: json['password'] as String?,
     );
 
-Map<String, dynamic> _$RegisterRequestToJson(_RegisterRequest instance) =>
+Map<String, dynamic> _$$RegisterRequestImplToJson(
+        _$RegisterRequestImpl instance) =>
     <String, dynamic>{
       'phone': instance.phone,
       'name': instance.name,
@@ -90,79 +97,82 @@ Map<String, dynamic> _$RegisterRequestToJson(_RegisterRequest instance) =>
       'password': instance.password,
     };
 
-_LoginOtpRequest _$LoginOtpRequestFromJson(Map<String, dynamic> json) =>
-    _LoginOtpRequest(
+_$LoginOtpRequestImpl _$$LoginOtpRequestImplFromJson(
+        Map<String, dynamic> json) =>
+    _$LoginOtpRequestImpl(
       phone: json['phone'] as String,
       otp: json['otp'] as String,
     );
 
-Map<String, dynamic> _$LoginOtpRequestToJson(_LoginOtpRequest instance) =>
+Map<String, dynamic> _$$LoginOtpRequestImplToJson(
+        _$LoginOtpRequestImpl instance) =>
     <String, dynamic>{
       'phone': instance.phone,
       'otp': instance.otp,
     };
 
-_LoginPasswordRequest _$LoginPasswordRequestFromJson(
+_$LoginPasswordRequestImpl _$$LoginPasswordRequestImplFromJson(
         Map<String, dynamic> json) =>
-    _LoginPasswordRequest(
+    _$LoginPasswordRequestImpl(
       phone: json['phone'] as String,
       password: json['password'] as String,
     );
 
-Map<String, dynamic> _$LoginPasswordRequestToJson(
-        _LoginPasswordRequest instance) =>
+Map<String, dynamic> _$$LoginPasswordRequestImplToJson(
+        _$LoginPasswordRequestImpl instance) =>
     <String, dynamic>{
       'phone': instance.phone,
       'password': instance.password,
     };
 
-_ChangePasswordRequest _$ChangePasswordRequestFromJson(
+_$ChangePasswordRequestImpl _$$ChangePasswordRequestImplFromJson(
         Map<String, dynamic> json) =>
-    _ChangePasswordRequest(
+    _$ChangePasswordRequestImpl(
       currentPassword: json['currentPassword'] as String,
       newPassword: json['newPassword'] as String,
     );
 
-Map<String, dynamic> _$ChangePasswordRequestToJson(
-        _ChangePasswordRequest instance) =>
+Map<String, dynamic> _$$ChangePasswordRequestImplToJson(
+        _$ChangePasswordRequestImpl instance) =>
     <String, dynamic>{
       'currentPassword': instance.currentPassword,
       'newPassword': instance.newPassword,
     };
 
-_ResetPasswordRequest _$ResetPasswordRequestFromJson(
+_$ResetPasswordRequestImpl _$$ResetPasswordRequestImplFromJson(
         Map<String, dynamic> json) =>
-    _ResetPasswordRequest(
+    _$ResetPasswordRequestImpl(
       phone: json['phone'] as String,
       otp: json['otp'] as String,
       newPassword: json['newPassword'] as String,
     );
 
-Map<String, dynamic> _$ResetPasswordRequestToJson(
-        _ResetPasswordRequest instance) =>
+Map<String, dynamic> _$$ResetPasswordRequestImplToJson(
+        _$ResetPasswordRequestImpl instance) =>
     <String, dynamic>{
       'phone': instance.phone,
       'otp': instance.otp,
       'newPassword': instance.newPassword,
     };
 
-_UpdateProfileRequest _$UpdateProfileRequestFromJson(
+_$UpdateProfileRequestImpl _$$UpdateProfileRequestImplFromJson(
         Map<String, dynamic> json) =>
-    _UpdateProfileRequest(
+    _$UpdateProfileRequestImpl(
       name: json['name'] as String?,
       email: json['email'] as String?,
       avatar: json['avatar'] as String?,
     );
 
-Map<String, dynamic> _$UpdateProfileRequestToJson(
-        _UpdateProfileRequest instance) =>
+Map<String, dynamic> _$$UpdateProfileRequestImplToJson(
+        _$UpdateProfileRequestImpl instance) =>
     <String, dynamic>{
       'name': instance.name,
       'email': instance.email,
       'avatar': instance.avatar,
     };
 
-_AuthState _$AuthStateFromJson(Map<String, dynamic> json) => _AuthState(
+_$AuthStateImpl _$$AuthStateImplFromJson(Map<String, dynamic> json) =>
+    _$AuthStateImpl(
       status: $enumDecodeNullable(_$AuthStatusEnumMap, json['status']) ??
           AuthStatus.initial,
       user: json['user'] == null
@@ -175,7 +185,7 @@ _AuthState _$AuthStateFromJson(Map<String, dynamic> json) => _AuthState(
       isLoading: json['isLoading'] as bool? ?? false,
     );
 
-Map<String, dynamic> _$AuthStateToJson(_AuthState instance) =>
+Map<String, dynamic> _$$AuthStateImplToJson(_$AuthStateImpl instance) =>
     <String, dynamic>{
       'status': _$AuthStatusEnumMap[instance.status]!,
       'user': instance.user,
