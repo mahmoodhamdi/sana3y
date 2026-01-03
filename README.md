@@ -107,6 +107,72 @@ npm run dev
 - Featured listings for craftsmen
 - Subscription plans (future)
 
+## API Endpoints
+
+### Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/auth/send-otp` | Send OTP to phone |
+| POST | `/api/v1/auth/verify-otp` | Verify OTP code |
+| POST | `/api/v1/auth/register` | Register new user |
+| POST | `/api/v1/auth/login` | Login user |
+| GET | `/api/v1/auth/me` | Get current user |
+
+### Categories
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/categories` | List all categories |
+| GET | `/api/v1/categories/:id` | Get category details |
+
+### Craftsmen
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/craftsmen` | List craftsmen |
+| GET | `/api/v1/craftsmen/nearby` | Find nearby craftsmen |
+| GET | `/api/v1/craftsmen/:id` | Get craftsman profile |
+
+### Requests
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/requests` | Create service request |
+| GET | `/api/v1/requests` | List user requests |
+| PUT | `/api/v1/requests/:id/status` | Update request status |
+
+## Docker Deployment
+
+### Quick Start
+```bash
+# Start all services
+docker-compose -f docker-compose.prod.yml up -d
+
+# View logs
+docker-compose -f docker-compose.prod.yml logs -f
+```
+
+### Environment Variables
+Create a `.env` file with the required variables:
+```env
+MONGODB_URI=mongodb://localhost:27017/sana3y
+JWT_SECRET=your-secret-key
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+```
+
+## Testing
+
+### Backend Tests
+```bash
+cd backend
+npm test
+```
+
+### Flutter Tests
+```bash
+cd mobile
+flutter test
+```
+
 ## Progress
 
 See [PROJECT_PROGRESS.md](PROJECT_PROGRESS.md) for current development status.

@@ -1,0 +1,105 @@
+version: '3.8'
+
+services:
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sana3y-backend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - MONGODB_URI=${MONGODB_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      - OTP_SECRET=${OTP_SECRET}
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
+      - REDIS_URL=${REDIS_URL}
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - sana3y-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # MongoDB
+  mongodb:
+    image: mongo:7
+    container_name: sana3y-mongodb
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - sana3y-network
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: sana3y-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - sana3y-network
+
+  # Admin Dashboard (Next.js)
+  admin:
+    build:
+      context: ./admin-dashboard
+      dockerfile: Dockerfile
+    container_name: sana3y-admin
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=${API_URL}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - sana3y-network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: sana3y-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - backend
+      - admin
+    networks:
+      - sana3y-network
+
+networks:
+  sana3y-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  redis_data:
