@@ -4,9 +4,14 @@ import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
 import '../models/auth.dart';
 import '../models/user.dart';
+// Auth screens
 import '../screens/auth/phone_screen.dart';
 import '../screens/auth/otp_screen.dart';
 import '../screens/auth/register_screen.dart';
+import '../screens/auth/welcome_screen.dart';
+import '../screens/auth/craftsman_register_screen.dart';
+import '../screens/auth/documents_upload_screen.dart';
+// Customer screens
 import '../screens/customer/home_screen.dart';
 import '../screens/customer/category_craftsmen_screen.dart';
 import '../screens/customer/craftsman_profile_screen.dart';
@@ -14,17 +19,43 @@ import '../screens/customer/search_screen.dart';
 import '../screens/customer/request/create_request_screen.dart';
 import '../screens/customer/request/request_tracking_screen.dart';
 import '../screens/customer/request/requests_history_screen.dart';
+import '../screens/customer/nearby_craftsmen_screen.dart';
+import '../screens/customer/quotes_list_screen.dart';
+import '../screens/customer/request_details_screen.dart';
+import '../screens/customer/rate_service_screen.dart';
+import '../screens/customer/profile_screen.dart';
+// Craftsman screens
 import '../screens/craftsman/craftsman_home_screen.dart';
 import '../screens/craftsman/manage_profile_screen.dart';
 import '../screens/craftsman/available_requests_screen.dart';
 import '../screens/craftsman/active_jobs_screen.dart';
 import '../screens/craftsman/earnings_screen.dart';
+import '../screens/craftsman/send_quote_screen.dart';
+import '../screens/craftsman/job_details_screen.dart';
+import '../screens/craftsman/complete_job_screen.dart';
+import '../screens/craftsman/jobs_history_screen.dart';
+import '../screens/craftsman/manage_services_screen.dart';
+import '../screens/craftsman/work_photos_screen.dart';
+import '../screens/craftsman/availability_screen.dart';
+import '../screens/craftsman/earnings_history_screen.dart';
+import '../screens/craftsman/withdrawal_screen.dart';
+// Shared screens
 import '../screens/shared/conversations_list_screen.dart';
 import '../screens/shared/chat_screen.dart';
 import '../screens/shared/craftsman_reviews_screen.dart';
 import '../screens/shared/notifications_screen.dart';
-import '../screens/customer/rate_service_screen.dart';
-import '../screens/customer/profile_screen.dart';
+import '../screens/shared/settings_screen.dart';
+import '../screens/shared/addresses_screen.dart';
+import '../screens/shared/add_address_screen.dart';
+import '../screens/shared/edit_profile_screen.dart';
+import '../screens/shared/switch_role_screen.dart';
+import '../screens/shared/my_reviews_screen.dart';
+// New customer screens
+import '../screens/customer/request_submitted_screen.dart';
+import '../screens/customer/quote_details_screen.dart';
+import '../screens/customer/favorites_screen.dart';
+// New craftsman screen
+import '../screens/craftsman/request_details_screen.dart';
 
 class AppRoutes {
   // Auth Routes
@@ -270,31 +301,166 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.craftsmanWorkPhotos,
-        builder: (context, state) => const _PlaceholderScreen(
-          title: 'صور الأعمال',
-          icon: Icons.photo_library,
-        ),
+        builder: (context, state) => const WorkPhotosScreen(),
       ),
       GoRoute(
         path: AppRoutes.craftsmanServices,
-        builder: (context, state) => const _PlaceholderScreen(
-          title: 'الخدمات',
-          icon: Icons.build,
-        ),
+        builder: (context, state) => const ManageServicesScreen(),
       ),
       GoRoute(
         path: AppRoutes.craftsmanAvailability,
-        builder: (context, state) => const _PlaceholderScreen(
-          title: 'أوقات العمل',
-          icon: Icons.access_time,
-        ),
+        builder: (context, state) => const AvailabilityScreen(),
       ),
       GoRoute(
         path: AppRoutes.craftsmanWithdrawal,
-        builder: (context, state) => const _PlaceholderScreen(
-          title: 'طلب سحب',
-          icon: Icons.payments,
-        ),
+        builder: (context, state) => const WithdrawalScreen(),
+      ),
+      // Send Quote
+      GoRoute(
+        path: '/craftsman/request/:id/quote',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return SendQuoteScreen(requestId: id);
+        },
+      ),
+      // Job Details
+      GoRoute(
+        path: '/craftsman/job/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return JobDetailsScreen(jobId: id);
+        },
+      ),
+      // Complete Job
+      GoRoute(
+        path: '/craftsman/job/:id/complete',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return CompleteJobScreen(jobId: id);
+        },
+      ),
+      // Jobs History
+      GoRoute(
+        path: '/craftsman/jobs/history',
+        builder: (context, state) => const JobsHistoryScreen(),
+      ),
+      // Earnings History
+      GoRoute(
+        path: '/craftsman/earnings/history',
+        builder: (context, state) => const EarningsHistoryScreen(),
+      ),
+      // Customer - Nearby Craftsmen
+      GoRoute(
+        path: '/nearby',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return NearbyCraftsmenScreen(categoryId: extra?['categoryId']);
+        },
+      ),
+      // Customer - Quotes List
+      GoRoute(
+        path: '/request/:id/quotes',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return QuotesListScreen(requestId: id);
+        },
+      ),
+      // Customer - Request Details
+      GoRoute(
+        path: '/request/:id/details',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return RequestDetailsScreen(requestId: id);
+        },
+      ),
+      // Shared - Settings
+      GoRoute(
+        path: '/settings',
+        builder: (context, state) => const SettingsScreen(),
+      ),
+      // Shared - Addresses
+      GoRoute(
+        path: AppRoutes.addresses,
+        builder: (context, state) => const AddressesScreen(),
+      ),
+      // Shared - Add Address
+      GoRoute(
+        path: AppRoutes.addAddress,
+        builder: (context, state) {
+          final editId = state.uri.queryParameters['edit'];
+          return AddAddressScreen(editId: editId);
+        },
+      ),
+      // Shared - Edit Profile
+      GoRoute(
+        path: AppRoutes.editProfile,
+        builder: (context, state) => const EditProfileScreen(),
+      ),
+      // Auth - Welcome
+      GoRoute(
+        path: '/welcome',
+        builder: (context, state) => const WelcomeScreen(),
+      ),
+      // Auth - Craftsman Register
+      GoRoute(
+        path: '/craftsman/register',
+        builder: (context, state) => const CraftsmanRegisterScreen(),
+      ),
+      // Auth - Documents Upload
+      GoRoute(
+        path: '/craftsman/register/documents',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return DocumentsUploadScreen(registrationData: extra);
+        },
+      ),
+      // Customer - Request Submitted Success
+      GoRoute(
+        path: '/request/:id/submitted',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          final extra = state.extra as Map<String, dynamic>?;
+          return RequestSubmittedScreen(
+            requestId: id,
+            requestNumber: extra?['requestNumber'],
+          );
+        },
+      ),
+      // Customer - Quote Details
+      GoRoute(
+        path: '/quote/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          final extra = state.extra as Map<String, dynamic>?;
+          return QuoteDetailsScreen(
+            quoteId: id,
+            requestId: extra?['requestId'] ?? '',
+            quote: extra?['quote'],
+          );
+        },
+      ),
+      // Customer - Favorites
+      GoRoute(
+        path: AppRoutes.favorites,
+        builder: (context, state) => const FavoritesScreen(),
+      ),
+      // Shared - Switch Role
+      GoRoute(
+        path: '/switch-role',
+        builder: (context, state) => const SwitchRoleScreen(),
+      ),
+      // Shared - My Reviews
+      GoRoute(
+        path: '/my-reviews',
+        builder: (context, state) => const MyReviewsScreen(),
+      ),
+      // Craftsman - Request Details (for available requests)
+      GoRoute(
+        path: '/craftsman/request/:id/details',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return CraftsmanRequestDetailsScreen(requestId: id);
+        },
       ),
     ],
     errorBuilder: (context, state) => Scaffold(
