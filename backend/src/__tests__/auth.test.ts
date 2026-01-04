@@ -2,9 +2,20 @@ import jwt from 'jsonwebtoken';
 import { generateOtpCode, hashOtp, verifyOtpHash, isOtpExpired, generateOtp } from '../utils/otp';
 
 // Mock environment variables
-process.env.JWT_SECRET = 'test-secret-key';
-process.env.JWT_REFRESH_SECRET = 'test-refresh-secret';
-process.env.OTP_SECRET = 'test-otp-secret';
+const TEST_JWT_SECRET = 'test-secret-key';
+const TEST_REFRESH_SECRET = 'test-refresh-secret';
+const TEST_OTP_SECRET = 'test-otp-secret';
+
+process.env.JWT_SECRET = TEST_JWT_SECRET;
+process.env.JWT_REFRESH_SECRET = TEST_REFRESH_SECRET;
+process.env.OTP_SECRET = TEST_OTP_SECRET;
+
+interface DecodedToken {
+  userId: string;
+  role: string;
+  iat: number;
+  exp: number;
+}
 
 describe('OTP Utils', () => {
   const testPhone = '+201012345678';
@@ -78,7 +89,7 @@ describe('JWT Token Generation', () => {
   };
 
   test('should generate valid access token', () => {
-    const token = jwt.sign(mockPayload, process.env.JWT_SECRET!, {
+    const token = jwt.sign(mockPayload, TEST_JWT_SECRET, {
       expiresIn: '1h',
     });
     expect(token).toBeDefined();
@@ -86,22 +97,22 @@ describe('JWT Token Generation', () => {
   });
 
   test('should decode token correctly', () => {
-    const token = jwt.sign(mockPayload, process.env.JWT_SECRET!, {
+    const token = jwt.sign(mockPayload, TEST_JWT_SECRET, {
       expiresIn: '1h',
     });
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
+    const decoded = jwt.verify(token, TEST_JWT_SECRET) as DecodedToken;
     expect(decoded.userId).toBe(mockPayload.userId);
     expect(decoded.role).toBe(mockPayload.role);
   });
 
   test('should reject invalid token', () => {
     expect(() => {
-      jwt.verify('invalid-token', process.env.JWT_SECRET!);
+      jwt.verify('invalid-token', TEST_JWT_SECRET);
     }).toThrow();
   });
 
   test('should reject token with wrong secret', () => {
-    const token = jwt.sign(mockPayload, process.env.JWT_SECRET!, {
+    const token = jwt.sign(mockPayload, TEST_JWT_SECRET, {
       expiresIn: '1h',
     });
     expect(() => {

@@ -1,5 +1,6 @@
 import admin from 'firebase-admin';
 import User from '../models/User';
+import { logger } from '../utils/logger';
 
 // Initialize Firebase Admin if not already initialized
 const initializeFirebase = () => {
@@ -12,12 +13,12 @@ const initializeFirebase = () => {
         admin.initializeApp({
           credential: admin.credential.cert(parsedAccount),
         });
-        console.log('Firebase Admin initialized successfully');
+        logger.info('Firebase Admin initialized successfully');
       } catch (error) {
-        console.error('Failed to initialize Firebase Admin:', error);
+        logger.error('Failed to initialize Firebase Admin:', error);
       }
     } else {
-      console.warn('FIREBASE_SERVICE_ACCOUNT not set, FCM will be disabled');
+      logger.warn('FIREBASE_SERVICE_ACCOUNT not set, FCM will be disabled');
     }
   }
 };
@@ -61,7 +62,7 @@ class FCMService {
 
       return this.sendToTokens(user.fcmTokens, payload, userId);
     } catch (error) {
-      console.error('Error sending notification to user:', error);
+      logger.error('Error sending notification to user:', error);
       return { success: false, successCount: 0, failureCount: 0, invalidTokens: [] };
     }
   }
@@ -91,7 +92,7 @@ class FCMService {
 
       return this.sendToTokens(allTokens, payload);
     } catch (error) {
-      console.error('Error sending notification to users:', error);
+      logger.error('Error sending notification to users:', error);
       return { success: false, successCount: 0, failureCount: 0, invalidTokens: [] };
     }
   }
@@ -159,7 +160,7 @@ class FCMService {
         invalidTokens,
       };
     } catch (error) {
-      console.error('Error sending FCM message:', error);
+      logger.error('Error sending FCM message:', error);
       return { success: false, successCount: 0, failureCount: tokens.length, invalidTokens: [] };
     }
   }
@@ -217,7 +218,7 @@ class FCMService {
         invalidTokens: allInvalidTokens,
       };
     } catch (error) {
-      console.error('Error sending notification to role:', error);
+      logger.error('Error sending notification to role:', error);
       return { success: false, successCount: 0, failureCount: 0, invalidTokens: [] };
     }
   }
@@ -230,7 +231,7 @@ class FCMService {
       });
       return true;
     } catch (error) {
-      console.error('Error registering FCM token:', error);
+      logger.error('Error registering FCM token:', error);
       return false;
     }
   }
@@ -243,7 +244,7 @@ class FCMService {
       });
       return true;
     } catch (error) {
-      console.error('Error removing FCM token:', error);
+      logger.error('Error removing FCM token:', error);
       return false;
     }
   }
@@ -255,7 +256,7 @@ class FCMService {
         $pull: { fcmTokens: { $in: tokens } },
       });
     } catch (error) {
-      console.error('Error removing invalid tokens:', error);
+      logger.error('Error removing invalid tokens:', error);
     }
   }
 }

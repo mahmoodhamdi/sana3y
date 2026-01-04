@@ -1,0 +1,481 @@
+# Craftsmen API Documentation
+paths:
+  /craftsmen:
+    get:
+      tags:
+        - Craftsmen
+      summary: Get all craftsmen (Admin)
+      description: Returns all craftsmen with filtering options
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, approved, suspended, rejected]
+        - name: categoryId
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Craftsmen list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Craftsman'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  /craftsmen/public:
+    get:
+      tags:
+        - Craftsmen
+      summary: Get approved craftsmen
+      description: Returns all approved and active craftsmen for public listing
+      parameters:
+        - name: categoryId
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+            enum: [rating, completedJobs, distance]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Approved craftsmen list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Craftsman'
+
+  /craftsmen/featured:
+    get:
+      tags:
+        - Craftsmen
+      summary: Get featured craftsmen
+      description: Returns top-rated featured craftsmen
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 6
+      responses:
+        '200':
+          description: Featured craftsmen
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Craftsman'
+
+  /craftsmen/nearby:
+    get:
+      tags:
+        - Craftsmen
+      summary: Get nearby craftsmen
+      description: Find craftsmen near a location
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          schema:
+            type: number
+          description: Latitude
+        - name: lng
+          in: query
+          required: true
+          schema:
+            type: number
+          description: Longitude
+        - name: radius
+          in: query
+          schema:
+            type: number
+            default: 10
+          description: Search radius in kilometers
+        - name: categoryId
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Nearby craftsmen
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: '#/components/schemas/Craftsman'
+                        - type: object
+                          properties:
+                            distance:
+                              type: number
+                              description: Distance in kilometers
+
+  /craftsmen/category/{categoryId}:
+    get:
+      tags:
+        - Craftsmen
+      summary: Get craftsmen by category
+      description: Returns craftsmen offering services in a specific category
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Category craftsmen
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Craftsman'
+
+  /craftsmen/pending:
+    get:
+      tags:
+        - Craftsmen
+      summary: Get pending craftsmen (Admin)
+      description: Returns craftsmen awaiting approval
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Pending craftsmen
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Craftsman'
+
+  /craftsmen/me:
+    get:
+      tags:
+        - Craftsmen
+      summary: Get my craftsman profile
+      description: Returns the authenticated craftsman's profile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Craftsman profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Craftsman'
+        '404':
+          description: Profile not found
+
+  /craftsmen/profile:
+    post:
+      tags:
+        - Craftsmen
+      summary: Create craftsman profile
+      description: Create a new craftsman profile for the authenticated user
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCraftsmanRequest'
+      responses:
+        '201':
+          description: Profile created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Craftsman'
+        '409':
+          description: Profile already exists
+    put:
+      tags:
+        - Craftsmen
+      summary: Update craftsman profile
+      description: Update the authenticated craftsman's profile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bio:
+                  type: string
+                services:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CraftsmanService'
+                workingHours:
+                  $ref: '#/components/schemas/WorkingHours'
+                location:
+                  $ref: '#/components/schemas/GeoLocation'
+                serviceRadius:
+                  type: number
+                coverImage:
+                  type: string
+      responses:
+        '200':
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Craftsman'
+
+  /craftsmen/online:
+    put:
+      tags:
+        - Craftsmen
+      summary: Toggle online status
+      description: Toggle the craftsman's online/offline status
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isOnline:
+                  type: boolean
+      responses:
+        '200':
+          description: Status updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      isOnline:
+                        type: boolean
+
+  /craftsmen/availability:
+    put:
+      tags:
+        - Craftsmen
+      summary: Toggle availability
+      description: Toggle the craftsman's availability for new jobs
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isAvailable:
+                  type: boolean
+      responses:
+        '200':
+          description: Availability updated
+
+  /craftsmen/photos:
+    post:
+      tags:
+        - Craftsmen
+      summary: Add work photos
+      description: Add photos to work portfolio
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - photos
+              properties:
+                photos:
+                  type: array
+                  items:
+                    type: string
+                  maxItems: 10
+      responses:
+        '200':
+          description: Photos added
+    delete:
+      tags:
+        - Craftsmen
+      summary: Remove work photo
+      description: Remove a photo from work portfolio
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - photoUrl
+              properties:
+                photoUrl:
+                  type: string
+      responses:
+        '200':
+          description: Photo removed
+
+  /craftsmen/{id}:
+    get:
+      tags:
+        - Craftsmen
+      summary: Get craftsman by ID
+      description: Returns a craftsman's public profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Craftsman profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Craftsman'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /craftsmen/{id}/status:
+    put:
+      tags:
+        - Craftsmen
+      summary: Update craftsman status (Admin)
+      description: Approve, reject, or suspend a craftsman
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum: [approved, rejected, suspended]
+                reason:
+                  type: string
+                  description: Required for rejection/suspension
+      responses:
+        '200':
+          description: Status updated
+        '400':
+          description: Invalid status or missing reason

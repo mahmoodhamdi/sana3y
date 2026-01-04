@@ -2,6 +2,15 @@ import { Request, Response, NextFunction } from 'express';
 import { chatService } from '@services/chat.service';
 import { sendSuccess, sendCreated, sendError, sendPaginated } from '@utils/response';
 import { StatusCodes } from 'http-status-codes';
+import { UnauthorizedError } from '@utils/errors';
+
+// Helper to get userId with proper null check
+const getUserId = (req: Request): string => {
+  if (!req.user?.userId) {
+    throw new UnauthorizedError('غير مصرح');
+  }
+  return req.user.userId;
+};
 
 /**
  * Get user's conversations
@@ -13,7 +22,7 @@ export const getConversations = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user!.userId;
+    const userId = getUserId(req);
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
 
@@ -46,7 +55,7 @@ export const getConversation = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user!.userId;
+    const userId = getUserId(req);
     const conversationId = req.params.id;
 
     const conversation = await chatService.getConversationById(
@@ -74,7 +83,7 @@ export const createConversation = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user!.userId;
+    const userId = getUserId(req);
     const { requestId, otherUserId } = req.body;
 
     const conversation = await chatService.getOrCreateConversation({
@@ -104,7 +113,7 @@ export const getMessages = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user!.userId;
+    const userId = getUserId(req);
     const conversationId = req.params.id;
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 50;
@@ -143,7 +152,7 @@ export const sendMessage = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user!.userId;
+    const userId = getUserId(req);
     const conversationId = req.params.id;
     const { type = 'text', content, metadata } = req.body;
 
@@ -171,7 +180,7 @@ export const markAsRead = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user!.userId;
+    const userId = getUserId(req);
     const conversationId = req.params.id;
 
     await chatService.markAsRead(conversationId, userId);
@@ -192,7 +201,7 @@ export const getUnreadCount = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user!.userId;
+    const userId = getUserId(req);
     const count = await chatService.getTotalUnreadCount(userId);
 
     return sendSuccess(res, { count }, 'تم جلب عدد الرسائل غير المقروءة');
@@ -211,7 +220,7 @@ export const archiveConversation = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user!.userId;
+    const userId = getUserId(req);
     const conversationId = req.params.id;
 
     await chatService.archiveConversation(conversationId, userId);

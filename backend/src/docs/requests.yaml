@@ -1,0 +1,580 @@
+# Service Requests API Documentation
+paths:
+  /requests:
+    get:
+      tags:
+        - Requests
+      summary: Get all requests (Admin)
+      description: Returns all service requests with filtering
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, quoted, accepted, in_progress, completed, cancelled, expired]
+        - name: categoryId
+          in: query
+          schema:
+            type: string
+        - name: customerId
+          in: query
+          schema:
+            type: string
+        - name: craftsmanId
+          in: query
+          schema:
+            type: string
+        - name: isUrgent
+          in: query
+          schema:
+            type: boolean
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Requests list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ServiceRequest'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      tags:
+        - Requests
+      summary: Create service request
+      description: Create a new service request (Customer only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRequestRequest'
+      responses:
+        '201':
+          description: Request created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/ServiceRequest'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+
+  /requests/statuses:
+    get:
+      tags:
+        - Requests
+      summary: Get request statuses
+      description: Returns all possible request status values
+      responses:
+        '200':
+          description: Status list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        value:
+                          type: string
+                        labelAr:
+                          type: string
+                        labelEn:
+                          type: string
+
+  /requests/my:
+    get:
+      tags:
+        - Requests
+      summary: Get my requests
+      description: Returns authenticated user's requests (customer or craftsman)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: User's requests
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ServiceRequest'
+
+  /requests/available:
+    get:
+      tags:
+        - Requests
+      summary: Get available requests
+      description: Returns requests available for the craftsman to quote (Craftsman only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: categoryId
+          in: query
+          schema:
+            type: string
+        - name: lat
+          in: query
+          schema:
+            type: number
+        - name: lng
+          in: query
+          schema:
+            type: number
+        - name: radius
+          in: query
+          schema:
+            type: number
+            default: 10
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Available requests
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ServiceRequest'
+
+  /requests/my-jobs/active:
+    get:
+      tags:
+        - Requests
+      summary: Get craftsman's active jobs
+      description: Returns craftsman's currently active jobs (Craftsman only)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Active jobs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ServiceRequest'
+
+  /requests/my-jobs/completed:
+    get:
+      tags:
+        - Requests
+      summary: Get craftsman's completed jobs
+      description: Returns craftsman's completed jobs history (Craftsman only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Completed jobs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ServiceRequest'
+
+  /requests/stats:
+    get:
+      tags:
+        - Requests
+      summary: Get request statistics (Admin)
+      description: Returns request statistics for dashboard
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [day, week, month, year]
+            default: month
+      responses:
+        '200':
+          description: Request statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                      pending:
+                        type: integer
+                      inProgress:
+                        type: integer
+                      completed:
+                        type: integer
+                      cancelled:
+                        type: integer
+                      totalRevenue:
+                        type: number
+                      avgCompletionTime:
+                        type: number
+
+  /requests/{id}:
+    get:
+      tags:
+        - Requests
+      summary: Get request by ID
+      description: Returns a specific request details
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Request details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/ServiceRequest'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    put:
+      tags:
+        - Requests
+      summary: Update request
+      description: Update request details (Customer only, before acceptance)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                images:
+                  type: array
+                  items:
+                    type: string
+                budget:
+                  $ref: '#/components/schemas/Budget'
+                preferredTime:
+                  $ref: '#/components/schemas/PreferredTime'
+      responses:
+        '200':
+          description: Request updated
+        '400':
+          description: Cannot update after acceptance
+    delete:
+      tags:
+        - Requests
+      summary: Delete request (Admin)
+      description: Permanently delete a request
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Request deleted
+
+  /requests/{id}/cancel:
+    post:
+      tags:
+        - Requests
+      summary: Cancel request
+      description: Cancel a pending or in-progress request
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Request cancelled
+        '400':
+          description: Cannot cancel at this stage
+
+  /requests/{id}/status:
+    put:
+      tags:
+        - Requests
+      summary: Update request status
+      description: Update the status of a request (role-based permissions)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateStatusRequest'
+      responses:
+        '200':
+          description: Status updated
+        '400':
+          description: Invalid status transition
+
+  /requests/{id}/timeline:
+    get:
+      tags:
+        - Requests
+      summary: Get request timeline
+      description: Returns the status change history of a request
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Timeline data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                        timestamp:
+                          type: string
+                          format: date-time
+                        notes:
+                          type: string
+                        actor:
+                          type: string
+
+  /requests/{id}/quotes:
+    post:
+      tags:
+        - Requests
+      summary: Submit quote
+      description: Submit a quote for a request (Craftsman only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitQuoteRequest'
+      responses:
+        '201':
+          description: Quote submitted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Quote'
+        '400':
+          description: Already quoted or request not available
+        '403':
+          description: Category mismatch
+
+  /requests/{id}/quotes/{quoteId}/accept:
+    post:
+      tags:
+        - Requests
+      summary: Accept quote
+      description: Accept a craftsman's quote (Customer only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: quoteId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Quote accepted
+        '400':
+          description: Quote already handled
+        '404':
+          description: Quote not found
+
+  /requests/{id}/quotes/{quoteId}/reject:
+    post:
+      tags:
+        - Requests
+      summary: Reject quote
+      description: Reject a craftsman's quote (Customer only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: quoteId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Quote rejected

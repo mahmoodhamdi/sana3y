@@ -2,6 +2,7 @@ import mongoose, { Schema, Model, Document, Types } from 'mongoose';
 import dayjs from 'dayjs';
 
 interface IQuote {
+  _id?: Types.ObjectId;
   craftsmanId: Types.ObjectId;
   price: number;
   note?: string;

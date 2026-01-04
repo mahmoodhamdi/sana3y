@@ -3,6 +3,18 @@ import { Server as HTTPServer } from 'http';
 import jwt from 'jsonwebtoken';
 import User from '../models/User';
 import Craftsman from '../models/Craftsman';
+import { config } from '../config';
+import { logger } from '../utils/logger';
+import { Types } from 'mongoose';
+import { ICraftsmanService } from '../types';
+
+interface JwtPayload {
+  id: string;
+  userId?: string;
+  role?: string;
+  iat?: number;
+  exp?: number;
+}
 
 interface AuthenticatedSocket extends Socket {
   userId?: string;
@@ -17,6 +29,9 @@ interface UserConnection {
   craftsmanId?: string;
   connectedAt: Date;
 }
+
+// Type for socket event data
+type SocketEventData = Record<string, unknown>;
 
 class SocketService {
   private io: SocketIOServer | null = null;
@@ -44,7 +59,7 @@ class SocketService {
           return next(new Error('Authentication required'));
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
+        const decoded = jwt.verify(token, config.jwt.secret) as JwtPayload;
         const user = await User.findById(decoded.id).select('role');
 
         if (!user) {
@@ -73,14 +88,19 @@ class SocketService {
       this.handleConnection(socket);
     });
 
-    console.log('Socket.io server initialized');
+    logger.info('Socket.io server initialized');
     return this.io;
   }
 
   // Handle new socket connection
   private handleConnection(socket: AuthenticatedSocket) {
-    const userId = socket.userId!;
-    const role = socket.userRole!;
+    const userId = socket.userId;
+    const role = socket.userRole;
+
+    if (!userId || !role) {
+      logger.warn('Socket connection without userId or role');
+      return;
+    }
 
     // Store connection info
     this.userConnections.set(userId, {
@@ -111,7 +131,7 @@ class SocketService {
       this.joinCraftsmanRooms(socket);
     }
 
-    console.log(`User connected: ${userId} (${role})`);
+    logger.info(`User connected: ${userId} (${role})`);
 
     // Handle events
     this.setupEventHandlers(socket);
@@ -178,19 +198,19 @@ class SocketService {
 
       if (craftsman) {
         // Join category rooms based on services
-        craftsman.services?.forEach((service: any) => {
+        craftsman.services?.forEach((service: ICraftsmanService) => {
           if (service.categoryId) {
             socket.join(`category:${service.categoryId.toString()}`);
           }
         });
 
         // Join service zone rooms
-        craftsman.serviceZones?.forEach((zoneId: any) => {
+        craftsman.serviceZones?.forEach((zoneId: Types.ObjectId) => {
           socket.join(`zone:${zoneId.toString()}`);
         });
       }
     } catch (error) {
-      console.error('Error joining craftsman rooms:', error);
+      logger.error('Error joining craftsman rooms:', error);
     }
   }
 
@@ -206,7 +226,7 @@ class SocketService {
       this.updateCraftsmanOnlineStatus(socket.craftsmanId, false);
     }
 
-    console.log(`User disconnected: ${userId}`);
+    logger.info(`User disconnected: ${userId}`);
   }
 
   // Update craftsman online status in database
@@ -220,7 +240,7 @@ class SocketService {
         lastOnline: isOnline ? undefined : new Date(),
       });
     } catch (error) {
-      console.error('Error updating craftsman online status:', error);
+      logger.error('Error updating craftsman online status:', error);
     }
   }
 
@@ -240,48 +260,49 @@ class SocketService {
   // ==================== Public Methods for Emitting Events ====================
 
   // Emit to specific user
-  emitToUser(userId: string, event: string, data: any): void {
+  emitToUser(userId: string, event: string, data: SocketEventData): void {
     this.io?.to(`user:${userId}`).emit(event, data);
   }
 
   // Emit to specific craftsman
-  emitToCraftsman(craftsmanId: string, event: string, data: any): void {
+  emitToCraftsman(craftsmanId: string, event: string, data: SocketEventData): void {
     this.io?.to(`craftsman:${craftsmanId}`).emit(event, data);
   }
 
   // Emit to all craftsmen in a category
-  emitToCategory(categoryId: string, event: string, data: any): void {
+  emitToCategory(categoryId: string, event: string, data: SocketEventData): void {
     this.io?.to(`category:${categoryId}`).emit(event, data);
   }
 
   // Emit to all craftsmen in an area
-  emitToArea(governorate: string, city?: string, event?: string, data?: any): void {
+  emitToArea(governorate: string, city?: string, event?: string, data?: SocketEventData): void {
+    if (!event) return;
     const room = city ? `area:${governorate}:${city}` : `area:${governorate}`;
-    this.io?.to(room).emit(event!, data);
+    this.io?.to(room).emit(event, data);
   }
 
   // Emit to request room
-  emitToRequest(requestId: string, event: string, data: any): void {
+  emitToRequest(requestId: string, event: string, data: SocketEventData): void {
     this.io?.to(`request:${requestId}`).emit(event, data);
   }
 
   // Emit to chat room
-  emitToChat(chatId: string, event: string, data: any): void {
+  emitToChat(chatId: string, event: string, data: SocketEventData): void {
     this.io?.to(`chat:${chatId}`).emit(event, data);
   }
 
   // Emit to any room (generic)
-  emitToRoom(room: string, event: string, data: any): void {
+  emitToRoom(room: string, event: string, data: SocketEventData): void {
     this.io?.to(room).emit(event, data);
   }
 
   // Emit to all admins
-  emitToAdmins(event: string, data: any): void {
+  emitToAdmins(event: string, data: SocketEventData): void {
     this.io?.to('admin').emit(event, data);
   }
 
   // Broadcast to all connected users
-  broadcast(event: string, data: any): void {
+  broadcast(event: string, data: SocketEventData): void {
     this.io?.emit(event, data);
   }
 
@@ -292,7 +313,7 @@ class SocketService {
     categoryId: string,
     governorate: string,
     city: string,
-    requestData: any
+    requestData: SocketEventData
   ): void {
     // Emit to craftsmen in this category
     this.emitToCategory(categoryId, 'request:new', requestData);
@@ -302,7 +323,7 @@ class SocketService {
   }
 
   // Notify about new quote on request
-  notifyNewQuote(requestId: string, customerId: string, quoteData: any): void {
+  notifyNewQuote(requestId: string, customerId: string, quoteData: SocketEventData): void {
     // Notify customer
     this.emitToUser(customerId, 'quote:new', {
       requestId,
@@ -320,7 +341,7 @@ class SocketService {
   notifyQuoteAccepted(
     requestId: string,
     craftsmanId: string,
-    quoteData: any
+    quoteData: SocketEventData
   ): void {
     // Notify craftsman
     this.emitToCraftsman(craftsmanId, 'quote:accepted', {
@@ -341,7 +362,7 @@ class SocketService {
     customerId: string,
     craftsmanId: string | undefined,
     status: string,
-    statusData: any
+    statusData: SocketEventData
   ): void {
     const eventData = {
       requestId,
@@ -366,7 +387,7 @@ class SocketService {
   }
 
   // Notify about new chat message
-  notifyNewMessage(chatId: string, senderId: string, message: any): void {
+  notifyNewMessage(chatId: string, senderId: string, message: SocketEventData): void {
     this.emitToChat(chatId, 'chat:message', {
       chatId,
       senderId,

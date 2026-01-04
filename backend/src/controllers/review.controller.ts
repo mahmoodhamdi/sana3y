@@ -3,7 +3,15 @@ import { reviewService } from '@services/review.service';
 import Customer from '@models/Customer';
 import Craftsman from '@models/Craftsman';
 import { sendSuccess, sendCreated, sendPaginated } from '@utils/response';
-import { ForbiddenError } from '@utils/errors';
+import { ForbiddenError, UnauthorizedError } from '@utils/errors';
+
+// Helper to get userId with proper null check
+const getUserId = (req: Request): string => {
+  if (!req.user?.userId) {
+    throw new UnauthorizedError('غير مصرح');
+  }
+  return req.user.userId;
+};
 
 /**
  * Create a review
@@ -15,7 +23,7 @@ export const createReview = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user!.userId;
+    const userId = getUserId(req);
     const { requestId, score, comment, qualities, images } = req.body;
 
     // Get customer ID
@@ -128,7 +136,7 @@ export const getMyReviews = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user!.userId;
+    const userId = getUserId(req);
     const customer = await Customer.findOne({ userId });
 
     if (!customer) {
@@ -167,7 +175,7 @@ export const updateReview = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user!.userId;
+    const userId = getUserId(req);
     const reviewId = req.params.id;
     const { comment, images } = req.body;
 
@@ -198,7 +206,7 @@ export const respondToReview = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user!.userId;
+    const userId = getUserId(req);
     const reviewId = req.params.id;
     const { response } = req.body;
 
@@ -229,7 +237,7 @@ export const reportReview = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user!.userId;
+    const userId = getUserId(req);
     const reviewId = req.params.id;
     const { reason } = req.body;
 

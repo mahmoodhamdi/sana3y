@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { Types, PipelineStage } from 'mongoose';
 import Craftsman from '@models/Craftsman';
 import User from '@models/User';
 import { ICraftsman, ICraftsmanService, IWorkingHour, ICraftsmanDocuments } from '../types';
@@ -156,7 +156,7 @@ class CraftsmanService {
     const skip = (page - 1) * limit;
     const sortOrder = order === 'desc' ? -1 : 1;
 
-    let aggregatePipeline: any[] = [{ $match: filter }];
+    let aggregatePipeline: PipelineStage[] = [{ $match: filter }];
 
     // Geo-spatial query if coordinates provided
     if (lat && lng && radius) {

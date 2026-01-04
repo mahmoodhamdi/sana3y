@@ -1,0 +1,274 @@
+# Upload API Documentation
+paths:
+  /upload/image:
+    post:
+      tags:
+        - Upload
+      summary: Upload single image
+      description: Upload a single image to Cloudinary
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - image
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: Image file (max 5MB, jpg/png/webp)
+                folder:
+                  type: string
+                  description: Optional folder path
+      responses:
+        '200':
+          description: Image uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadResponse'
+        '400':
+          description: Invalid file or size exceeded
+
+  /upload/images:
+    post:
+      tags:
+        - Upload
+      summary: Upload multiple images
+      description: Upload multiple images at once (max 10)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - images
+              properties:
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  maxItems: 10
+                folder:
+                  type: string
+      responses:
+        '200':
+          description: Images uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultiUploadResponse'
+
+  /upload/profile:
+    post:
+      tags:
+        - Upload
+      summary: Upload profile image
+      description: Upload user profile avatar
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - image
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: Profile image (max 2MB, jpg/png/webp)
+      responses:
+        '200':
+          description: Profile image uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadResponse'
+
+  /upload/cover:
+    post:
+      tags:
+        - Upload
+      summary: Upload cover image
+      description: Upload craftsman cover/banner image
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - image
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: Cover image (max 5MB, jpg/png/webp)
+      responses:
+        '200':
+          description: Cover image uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadResponse'
+
+  /upload/work-photos:
+    post:
+      tags:
+        - Upload
+      summary: Upload work photos
+      description: Upload craftsman work portfolio photos (Craftsman only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - images
+              properties:
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  maxItems: 10
+      responses:
+        '200':
+          description: Work photos uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultiUploadResponse'
+        '403':
+          description: Craftsman only
+
+  /upload/document:
+    post:
+      tags:
+        - Upload
+      summary: Upload document
+      description: Upload ID document (for craftsman verification)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - document
+              properties:
+                document:
+                  type: string
+                  format: binary
+                  description: Document file (max 10MB, jpg/png/pdf)
+      responses:
+        '200':
+          description: Document uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadResponse'
+
+  /upload/base64:
+    post:
+      tags:
+        - Upload
+      summary: Upload base64 image
+      description: Upload image as base64 encoded string
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - image
+              properties:
+                image:
+                  type: string
+                  description: Base64 encoded image data
+                folder:
+                  type: string
+      responses:
+        '200':
+          description: Image uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadResponse'
+
+  /upload/category:
+    post:
+      tags:
+        - Upload
+      summary: Upload category image (Admin)
+      description: Upload service category icon/image
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - image
+              properties:
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Category image uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadResponse'
+        '403':
+          description: Admin only
+
+  /upload:
+    delete:
+      tags:
+        - Upload
+      summary: Delete image
+      description: Delete an uploaded image from Cloudinary
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - publicId
+              properties:
+                publicId:
+                  type: string
+                  description: Cloudinary public ID
+      responses:
+        '200':
+          description: Image deleted
+        '404':
+          description: Image not found

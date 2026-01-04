@@ -1,8 +1,27 @@
 import { Request, Response, NextFunction } from 'express';
 import requestService from '../services/request.service';
 import statusService from '../services/status.service';
+import { UnauthorizedError } from '@utils/errors';
 
 type RequestStatus = 'pending' | 'quoted' | 'accepted' | 'in_progress' | 'completed' | 'cancelled';
+
+// Helper to get userId with proper null check
+const getUserId = (req: Request): string => {
+  if (!req.user?.userId) {
+    throw new UnauthorizedError('غير مصرح');
+  }
+  return req.user.userId;
+};
+
+// Helper to get user role
+const getUserRole = (req: Request): 'customer' | 'craftsman' | 'admin' | undefined => {
+  return req.user?.role;
+};
+
+// Helper to get craftsman ID
+const getCraftsmanId = (req: Request): string | null => {
+  return req.craftsman?._id?.toString() || null;
+};
 
 // Create a new service request
 export const createRequest = async (
@@ -11,7 +30,7 @@ export const createRequest = async (
   next: NextFunction
 ) => {
   try {
-    const userId = (req as any).user.id;
+    const userId = getUserId(req);
 
     const requestData = {
       customer: userId,
@@ -128,7 +147,7 @@ export const getMyRequests = async (
   next: NextFunction
 ) => {
   try {
-    const userId = (req as any).user.id;
+    const userId = getUserId(req);
     const { page = 1, limit = 20, status } = req.query;
 
     const result = await requestService.getCustomerRequests(
@@ -160,7 +179,7 @@ export const getAvailableRequests = async (
   next: NextFunction
 ) => {
   try {
-    const craftsmanId = (req as any).craftsman?.id;
+    const craftsmanId = getCraftsmanId(req);
     if (!craftsmanId) {
       return res.status(400).json({
         success: false,
@@ -198,7 +217,7 @@ export const getMyActiveJobs = async (
   next: NextFunction
 ) => {
   try {
-    const craftsmanId = (req as any).craftsman?.id;
+    const craftsmanId = getCraftsmanId(req);
     if (!craftsmanId) {
       return res.status(400).json({
         success: false,
@@ -236,7 +255,7 @@ export const getMyCompletedJobs = async (
   next: NextFunction
 ) => {
   try {
-    const craftsmanId = (req as any).craftsman?.id;
+    const craftsmanId = getCraftsmanId(req);
     if (!craftsmanId) {
       return res.status(400).json({
         success: false,
@@ -275,7 +294,7 @@ export const submitQuote = async (
 ) => {
   try {
     const { id } = req.params;
-    const craftsmanId = (req as any).craftsman?.id;
+    const craftsmanId = getCraftsmanId(req);
 
     if (!craftsmanId) {
       return res.status(400).json({
@@ -312,7 +331,7 @@ export const acceptQuote = async (
 ) => {
   try {
     const { id, quoteId } = req.params;
-    const userId = (req as any).user.id;
+    const userId = getUserId(req);
 
     const request = await requestService.acceptQuote(id, quoteId, userId);
 
@@ -334,7 +353,7 @@ export const rejectQuote = async (
 ) => {
   try {
     const { id, quoteId } = req.params;
-    const userId = (req as any).user.id;
+    const userId = getUserId(req);
 
     const request = await requestService.rejectQuote(id, quoteId, userId);
 
@@ -357,21 +376,22 @@ export const updateRequestStatus = async (
   try {
     const { id } = req.params;
     const { status, cancellationReason, completionNotes, actualAmount } = req.body;
-    const userId = (req as any).user.id;
-    const userRole = (req as any).user.role;
+    const userId = getUserId(req);
+    const userRole = getUserRole(req);
+    const craftsmanId = getCraftsmanId(req);
 
     // Determine the role for status service
     let role: 'customer' | 'craftsman' | 'admin' = 'customer';
     if (userRole === 'admin') {
       role = 'admin';
-    } else if ((req as any).craftsman) {
+    } else if (craftsmanId) {
       role = 'craftsman';
     }
 
     const request = await statusService.updateStatus(
       id,
       status as RequestStatus,
-      role === 'craftsman' ? (req as any).craftsman.id : userId,
+      role === 'craftsman' && craftsmanId ? craftsmanId : userId,
       role,
       { cancellationReason, completionNotes, actualAmount }
     );
@@ -394,7 +414,7 @@ export const updateRequest = async (
 ) => {
   try {
     const { id } = req.params;
-    const userId = (req as any).user.id;
+    const userId = getUserId(req);
 
     const updates = {
       title: req.body.title,
@@ -426,7 +446,7 @@ export const cancelRequest = async (
 ) => {
   try {
     const { id } = req.params;
-    const userId = (req as any).user.id;
+    const userId = getUserId(req);
     const { reason } = req.body;
 
     const request = await requestService.cancelRequest(id, userId, reason);

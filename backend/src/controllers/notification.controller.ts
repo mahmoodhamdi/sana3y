@@ -1,6 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 import notificationService from '../services/notification.service';
 import { sendSuccess } from '@utils/response';
+import { UnauthorizedError } from '@utils/errors';
+
+// Helper to get userId with proper null check
+const getUserId = (req: Request): string => {
+  if (!req.user?.userId) {
+    throw new UnauthorizedError('غير مصرح');
+  }
+  return req.user.userId;
+};
 
 // Get user's notifications
 export const getNotifications = async (
@@ -9,7 +18,7 @@ export const getNotifications = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user!.userId;
+    const userId = getUserId(req);
     const { page = 1, limit = 20 } = req.query;
 
     const result = await notificationService.getUserNotifications(
@@ -40,7 +49,7 @@ export const getUnreadCount = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user!.userId;
+    const userId = getUserId(req);
     const count = await notificationService.getUnreadCount(userId);
 
     sendSuccess(res, { count });
@@ -56,7 +65,7 @@ export const markAsRead = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user!.userId;
+    const userId = getUserId(req);
     const { id } = req.params;
 
     await notificationService.markAsRead(id, userId);
@@ -73,7 +82,7 @@ export const markAllAsRead = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user!.userId;
+    const userId = getUserId(req);
     const count = await notificationService.markAllAsRead(userId);
 
     sendSuccess(res, { count }, `تم تحديث ${count} إشعار`);
@@ -89,7 +98,7 @@ export const deleteNotification = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user!.userId;
+    const userId = getUserId(req);
     const { id } = req.params;
 
     await notificationService.deleteNotification(id, userId);
@@ -106,7 +115,7 @@ export const registerFCMToken = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user!.userId;
+    const userId = getUserId(req);
     const { token } = req.body;
 
     await notificationService.registerFCMToken(userId, token);
@@ -123,7 +132,7 @@ export const removeFCMToken = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user!.userId;
+    const userId = getUserId(req);
     const { token } = req.body;
 
     await notificationService.removeFCMToken(userId, token);

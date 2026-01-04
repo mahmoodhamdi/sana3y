@@ -1,0 +1,306 @@
+# Reviews API Documentation
+paths:
+  /reviews:
+    post:
+      tags:
+        - Reviews
+      summary: Create review
+      description: Create a review for a completed request (Customer only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReviewRequest'
+      responses:
+        '201':
+          description: Review created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Review'
+        '400':
+          description: Request not completed or already reviewed
+        '403':
+          description: Not the request owner
+
+  /reviews/my:
+    get:
+      tags:
+        - Reviews
+      summary: Get my reviews
+      description: Returns reviews written by the authenticated user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: User's reviews
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Review'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  /reviews/craftsman/{id}:
+    get:
+      tags:
+        - Reviews
+      summary: Get craftsman reviews
+      description: Returns reviews for a specific craftsman
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+            enum: [latest, highest, lowest]
+            default: latest
+      responses:
+        '200':
+          description: Craftsman reviews
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Review'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  /reviews/craftsman/{id}/summary:
+    get:
+      tags:
+        - Reviews
+      summary: Get craftsman reviews summary
+      description: Returns rating summary and distribution for a craftsman
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Reviews summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/ReviewSummary'
+
+  /reviews/{id}:
+    get:
+      tags:
+        - Reviews
+      summary: Get review by ID
+      description: Returns a specific review
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Review details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Review'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    put:
+      tags:
+        - Reviews
+      summary: Update review
+      description: Update own review (within 24 hours)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                score:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                comment:
+                  type: string
+                images:
+                  type: array
+                  items:
+                    type: string
+                qualities:
+                  $ref: '#/components/schemas/QualityRatings'
+      responses:
+        '200':
+          description: Review updated
+        '400':
+          description: Update window expired
+
+  /reviews/{id}/respond:
+    post:
+      tags:
+        - Reviews
+      summary: Respond to review
+      description: Add craftsman response to a review (Craftsman only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - response
+              properties:
+                response:
+                  type: string
+                  maxLength: 500
+      responses:
+        '200':
+          description: Response added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Review'
+        '403':
+          description: Not the reviewed craftsman
+
+  /reviews/{id}/report:
+    post:
+      tags:
+        - Reviews
+      summary: Report review
+      description: Report a review for moderation
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - reason
+              properties:
+                reason:
+                  type: string
+                  enum: [inappropriate, spam, fake, other]
+                details:
+                  type: string
+      responses:
+        '200':
+          description: Report submitted
+
+  /reviews/admin/{id}/visibility:
+    put:
+      tags:
+        - Reviews
+      summary: Toggle review visibility (Admin)
+      description: Show or hide a reported review
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - isVisible
+              properties:
+                isVisible:
+                  type: boolean
+      responses:
+        '200':
+          description: Visibility updated

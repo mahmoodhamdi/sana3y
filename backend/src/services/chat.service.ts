@@ -199,11 +199,15 @@ class ChatService {
       'name avatar'
     );
 
+    if (!populatedMessage) {
+      throw new NotFoundError('فشل في إنشاء الرسالة');
+    }
+
     // Emit socket event for real-time
     socketService.emitToRoom(
       `conversation:${conversationId}`,
       'message:new',
-      populatedMessage
+      { message: populatedMessage.toObject() }
     );
 
     // Also notify participants individually
@@ -212,12 +216,12 @@ class ChatService {
       if (id !== senderId) {
         socketService.emitToUser(id, 'message:notification', {
           conversationId,
-          message: populatedMessage,
+          message: populatedMessage.toObject(),
         });
       }
     });
 
-    return populatedMessage!;
+    return populatedMessage;
   }
 
   /**

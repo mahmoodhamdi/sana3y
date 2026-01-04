@@ -280,7 +280,8 @@ class CategoryService {
       throw new ConflictError('فئة فرعية بهذا الاسم موجودة بالفعل');
     }
 
-    category.subcategories.push(input as any);
+    // MongoDB will auto-generate _id, so we can push directly
+    category.subcategories.push(input as typeof category.subcategories[number]);
     await category.save();
 
     return category.toObject() as IServiceCategory;

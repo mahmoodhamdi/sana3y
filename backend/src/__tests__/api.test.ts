@@ -1,8 +1,15 @@
+import { Response } from 'express';
 import { sendSuccess, sendCreated, sendError } from '../utils/response';
 
+// Mock Express Response interface
+interface MockResponse {
+  status: jest.Mock;
+  json: jest.Mock;
+}
+
 // Mock Express Response
-const mockResponse = () => {
-  const res: any = {};
+const mockResponse = (): MockResponse & Response => {
+  const res = {} as MockResponse & Response;
   res.status = jest.fn().mockReturnValue(res);
   res.json = jest.fn().mockReturnValue(res);
   return res;

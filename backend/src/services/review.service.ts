@@ -241,8 +241,9 @@ class ReviewService {
       if (r.qualities) {
         Object.keys(qualitySums).forEach((key) => {
           const k = key as keyof typeof qualitySums;
-          if (r.qualities[k]) {
-            qualitySums[k] += r.qualities[k]!;
+          const qualityValue = r.qualities[k];
+          if (qualityValue !== undefined && qualityValue !== null) {
+            qualitySums[k] += qualityValue;
             qualityCounts[k]++;
           }
         });

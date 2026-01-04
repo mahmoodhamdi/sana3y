@@ -385,7 +385,7 @@ class RequestService {
 
     // Find the quote
     const quote = request.quotesReceived.find(
-      (q) => (q as any)._id?.toString() === quoteId || q.craftsmanId.toString() === quoteId
+      (q) => q._id?.toString() === quoteId || q.craftsmanId.toString() === quoteId
     );
     if (!quote) {
       throw new NotFoundError('العرض غير موجود');
@@ -428,7 +428,7 @@ class RequestService {
 
     // Remove the quote
     request.quotesReceived = request.quotesReceived.filter(
-      (q) => (q as any)._id?.toString() !== quoteId && q.craftsmanId.toString() !== quoteId
+      (q) => q._id?.toString() !== quoteId && q.craftsmanId.toString() !== quoteId
     );
 
     await request.save();
