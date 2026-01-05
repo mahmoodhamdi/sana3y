@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/loading_button.dart';
+import '../../widgets/role_selection_sheet.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -70,12 +71,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _loginWithGoogle() async {
+    // Step 1: Show role selection sheet
+    final selectedRole = await RoleSelectionSheet.show(context);
+    if (selectedRole == null || !mounted) return;
+
     setState(() => _isGoogleLoading = true);
     final authNotifier = ref.read(authProvider.notifier);
 
     try {
-      await authNotifier.loginWithGoogle();
-      if (mounted) context.go('/');
+      await authNotifier.loginWithGoogle(role: selectedRole);
+
+      if (!mounted) return;
+
+      // Step 2: Redirect based on role
+      // Craftsman goes to setup (will check if already complete)
+      if (selectedRole == 'craftsman') {
+        context.go('/craftsman/setup');
+      } else {
+        context.go('/');
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

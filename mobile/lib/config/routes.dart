@@ -8,8 +8,10 @@ import '../models/user.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/otp_screen.dart';
 import '../screens/auth/register_screen.dart';
+import '../screens/auth/reset_password_screen.dart';
 import '../screens/auth/welcome_screen.dart';
 import '../screens/auth/craftsman_register_screen.dart';
+import '../screens/auth/craftsman_setup_screen.dart';
 import '../screens/auth/documents_upload_screen.dart';
 // Customer screens
 import '../screens/customer/home_screen.dart';
@@ -63,6 +65,8 @@ class AppRoutes {
   static const String login = '/login';
   static const String otp = '/otp';
   static const String register = '/register';
+  static const String resetPassword = '/reset-password';
+  static const String craftsmanSetup = '/craftsman/setup';
 
   // Customer Routes
   static const String customerHome = '/customer';
@@ -107,8 +111,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isAuthenticated = authState.status == AuthStatus.authenticated;
       final isAuthRoute = state.uri.path == AppRoutes.login ||
           state.uri.path == AppRoutes.otp ||
-          state.uri.path == AppRoutes.register;
+          state.uri.path == AppRoutes.register ||
+          state.uri.path == AppRoutes.resetPassword;
       final isSplash = state.uri.path == AppRoutes.splash;
+      final isCraftsmanSetup = state.uri.path == AppRoutes.craftsmanSetup;
 
       // Still loading auth state
       if (authState.status == AuthStatus.initial) {
@@ -118,6 +124,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       // Redirect to login if not authenticated and not on auth route
       if (!isAuthenticated && !isAuthRoute && !isSplash) {
         return AppRoutes.login;
+      }
+
+      // Allow craftsman setup route for authenticated craftsmen
+      if (isAuthenticated && isCraftsmanSetup) {
+        return null; // Allow access
       }
 
       // Redirect to home if authenticated and on auth route
@@ -181,6 +192,20 @@ final routerProvider = Provider<GoRouter>((ref) {
             otp: extra?['otp'],
           );
         },
+      ),
+      GoRoute(
+        path: AppRoutes.resetPassword,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return ResetPasswordScreen(
+            email: extra?['email'] ?? '',
+            otp: extra?['otp'] ?? '',
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.craftsmanSetup,
+        builder: (context, state) => const CraftsmanSetupScreen(),
       ),
 
       // Customer Home

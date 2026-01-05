@@ -144,7 +144,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       );
 
       if (mounted) {
-        context.go('/');
+        // Craftsman needs to complete profile setup
+        if (_selectedRole == 'craftsman') {
+          context.go('/craftsman/setup');
+        } else {
+          context.go('/');
+        }
       }
     } catch (e) {
       if (mounted) {
