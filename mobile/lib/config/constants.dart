@@ -1,6 +1,6 @@
 class AppConstants {
   // API
-  static const String baseUrl = 'http://localhost:5000/api/v1';
+  static const String baseUrl = 'https://pronouncedly-resupine-benito.ngrok-free.dev/api/v1';
   static const Duration apiTimeout = Duration(seconds: 30);
 
   // App Info

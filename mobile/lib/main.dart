@@ -21,16 +21,19 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
-  // Setup Firebase Cloud Messaging
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-  // Initialize notification service
-  await NotificationService.instance.initialize();
+  // Initialize Firebase (optional - app works without it)
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    // Setup Firebase Cloud Messaging
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    // Initialize notification service
+    await NotificationService.instance.initialize();
+  } catch (e) {
+    debugPrint('Firebase initialization failed: $e');
+    // Continue without Firebase - app still works
+  }
 
   // Set preferred orientations
   await SystemChrome.setPreferredOrientations([

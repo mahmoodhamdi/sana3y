@@ -33,9 +33,9 @@ export const config = {
     apiKey: process.env.GOOGLE_API_KEY || '',
   },
 
-  sms: {
-    apiKey: process.env.SMS_API_KEY || '',
-    senderId: process.env.SMS_SENDER_ID || 'SANA3Y',
+  resend: {
+    apiKey: process.env.RESEND_API_KEY || '',
+    fromEmail: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
   },
 
   rateLimit: {

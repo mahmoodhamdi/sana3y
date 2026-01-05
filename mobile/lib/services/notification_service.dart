@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'api_client.dart';
+import '../providers/auth_provider.dart';
 
 part 'notification_service.g.dart';
 
@@ -19,32 +20,40 @@ class NotificationService {
   String? get fcmToken => _fcmToken;
 
   Future<void> initialize() async {
-    // Request permission
-    final settings = await _messaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-      provisional: false,
-    );
+    try {
+      // Request permission
+      final settings = await _messaging.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+        provisional: false,
+      );
 
-    debugPrint('FCM Authorization status: ${settings.authorizationStatus}');
+      debugPrint('FCM Authorization status: ${settings.authorizationStatus}');
 
-    if (settings.authorizationStatus == AuthorizationStatus.authorized ||
-        settings.authorizationStatus == AuthorizationStatus.provisional) {
-      // Get FCM token
-      _fcmToken = await _messaging.getToken();
-      debugPrint('FCM Token: $_fcmToken');
+      if (settings.authorizationStatus == AuthorizationStatus.authorized ||
+          settings.authorizationStatus == AuthorizationStatus.provisional) {
+        // Get FCM token (may fail if Firebase is not properly configured)
+        try {
+          _fcmToken = await _messaging.getToken();
+          debugPrint('FCM Token: $_fcmToken');
+        } catch (e) {
+          debugPrint('Failed to get FCM token: $e');
+        }
 
-      // Listen for token refresh
-      _messaging.onTokenRefresh.listen((newToken) {
-        _fcmToken = newToken;
-        debugPrint('FCM Token refreshed: $newToken');
-      });
+        // Listen for token refresh
+        _messaging.onTokenRefresh.listen((newToken) {
+          _fcmToken = newToken;
+          debugPrint('FCM Token refreshed: $newToken');
+        });
 
-      // Handle foreground messages
-      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-        debugPrint('Foreground message received: ${message.notification?.title}');
-      });
+        // Handle foreground messages
+        FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+          debugPrint('Foreground message received: ${message.notification?.title}');
+        });
+      }
+    } catch (e) {
+      debugPrint('FCM initialization error: $e');
     }
   }
 }
