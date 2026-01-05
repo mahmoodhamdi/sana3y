@@ -180,7 +180,12 @@ const validate = (schema: Joi.ObjectSchema, source: 'body' | 'query' | 'params' 
       });
     }
 
-    req[source] = value;
+    // Apply validated values - use Object.assign for query/params (may be read-only)
+    if (source === 'body') {
+      req.body = value;
+    } else {
+      Object.assign(req[source], value);
+    }
     next();
   };
 };
