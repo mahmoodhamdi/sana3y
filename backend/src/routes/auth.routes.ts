@@ -1,16 +1,18 @@
 import { Router } from 'express';
 import {
-  sendOtp,
+  sendVerificationOTP,
+  sendPasswordResetOTP,
   verifyOtp,
   register,
-  loginWithOtp,
   loginWithPassword,
+  loginWithGoogle,
   adminLogin,
   refreshToken,
   getProfile,
   updateProfile,
   changePassword,
   resetPassword,
+  checkEmail,
   logout,
 } from '@controllers/auth.controller';
 import { authenticate } from '@middleware/auth';
@@ -31,15 +33,19 @@ const authLimiter = rateLimiter({
   message: 'تم تجاوز الحد المسموح. حاول مرة أخرى لاحقاً',
 });
 
-// Public routes
-router.post('/send-otp', otpLimiter, sendOtp);
+// Public routes - Email OTP
+router.post('/send-verification-otp', otpLimiter, sendVerificationOTP);
+router.post('/send-reset-otp', otpLimiter, sendPasswordResetOTP);
 router.post('/verify-otp', otpLimiter, verifyOtp);
+
+// Public routes - Registration & Login
 router.post('/register', authLimiter, register);
-router.post('/login/otp', authLimiter, loginWithOtp);
-router.post('/login/password', authLimiter, loginWithPassword);
+router.post('/login', authLimiter, loginWithPassword);
+router.post('/login/google', authLimiter, loginWithGoogle);
 router.post('/admin/login', authLimiter, adminLogin);
 router.post('/refresh', refreshToken);
 router.post('/reset-password', authLimiter, resetPassword);
+router.post('/check-email', checkEmail);
 
 // Protected routes (require authentication)
 router.get('/me', authenticate, getProfile);

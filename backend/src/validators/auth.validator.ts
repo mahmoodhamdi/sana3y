@@ -1,8 +1,5 @@
 import Joi from 'joi';
 
-// Egyptian Phone Regex
-const EGYPT_PHONE_REGEX = /^\+20[0-9]{10}$/;
-
 // User Roles
 const USER_ROLES = {
   CUSTOMER: 'customer',
@@ -11,13 +8,15 @@ const USER_ROLES = {
 } as const;
 
 /**
- * Phone validation schema
+ * Email validation schema
  */
-const phoneSchema = Joi.string()
-  .pattern(EGYPT_PHONE_REGEX)
+const emailSchema = Joi.string()
+  .email()
+  .lowercase()
+  .trim()
   .messages({
-    'string.pattern.base': 'رقم الهاتف غير صالح. يجب أن يكون بالصيغة +20XXXXXXXXXX',
-    'string.empty': 'رقم الهاتف مطلوب',
+    'string.email': 'البريد الإلكتروني غير صالح',
+    'string.empty': 'البريد الإلكتروني مطلوب',
   });
 
 /**
@@ -45,23 +44,27 @@ const otpSchema = Joi.string()
   });
 
 /**
- * Send OTP request validation
+ * Send verification OTP request validation
  */
-export const sendOtpSchema = Joi.object({
-  phone: phoneSchema.required(),
-  type: Joi.string()
-    .valid('verification', 'login', 'password_reset')
-    .default('verification'),
+export const sendVerificationOTPSchema = Joi.object({
+  email: emailSchema.required(),
+});
+
+/**
+ * Send password reset OTP request validation
+ */
+export const sendPasswordResetOTPSchema = Joi.object({
+  email: emailSchema.required(),
 });
 
 /**
  * Verify OTP request validation
  */
 export const verifyOtpSchema = Joi.object({
-  phone: phoneSchema.required(),
+  email: emailSchema.required(),
   code: otpSchema.required(),
   type: Joi.string()
-    .valid('verification', 'login', 'password_reset')
+    .valid('verification', 'password_reset')
     .default('verification'),
 });
 
@@ -69,7 +72,10 @@ export const verifyOtpSchema = Joi.object({
  * Register request validation
  */
 export const registerSchema = Joi.object({
-  phone: phoneSchema.required(),
+  email: emailSchema.required(),
+  password: passwordSchema.required().messages({
+    'any.required': 'كلمة المرور مطلوبة',
+  }),
   name: Joi.string()
     .min(2)
     .max(100)
@@ -79,13 +85,6 @@ export const registerSchema = Joi.object({
       'string.max': 'الاسم يجب أن يكون أقل من 100 حرف',
       'any.required': 'الاسم مطلوب',
     }),
-  email: Joi.string()
-    .email()
-    .optional()
-    .messages({
-      'string.email': 'البريد الإلكتروني غير صالح',
-    }),
-  password: passwordSchema.optional(),
   role: Joi.string()
     .valid(USER_ROLES.CUSTOMER, USER_ROLES.CRAFTSMAN)
     .required()
@@ -93,24 +92,31 @@ export const registerSchema = Joi.object({
       'any.only': 'نوع الحساب يجب أن يكون عميل أو صنايعي',
       'any.required': 'نوع الحساب مطلوب',
     }),
-});
-
-/**
- * Login with OTP request validation
- */
-export const loginOtpSchema = Joi.object({
-  phone: phoneSchema.required(),
-  otp: otpSchema.required(),
+  otp: otpSchema.required().messages({
+    'any.required': 'كود التحقق مطلوب',
+  }),
 });
 
 /**
  * Login with password request validation
  */
 export const loginPasswordSchema = Joi.object({
-  phone: phoneSchema.required(),
+  email: emailSchema.required(),
   password: Joi.string().required().messages({
     'any.required': 'كلمة المرور مطلوبة',
   }),
+});
+
+/**
+ * Login with Google request validation
+ */
+export const loginGoogleSchema = Joi.object({
+  idToken: Joi.string().required().messages({
+    'any.required': 'Google ID token مطلوب',
+  }),
+  role: Joi.string()
+    .valid(USER_ROLES.CUSTOMER, USER_ROLES.CRAFTSMAN)
+    .default(USER_ROLES.CUSTOMER),
 });
 
 /**
@@ -138,7 +144,7 @@ export const changePasswordSchema = Joi.object({
  * Reset password request validation
  */
 export const resetPasswordSchema = Joi.object({
-  phone: phoneSchema.required(),
+  email: emailSchema.required(),
   otp: otpSchema.required(),
   newPassword: passwordSchema.required().messages({
     'any.required': 'كلمة المرور الجديدة مطلوبة',
@@ -150,7 +156,6 @@ export const resetPasswordSchema = Joi.object({
  */
 export const updateProfileSchema = Joi.object({
   name: Joi.string().min(2).max(100).optional(),
-  email: Joi.string().email().optional(),
   avatar: Joi.string().uri().optional(),
 });
 
@@ -158,11 +163,15 @@ export const updateProfileSchema = Joi.object({
  * Admin login request validation
  */
 export const adminLoginSchema = Joi.object({
-  email: Joi.string().email().required().messages({
-    'string.email': 'البريد الإلكتروني غير صالح',
-    'any.required': 'البريد الإلكتروني مطلوب',
-  }),
+  email: emailSchema.required(),
   password: Joi.string().required().messages({
     'any.required': 'كلمة المرور مطلوبة',
   }),
+});
+
+/**
+ * Check email exists request validation
+ */
+export const checkEmailSchema = Joi.object({
+  email: emailSchema.required(),
 });

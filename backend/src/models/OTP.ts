@@ -1,7 +1,7 @@
 import mongoose, { Schema, Model, Document } from 'mongoose';
 
 export interface IOTP extends Document {
-  phone: string;
+  email: string;
   code: string;
   type: 'verification' | 'login' | 'password_reset';
   attempts: number;
@@ -14,10 +14,11 @@ export interface IOTP extends Document {
 
 const otpSchema = new Schema<IOTP>(
   {
-    phone: {
+    email: {
       type: String,
       required: true,
       trim: true,
+      lowercase: true,
     },
     code: {
       type: String,
@@ -53,17 +54,17 @@ const otpSchema = new Schema<IOTP>(
 );
 
 // Indexes
-otpSchema.index({ phone: 1, type: 1 });
+otpSchema.index({ email: 1, type: 1 });
 otpSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 // Static method to generate OTP
 otpSchema.statics.generateOTP = async function (
-  phone: string,
+  email: string,
   type: 'verification' | 'login' | 'password_reset' = 'verification',
-  expirationMinutes: number = 5
+  expirationMinutes: number = 10
 ): Promise<IOTP> {
-  // Delete any existing OTPs for this phone and type
-  await this.deleteMany({ phone, type });
+  // Delete any existing OTPs for this email and type
+  await this.deleteMany({ email: email.toLowerCase(), type });
 
   // Generate 6-digit OTP
   const code = Math.floor(100000 + Math.random() * 900000).toString();
@@ -73,7 +74,7 @@ otpSchema.statics.generateOTP = async function (
 
   // Create and save OTP
   const otp = new this({
-    phone,
+    email: email.toLowerCase(),
     code,
     type,
     expiresAt,
@@ -85,12 +86,12 @@ otpSchema.statics.generateOTP = async function (
 
 // Static method to verify OTP
 otpSchema.statics.verifyOTP = async function (
-  phone: string,
+  email: string,
   code: string,
   type: 'verification' | 'login' | 'password_reset' = 'verification'
 ): Promise<{ success: boolean; message: string }> {
   const otp = await this.findOne({
-    phone,
+    email: email.toLowerCase(),
     type,
     expiresAt: { $gt: new Date() },
   });
@@ -120,12 +121,12 @@ otpSchema.statics.verifyOTP = async function (
 
 interface OTPModel extends Model<IOTP> {
   generateOTP(
-    phone: string,
+    email: string,
     type?: 'verification' | 'login' | 'password_reset',
     expirationMinutes?: number
   ): Promise<IOTP>;
   verifyOTP(
-    phone: string,
+    email: string,
     code: string,
     type?: 'verification' | 'login' | 'password_reset'
   ): Promise<{ success: boolean; message: string }>;

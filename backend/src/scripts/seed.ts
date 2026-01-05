@@ -247,29 +247,29 @@ const settings = [
 const adminUsers = [
   {
     role: 'admin' as const,
-    phone: '+201000000000',
     email: 'admin@sana3y.com',
     password: 'Admin@123',
     name: 'مدير النظام',
-    isPhoneVerified: true,
+    authProvider: 'email' as const,
+    isVerified: true,
     isActive: true,
   },
   {
     role: 'admin' as const,
-    phone: '+201000000001',
     email: 'superadmin@sana3y.com',
     password: 'SuperAdmin@123',
     name: 'المدير العام',
-    isPhoneVerified: true,
+    authProvider: 'email' as const,
+    isVerified: true,
     isActive: true,
   },
 ];
 
 const customerUsers = [
   {
-    phone: '+201111111111',
     name: 'محمد أحمد',
     email: 'mohamed@example.com',
+    password: 'Customer@123',
     addresses: [
       {
         label: 'home' as const,
@@ -283,9 +283,9 @@ const customerUsers = [
     ],
   },
   {
-    phone: '+201111111112',
     name: 'أحمد محمود',
     email: 'ahmed@example.com',
+    password: 'Customer@123',
     addresses: [
       {
         label: 'home' as const,
@@ -299,9 +299,9 @@ const customerUsers = [
     ],
   },
   {
-    phone: '+201111111113',
     name: 'خالد إبراهيم',
     email: 'khaled@example.com',
+    password: 'Customer@123',
     addresses: [
       {
         label: 'home' as const,
@@ -315,22 +315,23 @@ const customerUsers = [
     ],
   },
   {
-    phone: '+201111111114',
     name: 'سامي عبدالله',
     email: 'sami@example.com',
+    password: 'Customer@123',
     addresses: [],
   },
   {
-    phone: '+201111111115',
     name: 'ياسر حسن',
     email: 'yasser@example.com',
+    password: 'Customer@123',
     addresses: [],
   },
 ];
 
 const craftsmanUsers = [
   {
-    phone: '+201222222221',
+    email: 'abdullah.plumber@example.com',
+    password: 'Craftsman@123',
     name: 'عبدالله السباك',
     bio: 'سباك محترف مع خبرة 15 سنة في جميع أعمال السباكة المنزلية والتجارية',
     categorySlug: 'plumbing',
@@ -341,7 +342,8 @@ const craftsmanUsers = [
     isFeatured: true,
   },
   {
-    phone: '+201222222222',
+    email: 'hassan.electrician@example.com',
+    password: 'Craftsman@123',
     name: 'حسن الكهربائي',
     bio: 'فني كهرباء معتمد مع خبرة 12 سنة في الصيانة والتركيبات الكهربائية',
     categorySlug: 'electrical',
@@ -352,7 +354,8 @@ const craftsmanUsers = [
     isFeatured: true,
   },
   {
-    phone: '+201222222223',
+    email: 'mahmoud.carpenter@example.com',
+    password: 'Craftsman@123',
     name: 'محمود النجار',
     bio: 'نجار محترف متخصص في تصنيع وإصلاح الأثاث والمطابخ',
     categorySlug: 'carpentry',
@@ -363,7 +366,8 @@ const craftsmanUsers = [
     isFeatured: false,
   },
   {
-    phone: '+201222222224',
+    email: 'ahmed.painter@example.com',
+    password: 'Craftsman@123',
     name: 'أحمد الدهان',
     bio: 'دهان محترف مع خبرة 10 سنوات في دهان الشقق والفيلات',
     categorySlug: 'painting',
@@ -374,7 +378,8 @@ const craftsmanUsers = [
     isFeatured: false,
   },
   {
-    phone: '+201222222225',
+    email: 'karim.ac@example.com',
+    password: 'Craftsman@123',
     name: 'كريم التكييفات',
     bio: 'فني تكييفات معتمد من كبرى الشركات العالمية',
     categorySlug: 'ac-services',
@@ -385,7 +390,8 @@ const craftsmanUsers = [
     isFeatured: true,
   },
   {
-    phone: '+201222222226',
+    email: 'saeed.aluminum@example.com',
+    password: 'Craftsman@123',
     name: 'سعيد الألوميتال',
     bio: 'متخصص في تركيب وصيانة الشبابيك والأبواب الألوميتال',
     categorySlug: 'aluminum-works',
@@ -396,7 +402,8 @@ const craftsmanUsers = [
     isFeatured: false,
   },
   {
-    phone: '+201222222227',
+    email: 'tarek.appliance@example.com',
+    password: 'Craftsman@123',
     name: 'طارق الأجهزة',
     bio: 'فني صيانة أجهزة منزلية مع خبرة 8 سنوات',
     categorySlug: 'appliance-repair',
@@ -407,7 +414,8 @@ const craftsmanUsers = [
     isFeatured: false,
   },
   {
-    phone: '+201222222228',
+    email: 'ali.welder@example.com',
+    password: 'Craftsman@123',
     name: 'علي الحداد',
     bio: 'حداد متخصص في الأبواب والشبابيك الحديدية',
     categorySlug: 'welding',
@@ -418,7 +426,8 @@ const craftsmanUsers = [
     isFeatured: false,
   },
   {
-    phone: '+201222222229',
+    email: 'maged.cleaning@example.com',
+    password: 'Craftsman@123',
     name: 'ماجد المنظفات',
     bio: 'خبير في تنظيف الشقق والفيلات ومكافحة الحشرات',
     categorySlug: 'cleaning',
@@ -429,7 +438,8 @@ const craftsmanUsers = [
     isFeatured: false,
   },
   {
-    phone: '+201222222230',
+    email: 'walid.moving@example.com',
+    password: 'Craftsman@123',
     name: 'وليد النقل',
     bio: 'متخصص في نقل العفش والأثاث مع ضمان السلامة',
     categorySlug: 'moving',
@@ -441,7 +451,8 @@ const craftsmanUsers = [
   },
   // Pending craftsmen
   {
-    phone: '+201222222231',
+    email: 'fahd.plumber@example.com',
+    password: 'Craftsman@123',
     name: 'فهد السباك',
     bio: 'سباك جديد يبحث عن فرصة عمل',
     categorySlug: 'plumbing',
@@ -452,7 +463,8 @@ const craftsmanUsers = [
     isFeatured: false,
   },
   {
-    phone: '+201222222232',
+    email: 'ramy.electrician@example.com',
+    password: 'Craftsman@123',
     name: 'رامي الكهربائي',
     bio: 'كهربائي مبتدئ',
     categorySlug: 'electrical',
@@ -525,12 +537,14 @@ async function seed() {
     const customerDocs = [];
     const customerProfileDocs = [];
     for (const customer of customerUsers) {
+      const hashedPassword = await hashPassword(customer.password);
       const user = new User({
         role: 'customer',
-        phone: customer.phone,
-        name: customer.name,
         email: customer.email,
-        isPhoneVerified: true,
+        password: hashedPassword,
+        name: customer.name,
+        authProvider: 'email',
+        isVerified: true,
         isActive: true,
       });
       await user.save();
@@ -550,11 +564,14 @@ async function seed() {
     const craftsmanDocs = [];
     const craftsmanProfileDocs = [];
     for (const craftsman of craftsmanUsers) {
+      const hashedPassword = await hashPassword(craftsman.password);
       const user = new User({
         role: 'craftsman',
-        phone: craftsman.phone,
+        email: craftsman.email,
+        password: hashedPassword,
         name: craftsman.name,
-        isPhoneVerified: true,
+        authProvider: 'email',
+        isVerified: true,
         isActive: true,
       });
       await user.save();
@@ -782,8 +799,8 @@ async function seed() {
     logger.info('='.repeat(50));
     logger.info('Test Credentials:');
     logger.info('  Admin: admin@sana3y.com / Admin@123');
-    logger.info('  Customer: +201111111111 (use OTP)');
-    logger.info('  Craftsman: +201222222221 (use OTP)');
+    logger.info('  Customer: mohamed@example.com / Customer@123');
+    logger.info('  Craftsman: abdullah.plumber@example.com / Craftsman@123');
     logger.info('='.repeat(50));
 
     await mongoose.disconnect();

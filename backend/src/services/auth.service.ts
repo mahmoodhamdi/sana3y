@@ -2,12 +2,11 @@ import User, { IUser } from '@models/User';
 import Customer from '@models/Customer';
 import Craftsman from '@models/Craftsman';
 import OTP from '@models/OTP';
-import { generateOtp, generateDevOtp, verifyOtpHash, isOtpExpired } from '@utils/otp';
 import { generateTokens, TokenPayload, verifyRefreshToken, AuthTokens } from '@utils/jwt';
-import { sendOtpSms, sendWelcomeSms } from '@utils/sms';
-import { formatPhone } from '@utils/phone';
+import { emailService } from '@services/email.service';
 import { BadRequestError, UnauthorizedError, NotFoundError, ConflictError } from '@utils/errors';
 import { config } from '@config/index';
+import admin from 'firebase-admin';
 
 // User roles
 const USER_ROLES = {
@@ -18,11 +17,10 @@ const USER_ROLES = {
 
 // Register request type
 export interface RegisterRequest {
-  phone: string;
+  email: string;
+  password: string;
   name: string;
   role: 'customer' | 'craftsman';
-  email?: string;
-  password?: string;
 }
 
 export interface AuthResult {
@@ -40,57 +38,86 @@ export interface OtpSendResult {
 
 class AuthService {
   /**
-   * Send OTP to phone number
+   * Send email verification OTP
    */
-  async sendOtp(
-    phone: string,
-    type: 'verification' | 'login' | 'password_reset' = 'verification'
-  ): Promise<OtpSendResult> {
-    const formattedPhone = formatPhone(phone);
+  async sendVerificationOTP(email: string): Promise<OtpSendResult> {
+    const normalizedEmail = email.toLowerCase().trim();
 
-    // Check for existing user for login/password_reset
-    if (type === 'login' || type === 'password_reset') {
-      const existingUser = await User.findOne({ phone: formattedPhone });
-      if (!existingUser) {
-        throw new NotFoundError('لم يتم العثور على حساب بهذا الرقم');
-      }
+    // Check if email already exists and verified
+    const existingUser = await User.findOne({ email: normalizedEmail });
+    if (existingUser && existingUser.isVerified) {
+      throw new ConflictError('هذا البريد الإلكتروني مسجل بالفعل');
     }
 
-    // Check for existing user for verification (registration)
-    if (type === 'verification') {
-      const existingUser = await User.findOne({ phone: formattedPhone });
-      if (existingUser && existingUser.isPhoneVerified) {
-        throw new ConflictError('هذا الرقم مسجل بالفعل');
-      }
-    }
+    // Generate OTP using the model's static method
+    const otp = await OTP.generateOTP(normalizedEmail, 'verification', 10);
 
-    // Generate OTP (use dev OTP in development mode)
-    const otpData = config.env === 'development'
-      ? generateDevOtp(formattedPhone)
-      : generateOtp(formattedPhone);
-
-    // Save OTP to database
-    await OTP.create({
-      phone: formattedPhone,
-      code: otpData.hash,
-      type,
-      expiresAt: otpData.expiresAt,
-    });
-
-    // Send SMS (skipped in development)
-    if (config.env !== 'development') {
-      await sendOtpSms(formattedPhone, otpData.code);
+    // Send OTP via email
+    try {
+      await emailService.sendOTP({
+        to: normalizedEmail,
+        otp: otp.code,
+        type: 'verification',
+      });
+    } catch (error) {
+      console.error('Failed to send verification email:', error);
+      throw new BadRequestError('فشل في إرسال رسالة التحقق. حاول مرة أخرى.');
     }
 
     const result: OtpSendResult = {
       success: true,
-      message: 'تم إرسال كود التحقق بنجاح',
-      expiresAt: otpData.expiresAt,
+      message: 'تم إرسال كود التحقق إلى بريدك الإلكتروني',
+      expiresAt: otp.expiresAt,
     };
 
     // Include code in development for testing
     if (config.env === 'development') {
-      result.code = otpData.code;
+      result.code = otp.code;
+    }
+
+    return result;
+  }
+
+  /**
+   * Send password reset OTP
+   */
+  async sendPasswordResetOTP(email: string): Promise<OtpSendResult> {
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Check if user exists
+    const user = await User.findOne({ email: normalizedEmail });
+    if (!user) {
+      throw new NotFoundError('لم يتم العثور على حساب بهذا البريد الإلكتروني');
+    }
+
+    if (user.authProvider === 'google') {
+      throw new BadRequestError('هذا الحساب مسجل عبر Google. استخدم تسجيل الدخول بـ Google.');
+    }
+
+    // Generate OTP
+    const otp = await OTP.generateOTP(normalizedEmail, 'password_reset', 10);
+
+    // Send OTP via email
+    try {
+      await emailService.sendOTP({
+        to: normalizedEmail,
+        otp: otp.code,
+        type: 'reset',
+      });
+    } catch (error) {
+      console.error('Failed to send reset email:', error);
+      throw new BadRequestError('فشل في إرسال رسالة إعادة التعيين. حاول مرة أخرى.');
+    }
+
+    const result: OtpSendResult = {
+      success: true,
+      message: 'تم إرسال كود إعادة التعيين إلى بريدك الإلكتروني',
+      expiresAt: otp.expiresAt,
+    };
+
+    // Include code in development for testing
+    if (config.env === 'development') {
+      result.code = otp.code;
     }
 
     return result;
@@ -99,61 +126,40 @@ class AuthService {
   /**
    * Verify OTP code
    */
-  async verifyOtp(
-    phone: string,
+  async verifyOTP(
+    email: string,
     code: string,
-    type: 'verification' | 'login' | 'password_reset' = 'verification'
+    type: 'verification' | 'password_reset' = 'verification'
   ): Promise<boolean> {
-    const formattedPhone = formatPhone(phone);
+    const normalizedEmail = email.toLowerCase().trim();
+    const result = await OTP.verifyOTP(normalizedEmail, code, type);
 
-    // Find the latest OTP for this phone and type
-    const otpRecord = await OTP.findOne({
-      phone: formattedPhone,
-      type,
-      isUsed: false,
-    }).sort({ createdAt: -1 });
-
-    if (!otpRecord) {
-      throw new BadRequestError('كود التحقق غير صالح أو منتهي الصلاحية');
+    if (!result.success) {
+      throw new BadRequestError(
+        result.message === 'OTP expired or not found'
+          ? 'كود التحقق غير صالح أو منتهي الصلاحية'
+          : result.message === 'Too many attempts. Please request a new OTP.'
+          ? 'تم تجاوز عدد المحاولات المسموحة. اطلب كود جديد.'
+          : 'كود التحقق غير صحيح'
+      );
     }
-
-    // Check expiration
-    if (isOtpExpired(otpRecord.expiresAt)) {
-      throw new BadRequestError('كود التحقق منتهي الصلاحية');
-    }
-
-    // Verify the code
-    if (!verifyOtpHash(code, formattedPhone, otpRecord.code)) {
-      // Increment attempts
-      otpRecord.attempts += 1;
-      await otpRecord.save();
-
-      if (otpRecord.attempts >= 5) {
-        otpRecord.isUsed = true;
-        await otpRecord.save();
-        throw new BadRequestError('تم تجاوز عدد المحاولات المسموحة');
-      }
-
-      throw new BadRequestError('كود التحقق غير صحيح');
-    }
-
-    // Mark OTP as used
-    otpRecord.isUsed = true;
-    await otpRecord.save();
 
     return true;
   }
 
   /**
-   * Register a new user
+   * Register a new user with email and password
    */
-  async register(data: RegisterRequest): Promise<AuthResult> {
-    const formattedPhone = formatPhone(data.phone);
+  async register(data: RegisterRequest, otp: string): Promise<AuthResult> {
+    const normalizedEmail = data.email.toLowerCase().trim();
+
+    // Verify OTP first
+    await this.verifyOTP(normalizedEmail, otp, 'verification');
 
     // Check if user already exists
-    const existingUser = await User.findOne({ phone: formattedPhone });
-    if (existingUser && existingUser.isPhoneVerified) {
-      throw new ConflictError('هذا الرقم مسجل بالفعل');
+    const existingUser = await User.findOne({ email: normalizedEmail });
+    if (existingUser && existingUser.isVerified) {
+      throw new ConflictError('هذا البريد الإلكتروني مسجل بالفعل');
     }
 
     // Create or update user
@@ -162,108 +168,91 @@ class AuthService {
     if (existingUser) {
       // Update existing unverified user
       existingUser.name = data.name;
-      existingUser.email = data.email;
       existingUser.password = data.password;
       existingUser.role = data.role;
-      existingUser.isPhoneVerified = true;
+      existingUser.authProvider = 'email';
+      existingUser.isVerified = true;
       await existingUser.save();
       user = existingUser;
     } else {
       // Create new user
       user = await User.create({
-        phone: formattedPhone,
+        email: normalizedEmail,
         name: data.name,
-        email: data.email,
         password: data.password,
         role: data.role,
-        isPhoneVerified: true,
+        authProvider: 'email',
+        isVerified: true,
       });
     }
 
     // Create role-specific profile
     if (data.role === USER_ROLES.CUSTOMER) {
-      await Customer.create({
-        userId: user._id,
-        addresses: [],
-      });
+      const existingProfile = await Customer.findOne({ userId: user._id });
+      if (!existingProfile) {
+        await Customer.create({
+          userId: user._id,
+          addresses: [],
+        });
+      }
     } else if (data.role === USER_ROLES.CRAFTSMAN) {
-      await Craftsman.create({
-        userId: user._id,
-        services: [],
-        status: 'pending',
-      });
+      const existingProfile = await Craftsman.findOne({ userId: user._id });
+      if (!existingProfile) {
+        await Craftsman.create({
+          userId: user._id,
+          displayName: data.name,
+          services: [],
+          status: 'pending',
+        });
+      }
     }
 
     // Generate tokens
     const tokenPayload: TokenPayload = {
       userId: user._id.toString(),
       role: user.role,
-      phone: user.phone,
+      email: user.email,
     };
     const tokens = generateTokens(tokenPayload);
 
-    // Send welcome SMS
-    if (config.env !== 'development') {
-      await sendWelcomeSms(formattedPhone, data.name);
+    // Send welcome email
+    try {
+      await emailService.sendWelcome(normalizedEmail, data.name);
+    } catch (error) {
+      console.error('Failed to send welcome email:', error);
     }
 
     return { user: user.toObject(), tokens };
   }
 
   /**
-   * Login with OTP
+   * Login with email and password
    */
-  async loginWithOtp(phone: string, otp: string): Promise<AuthResult> {
-    const formattedPhone = formatPhone(phone);
-
-    // Verify OTP first
-    await this.verifyOtp(formattedPhone, otp, 'login');
+  async loginWithPassword(email: string, password: string): Promise<AuthResult> {
+    const normalizedEmail = email.toLowerCase().trim();
 
     // Find user
-    const user = await User.findOne({ phone: formattedPhone });
+    const user = await User.findOne({ email: normalizedEmail }).select('+password');
     if (!user) {
-      throw new NotFoundError('لم يتم العثور على حساب بهذا الرقم');
+      throw new UnauthorizedError('البريد الإلكتروني أو كلمة المرور غير صحيحة');
     }
 
-    if (!user.isActive) {
-      throw new UnauthorizedError('حسابك موقوف. تواصل مع الدعم');
-    }
-
-    // Update last login
-    user.lastLoginAt = new Date();
-    await user.save();
-
-    // Generate tokens
-    const tokenPayload: TokenPayload = {
-      userId: user._id.toString(),
-      role: user.role,
-      phone: user.phone,
-    };
-    const tokens = generateTokens(tokenPayload);
-
-    return { user: user.toObject(), tokens };
-  }
-
-  /**
-   * Login with password
-   */
-  async loginWithPassword(phone: string, password: string): Promise<AuthResult> {
-    const formattedPhone = formatPhone(phone);
-
-    // Find user
-    const user = await User.findOne({ phone: formattedPhone }).select('+password');
-    if (!user) {
-      throw new UnauthorizedError('رقم الهاتف أو كلمة المرور غير صحيحة');
+    if (user.authProvider === 'google') {
+      throw new BadRequestError('هذا الحساب مسجل عبر Google. استخدم تسجيل الدخول بـ Google.');
     }
 
     if (!user.password) {
-      throw new BadRequestError('لم يتم تعيين كلمة مرور. استخدم تسجيل الدخول بالكود');
+      throw new BadRequestError('لم يتم تعيين كلمة مرور. استخدم إعادة تعيين كلمة المرور.');
+    }
+
+    if (!user.isVerified) {
+      throw new UnauthorizedError('يرجى تفعيل حسابك أولاً');
     }
 
     // Verify password
     const isValidPassword = await user.comparePassword(password);
     if (!isValidPassword) {
-      throw new UnauthorizedError('رقم الهاتف أو كلمة المرور غير صحيحة');
+      throw new UnauthorizedError('البريد الإلكتروني أو كلمة المرور غير صحيحة');
     }
 
     if (!user.isActive) {
@@ -278,7 +267,94 @@ class AuthService {
     const tokenPayload: TokenPayload = {
       userId: user._id.toString(),
       role: user.role,
-      phone: user.phone,
+      email: user.email,
+    };
+    const tokens = generateTokens(tokenPayload);
+
+    return { user: user.toObject(), tokens };
+  }
+
+  /**
+   * Login with Google
+   */
+  async loginWithGoogle(
+    idToken: string,
+    role: 'customer' | 'craftsman' = 'customer'
+  ): Promise<AuthResult> {
+    // Verify Google ID token with Firebase
+    let decodedToken;
+    try {
+      decodedToken = await admin.auth().verifyIdToken(idToken);
+    } catch (error) {
+      console.error('Google token verification failed:', error);
+      throw new UnauthorizedError('فشل التحقق من حساب Google');
+    }
+
+    const { email, name, picture, uid } = decodedToken;
+
+    if (!email) {
+      throw new BadRequestError('لم يتم العثور على البريد الإلكتروني في حساب Google');
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Check if user exists with this email
+    let user = await User.findOne({ email: normalizedEmail });
+
+    if (user) {
+      // Existing user - check if they used a different auth provider
+      if (user.authProvider === 'email' && !user.googleId) {
+        // Link Google account to existing email account
+        user.googleId = uid;
+        user.authProvider = 'google';
+        if (picture && !user.avatar) {
+          user.avatar = picture;
+        }
+        await user.save();
+      } else if (user.googleId && user.googleId !== uid) {
+        throw new ConflictError('هذا البريد الإلكتروني مرتبط بحساب Google آخر');
+      }
+    } else {
+      // New user - create account
+      user = await User.create({
+        email: normalizedEmail,
+        name: name || email.split('@')[0],
+        avatar: picture,
+        role,
+        authProvider: 'google',
+        googleId: uid,
+        isVerified: true,
+      });
+
+      // Create role-specific profile
+      if (role === USER_ROLES.CUSTOMER) {
+        await Customer.create({
+          userId: user._id,
+          addresses: [],
+        });
+      } else if (role === USER_ROLES.CRAFTSMAN) {
+        await Craftsman.create({
+          userId: user._id,
+          displayName: name || email.split('@')[0],
+          services: [],
+          status: 'pending',
+        });
+      }
+    }
+
+    if (!user.isActive) {
+      throw new UnauthorizedError('حسابك موقوف. تواصل مع الدعم');
+    }
+
+    // Update last login
+    user.lastLoginAt = new Date();
+    await user.save();
+
+    // Generate tokens
+    const tokenPayload: TokenPayload = {
+      userId: user._id.toString(),
+      role: user.role,
+      email: user.email,
     };
     const tokens = generateTokens(tokenPayload);
 
@@ -289,9 +365,11 @@ class AuthService {
    * Admin login
    */
   async adminLogin(email: string, password: string): Promise<AuthResult> {
+    const normalizedEmail = email.toLowerCase().trim();
+
     // Find admin user
     const user = await User.findOne({
-      email: email.toLowerCase(),
+      email: normalizedEmail,
       role: USER_ROLES.ADMIN,
     }).select('+password');
 
@@ -321,7 +399,7 @@ class AuthService {
     const tokenPayload: TokenPayload = {
       userId: user._id.toString(),
       role: user.role,
-      phone: user.phone,
+      email: user.email,
     };
     const tokens = generateTokens(tokenPayload);
 
@@ -345,7 +423,7 @@ class AuthService {
       const tokenPayload: TokenPayload = {
         userId: user._id.toString(),
         role: user.role,
-        phone: user.phone,
+        email: user.email,
       };
 
       return generateTokens(tokenPayload);
@@ -367,6 +445,10 @@ class AuthService {
       throw new NotFoundError('المستخدم غير موجود');
     }
 
+    if (user.authProvider === 'google') {
+      throw new BadRequestError('لا يمكن تغيير كلمة المرور لحساب Google');
+    }
+
     if (!user.password) {
       throw new BadRequestError('لم يتم تعيين كلمة مرور. استخدم إعادة تعيين كلمة المرور');
     }
@@ -380,25 +462,43 @@ class AuthService {
     // Update password
     user.password = newPassword;
     await user.save();
+
+    // Send confirmation email
+    try {
+      await emailService.sendPasswordChanged(user.email, user.name);
+    } catch (error) {
+      console.error('Failed to send password changed email:', error);
+    }
   }
 
   /**
    * Reset password with OTP
    */
-  async resetPassword(phone: string, otp: string, newPassword: string): Promise<void> {
-    const formattedPhone = formatPhone(phone);
+  async resetPassword(email: string, otp: string, newPassword: string): Promise<void> {
+    const normalizedEmail = email.toLowerCase().trim();
 
     // Verify OTP
-    await this.verifyOtp(formattedPhone, otp, 'password_reset');
+    await this.verifyOTP(normalizedEmail, otp, 'password_reset');
 
     // Find and update user
-    const user = await User.findOne({ phone: formattedPhone });
+    const user = await User.findOne({ email: normalizedEmail });
     if (!user) {
-      throw new NotFoundError('لم يتم العثور على حساب بهذا الرقم');
+      throw new NotFoundError('لم يتم العثور على حساب بهذا البريد الإلكتروني');
+    }
+
+    if (user.authProvider === 'google') {
+      throw new BadRequestError('لا يمكن تغيير كلمة المرور لحساب Google');
     }
 
     user.password = newPassword;
     await user.save();
+
+    // Send confirmation email
+    try {
+      await emailService.sendPasswordChanged(user.email, user.name);
+    } catch (error) {
+      console.error('Failed to send password changed email:', error);
+    }
   }
 
   /**
@@ -417,7 +517,7 @@ class AuthService {
    */
   async updateProfile(
     userId: string,
-    data: { name?: string; email?: string; avatar?: string }
+    data: { name?: string; avatar?: string }
   ): Promise<IUser> {
     const user = await User.findById(userId);
     if (!user) {
@@ -425,11 +525,19 @@ class AuthService {
     }
 
     if (data.name) user.name = data.name;
-    if (data.email) user.email = data.email;
     if (data.avatar) user.avatar = data.avatar;
 
     await user.save();
     return user.toObject();
+  }
+
+  /**
+   * Check if email exists
+   */
+  async checkEmailExists(email: string): Promise<boolean> {
+    const normalizedEmail = email.toLowerCase().trim();
+    const user = await User.findOne({ email: normalizedEmail, isVerified: true });
+    return !!user;
   }
 }
 

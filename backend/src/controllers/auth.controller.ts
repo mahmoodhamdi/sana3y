@@ -1,35 +1,55 @@
 import { Request, Response, NextFunction } from 'express';
 import { authService } from '@services/auth.service';
 import {
-  sendOtpSchema,
+  sendVerificationOTPSchema,
+  sendPasswordResetOTPSchema,
   verifyOtpSchema,
   registerSchema,
-  loginOtpSchema,
   loginPasswordSchema,
+  loginGoogleSchema,
   refreshTokenSchema,
   changePasswordSchema,
   resetPasswordSchema,
   updateProfileSchema,
   adminLoginSchema,
+  checkEmailSchema,
 } from '@validators/auth.validator';
 import { sendSuccess, sendCreated } from '@utils/response';
 import { BadRequestError } from '@utils/errors';
-import { formatPhone } from '@utils/phone';
 
 /**
- * Send OTP to phone number
- * POST /api/v1/auth/send-otp
+ * Send verification OTP to email
+ * POST /api/v1/auth/send-verification-otp
  */
-export const sendOtp = async (req: Request, res: Response, next: NextFunction) => {
+export const sendVerificationOTP = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { error, value } = sendOtpSchema.validate(req.body);
+    const { error, value } = sendVerificationOTPSchema.validate(req.body);
     if (error) {
       throw new BadRequestError(error.details[0].message);
     }
 
-    const result = await authService.sendOtp(value.phone, value.type);
+    const result = await authService.sendVerificationOTP(value.email);
 
     return sendSuccess(res, result, 'تم إرسال كود التحقق بنجاح');
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * Send password reset OTP to email
+ * POST /api/v1/auth/send-reset-otp
+ */
+export const sendPasswordResetOTP = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { error, value } = sendPasswordResetOTPSchema.validate(req.body);
+    if (error) {
+      throw new BadRequestError(error.details[0].message);
+    }
+
+    const result = await authService.sendPasswordResetOTP(value.email);
+
+    return sendSuccess(res, result, 'تم إرسال كود إعادة التعيين بنجاح');
   } catch (err) {
     next(err);
   }
@@ -46,7 +66,7 @@ export const verifyOtp = async (req: Request, res: Response, next: NextFunction)
       throw new BadRequestError(error.details[0].message);
     }
 
-    await authService.verifyOtp(value.phone, value.code, value.type);
+    await authService.verifyOTP(value.email, value.code, value.type);
 
     return sendSuccess(res, { verified: true }, 'تم التحقق بنجاح');
   } catch (err) {
@@ -65,10 +85,15 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
       throw new BadRequestError(error.details[0].message);
     }
 
-    // Format phone number
-    value.phone = formatPhone(value.phone);
-
-    const result = await authService.register(value);
+    const result = await authService.register(
+      {
+        email: value.email,
+        password: value.password,
+        name: value.name,
+        role: value.role,
+      },
+      value.otp
+    );
 
     return sendCreated(res, result, 'تم إنشاء الحساب بنجاح');
   } catch (err) {
@@ -77,27 +102,8 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 };
 
 /**
- * Login with OTP
- * POST /api/v1/auth/login/otp
- */
-export const loginWithOtp = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { error, value } = loginOtpSchema.validate(req.body);
-    if (error) {
-      throw new BadRequestError(error.details[0].message);
-    }
-
-    const result = await authService.loginWithOtp(value.phone, value.otp);
-
-    return sendSuccess(res, result, 'تم تسجيل الدخول بنجاح');
-  } catch (err) {
-    next(err);
-  }
-};
-
-/**
- * Login with password
- * POST /api/v1/auth/login/password
+ * Login with email and password
+ * POST /api/v1/auth/login
  */
 export const loginWithPassword = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -106,7 +112,26 @@ export const loginWithPassword = async (req: Request, res: Response, next: NextF
       throw new BadRequestError(error.details[0].message);
     }
 
-    const result = await authService.loginWithPassword(value.phone, value.password);
+    const result = await authService.loginWithPassword(value.email, value.password);
+
+    return sendSuccess(res, result, 'تم تسجيل الدخول بنجاح');
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * Login with Google
+ * POST /api/v1/auth/login/google
+ */
+export const loginWithGoogle = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { error, value } = loginGoogleSchema.validate(req.body);
+    if (error) {
+      throw new BadRequestError(error.details[0].message);
+    }
+
+    const result = await authService.loginWithGoogle(value.idToken, value.role);
 
     return sendSuccess(res, result, 'تم تسجيل الدخول بنجاح');
   } catch (err) {
@@ -230,9 +255,28 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
       throw new BadRequestError(error.details[0].message);
     }
 
-    await authService.resetPassword(value.phone, value.otp, value.newPassword);
+    await authService.resetPassword(value.email, value.otp, value.newPassword);
 
     return sendSuccess(res, null, 'تم إعادة تعيين كلمة المرور بنجاح');
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * Check if email exists
+ * POST /api/v1/auth/check-email
+ */
+export const checkEmail = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { error, value } = checkEmailSchema.validate(req.body);
+    if (error) {
+      throw new BadRequestError(error.details[0].message);
+    }
+
+    const exists = await authService.checkEmailExists(value.email);
+
+    return sendSuccess(res, { exists }, 'تم التحقق بنجاح');
   } catch (err) {
     next(err);
   }

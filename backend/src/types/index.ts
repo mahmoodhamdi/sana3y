@@ -1,22 +1,41 @@
 import { Document, Types } from 'mongoose';
 
 export type UserRole = 'customer' | 'craftsman' | 'admin';
+export type AuthProvider = 'email' | 'google';
 
 export interface IUser extends Document {
   _id: Types.ObjectId;
   role: UserRole;
-  phone: string;
-  email?: string;
+  email: string;
   password?: string;
   name: string;
   avatar?: string;
-  isPhoneVerified: boolean;
-  isEmailVerified: boolean;
+
+  // Auth provider
+  authProvider: AuthProvider;
+  googleId?: string;
+
+  // Email verification OTP
+  emailOTP?: string;
+  emailOTPExpires?: Date;
+
+  // Password reset OTP
+  resetOTP?: string;
+  resetOTPExpires?: Date;
+
+  // Status flags
+  isVerified: boolean;
   isActive: boolean;
+
+  // FCM tokens for push notifications
   fcmTokens: string[];
+
+  // Timestamps
   lastLoginAt?: Date;
   createdAt: Date;
   updatedAt: Date;
+
+  // Methods
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 

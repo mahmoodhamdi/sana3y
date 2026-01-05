@@ -10,7 +10,7 @@ export interface AuthTokens {
 export interface TokenPayload {
   userId: string;
   role: 'customer' | 'craftsman' | 'admin';
-  phone: string;
+  email: string;
 }
 
 export interface DecodedToken extends TokenPayload, JwtPayload {

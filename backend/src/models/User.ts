@@ -1,6 +1,6 @@
 import mongoose, { Schema, Model, HydratedDocument } from 'mongoose';
 import bcrypt from 'bcryptjs';
-import { IUser, UserRole } from '../types';
+import { IUser, UserRole, AuthProvider } from '../types';
 
 export type { IUser } from '../types';
 
@@ -18,17 +18,10 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
       required: true,
       default: 'customer',
     },
-    phone: {
+    email: {
       type: String,
       required: true,
       unique: true,
-      trim: true,
-      match: [/^\+20[0-9]{10}$/, 'Please provide a valid Egyptian phone number'],
-    },
-    email: {
-      type: String,
-      unique: true,
-      sparse: true,
       trim: true,
       lowercase: true,
       match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email'],
@@ -48,11 +41,34 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
     avatar: {
       type: String,
     },
-    isPhoneVerified: {
-      type: Boolean,
-      default: false,
+    // Auth provider
+    authProvider: {
+      type: String,
+      enum: ['email', 'google'] as AuthProvider[],
+      required: true,
+      default: 'email',
     },
-    isEmailVerified: {
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+    // Email verification OTP
+    emailOTP: {
+      type: String,
+    },
+    emailOTPExpires: {
+      type: Date,
+    },
+    // Password reset OTP
+    resetOTP: {
+      type: String,
+    },
+    resetOTPExpires: {
+      type: Date,
+    },
+    // Status flags
+    isVerified: {
       type: Boolean,
       default: false,
     },
@@ -85,9 +101,10 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
 );
 
 // Indexes
-userSchema.index({ phone: 1 });
 userSchema.index({ email: 1 });
+userSchema.index({ googleId: 1 });
 userSchema.index({ role: 1 });
+userSchema.index({ authProvider: 1 });
 userSchema.index({ createdAt: -1 });
 
 // Hash password before saving
