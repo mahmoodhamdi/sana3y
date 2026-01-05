@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import swaggerUi from 'swagger-ui-express';
+import redoc from 'redoc-express';
 import { config } from './config';
 import { swaggerSpec } from './config/swagger';
 import { errorHandler } from './middleware/errorHandler';
@@ -92,6 +93,37 @@ const createApp = (): Application => {
     res.setHeader('Content-Type', 'application/json');
     res.send(swaggerSpec);
   });
+
+  // ReDoc API Documentation
+  app.get(
+    '/api/redoc',
+    redoc({
+      title: 'Sana3y API Documentation - صنايعي',
+      specUrl: '/api/docs.json',
+      redocOptions: {
+        theme: {
+          colors: {
+            primary: {
+              main: '#1E88E5',
+            },
+          },
+          typography: {
+            fontSize: '16px',
+            headings: {
+              fontFamily: 'Cairo, Arial, sans-serif',
+            },
+          },
+          rightPanel: {
+            backgroundColor: '#1a1a1a',
+          },
+        },
+        hideDownloadButton: false,
+        expandResponses: '200,201',
+        pathInMiddlePanel: true,
+        sortPropsAlphabetically: true,
+      },
+    })
+  );
 
   // API routes
   app.use(routes);

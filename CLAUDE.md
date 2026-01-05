@@ -17,9 +17,10 @@ npm run dev           # Start development server with nodemon
 npm run build         # Compile TypeScript to dist/
 npm run lint          # Run ESLint
 npm run lint:fix      # Fix ESLint issues
+npm run format        # Format code with Prettier
 npm run test          # Run Jest tests
 npm run test:watch    # Run tests in watch mode
-npm run test -- --testPathPattern="auth"  # Run single test file
+npm run test -- --testPathPattern="auth"  # Run tests matching pattern (regex)
 npm run seed          # Seed database
 ```
 
@@ -31,6 +32,7 @@ flutter run                          # Run on connected device/emulator
 flutter run -d chrome                # Run on Chrome (web)
 flutter build apk                    # Build Android APK
 flutter build ios                    # Build iOS
+flutter analyze                      # Static analysis
 flutter test                         # Run all tests
 flutter test test/widget_test.dart   # Run single test file
 dart run build_runner build --delete-conflicting-outputs  # Generate Freezed/Riverpod code
@@ -71,6 +73,8 @@ Configured in `backend/tsconfig.json`:
 - Base URL: `/api/v1`
 - Routes: `/auth`, `/categories`, `/craftsmen`, `/requests`, `/chat`, `/reviews`, `/notifications`, `/upload`
 - Health check: `/health`
+- API Documentation: `/api/docs` (Swagger UI)
+- Postman collection available in `backend/src/docs/`
 
 ### Mobile Architecture
 - **State Management**: Riverpod with code generation (`riverpod_generator`)

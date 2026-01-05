@@ -1,0 +1,2150 @@
+{
+  "info": {
+    "_postman_id": "sana3y-api-collection",
+    "name": "Sana3y API - صنايعي",
+    "description": "Sana3y (صنايعي) - Platform connecting customers with local craftsmen/handymen for home services in Egypt.\n\n## Authentication\nMost endpoints require Bearer token authentication. After login, set the `token` variable or include in Authorization header.\n\n## Phone Format\nEgyptian phone: `+20XXXXXXXXXX`\n\n## Base URL\n- Development: `http://localhost:5000/api/v1`\n- Production: `https://api.sana3y.com/api/v1`",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "craftsmanId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "categoryId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "requestId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "conversationId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "reviewId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Authentication and authorization endpoints",
+      "item": [
+        {
+          "name": "Send OTP",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+201234567890\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/send-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "send-otp"]
+            },
+            "description": "Send 6-digit OTP to Egyptian phone number. Rate limited to 3 requests/minute."
+          }
+        },
+        {
+          "name": "Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+201234567890\",\n  \"code\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/verify-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "verify-otp"]
+            },
+            "description": "Verify OTP code sent to phone"
+          }
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+201234567890\",\n  \"name\": \"محمد أحمد\",\n  \"role\": \"customer\",\n  \"email\": \"user@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Register new customer or craftsman. Phone must be verified first."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.token) {",
+                  "    pm.collectionVariables.set('token', jsonData.data.token);",
+                  "    pm.collectionVariables.set('refreshToken', jsonData.data.refreshToken);",
+                  "    pm.collectionVariables.set('userId', jsonData.data.user._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login with OTP",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+201234567890\",\n  \"code\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login/otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login", "otp"]
+            },
+            "description": "Login using phone and OTP"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.token) {",
+                  "    pm.collectionVariables.set('token', jsonData.data.token);",
+                  "    pm.collectionVariables.set('refreshToken', jsonData.data.refreshToken);",
+                  "    pm.collectionVariables.set('userId', jsonData.data.user._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login with Password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+201234567890\",\n  \"password\": \"password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login/password",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login", "password"]
+            },
+            "description": "Login using phone and password"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.token) {",
+                  "    pm.collectionVariables.set('token', jsonData.data.token);",
+                  "    pm.collectionVariables.set('refreshToken', jsonData.data.refreshToken);",
+                  "    pm.collectionVariables.set('userId', jsonData.data.user._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@sana3y.com\",\n  \"password\": \"admin123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/admin/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "admin", "login"]
+            },
+            "description": "Admin login with email and password"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.token) {",
+                  "    pm.collectionVariables.set('token', jsonData.data.token);",
+                  "    pm.collectionVariables.set('refreshToken', jsonData.data.refreshToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "refresh"]
+            },
+            "description": "Get new access token using refresh token"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.token) {",
+                  "    pm.collectionVariables.set('token', jsonData.data.token);",
+                  "    pm.collectionVariables.set('refreshToken', jsonData.data.refreshToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            },
+            "description": "Get current user profile"
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"محمد أحمد\",\n  \"email\": \"updated@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            },
+            "description": "Update user profile"
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"oldpassword\",\n  \"newPassword\": \"newpassword123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/change-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "change-password"]
+            },
+            "description": "Change user password"
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+201234567890\",\n  \"code\": \"123456\",\n  \"newPassword\": \"newpassword123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/reset-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "reset-password"]
+            },
+            "description": "Reset password using OTP"
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "logout"]
+            },
+            "description": "Logout and invalidate token"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "description": "Service categories management",
+      "item": [
+        {
+          "name": "Get Active Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categories/active",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", "active"]
+            },
+            "description": "Get all active categories (public)"
+          },
+          "auth": {
+            "type": "noauth"
+          }
+        },
+        {
+          "name": "Get Popular Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categories/popular?limit=6",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", "popular"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "6"
+                }
+              ]
+            },
+            "description": "Get popular categories by request count"
+          },
+          "auth": {
+            "type": "noauth"
+          }
+        },
+        {
+          "name": "Get Category by Slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categories/slug/electrical",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", "slug", "electrical"]
+            },
+            "description": "Get category by slug"
+          },
+          "auth": {
+            "type": "noauth"
+          }
+        },
+        {
+          "name": "Get Category by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categories/{{categoryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", "{{categoryId}}"]
+            },
+            "description": "Get category by ID"
+          },
+          "auth": {
+            "type": "noauth"
+          }
+        },
+        {
+          "name": "Get All Categories (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categories?includeInactive=true",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories"],
+              "query": [
+                {
+                  "key": "includeInactive",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": "Get all categories including inactive (Admin)"
+          }
+        },
+        {
+          "name": "Create Category (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nameAr\": \"سباكة\",\n  \"nameEn\": \"Plumbing\",\n  \"icon\": \"plumbing\",\n  \"description\": \"خدمات السباكة والصيانة\",\n  \"order\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories"]
+            },
+            "description": "Create new category (Admin)"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data._id) {",
+                  "    pm.collectionVariables.set('categoryId', jsonData.data._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Category (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nameAr\": \"سباكة\",\n  \"nameEn\": \"Plumbing Services\",\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/categories/{{categoryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", "{{categoryId}}"]
+            },
+            "description": "Update category (Admin)"
+          }
+        },
+        {
+          "name": "Delete Category (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categories/{{categoryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", "{{categoryId}}"]
+            },
+            "description": "Delete category (Admin)"
+          }
+        },
+        {
+          "name": "Reorder Categories (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order\": [\n    { \"id\": \"category_id_1\", \"order\": 1 },\n    { \"id\": \"category_id_2\", \"order\": 2 }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/categories/reorder",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", "reorder"]
+            },
+            "description": "Reorder categories (Admin)"
+          }
+        },
+        {
+          "name": "Add Subcategory (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nameAr\": \"صيانة مواسير\",\n  \"nameEn\": \"Pipe Maintenance\",\n  \"icon\": \"pipe\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/categories/{{categoryId}}/subcategories",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", "{{categoryId}}", "subcategories"]
+            },
+            "description": "Add subcategory (Admin)"
+          }
+        },
+        {
+          "name": "Update Subcategory (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nameAr\": \"صيانة مواسير محدث\",\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/categories/{{categoryId}}/subcategories/:subcategoryId",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", "{{categoryId}}", "subcategories", ":subcategoryId"],
+              "variable": [
+                {
+                  "key": "subcategoryId",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Update subcategory (Admin)"
+          }
+        },
+        {
+          "name": "Remove Subcategory (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categories/{{categoryId}}/subcategories/:subcategoryId",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", "{{categoryId}}", "subcategories", ":subcategoryId"],
+              "variable": [
+                {
+                  "key": "subcategoryId",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Remove subcategory (Admin)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Craftsmen",
+      "description": "Craftsmen profiles and management",
+      "item": [
+        {
+          "name": "Get Approved Craftsmen",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/craftsmen/public?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["craftsmen", "public"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Get approved craftsmen (public)"
+          },
+          "auth": {
+            "type": "noauth"
+          }
+        },
+        {
+          "name": "Get Featured Craftsmen",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/craftsmen/featured?limit=6",
+              "host": ["{{baseUrl}}"],
+              "path": ["craftsmen", "featured"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "6"
+                }
+              ]
+            },
+            "description": "Get featured craftsmen"
+          },
+          "auth": {
+            "type": "noauth"
+          }
+        },
+        {
+          "name": "Get Nearby Craftsmen",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/craftsmen/nearby?lat=30.4522&lng=30.9667&radius=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["craftsmen", "nearby"],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "30.4522"
+                },
+                {
+                  "key": "lng",
+                  "value": "30.9667"
+                },
+                {
+                  "key": "radius",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Find nearby craftsmen"
+          },
+          "auth": {
+            "type": "noauth"
+          }
+        },
+        {
+          "name": "Get Craftsmen by Category",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/craftsmen/category/{{categoryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["craftsmen", "category", "{{categoryId}}"]
+            },
+            "description": "Get craftsmen by service category"
+          },
+          "auth": {
+            "type": "noauth"
+          }
+        },
+        {
+          "name": "Get Craftsman by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/craftsmen/{{craftsmanId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["craftsmen", "{{craftsmanId}}"]
+            },
+            "description": "Get craftsman public profile"
+          },
+          "auth": {
+            "type": "noauth"
+          }
+        },
+        {
+          "name": "Get My Craftsman Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/craftsmen/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["craftsmen", "me"]
+            },
+            "description": "Get authenticated craftsman's profile"
+          }
+        },
+        {
+          "name": "Create Craftsman Profile",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bio\": \"صنايعي كهربائي خبرة 10 سنين\",\n  \"services\": [\n    {\n      \"categoryId\": \"{{categoryId}}\",\n      \"priceRange\": { \"min\": 100, \"max\": 500 },\n      \"description\": \"جميع أعمال الكهرباء\"\n    }\n  ],\n  \"location\": {\n    \"type\": \"Point\",\n    \"coordinates\": [30.9667, 30.4522],\n    \"address\": \"شارع النصر\",\n    \"city\": \"الباجور\",\n    \"governorate\": \"المنوفية\"\n  },\n  \"serviceRadius\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/craftsmen/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["craftsmen", "profile"]
+            },
+            "description": "Create craftsman profile"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data._id) {",
+                  "    pm.collectionVariables.set('craftsmanId', jsonData.data._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Craftsman Profile",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bio\": \"صنايعي كهربائي خبرة 15 سنة\",\n  \"serviceRadius\": 15\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/craftsmen/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["craftsmen", "profile"]
+            },
+            "description": "Update craftsman profile"
+          }
+        },
+        {
+          "name": "Toggle Online Status",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isOnline\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/craftsmen/online",
+              "host": ["{{baseUrl}}"],
+              "path": ["craftsmen", "online"]
+            },
+            "description": "Toggle online/offline status"
+          }
+        },
+        {
+          "name": "Toggle Availability",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isAvailable\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/craftsmen/availability",
+              "host": ["{{baseUrl}}"],
+              "path": ["craftsmen", "availability"]
+            },
+            "description": "Toggle availability for new jobs"
+          }
+        },
+        {
+          "name": "Add Work Photos",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"photos\": [\n    \"https://cloudinary.com/photo1.jpg\",\n    \"https://cloudinary.com/photo2.jpg\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/craftsmen/photos",
+              "host": ["{{baseUrl}}"],
+              "path": ["craftsmen", "photos"]
+            },
+            "description": "Add photos to work portfolio"
+          }
+        },
+        {
+          "name": "Remove Work Photo",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"photoUrl\": \"https://cloudinary.com/photo1.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/craftsmen/photos",
+              "host": ["{{baseUrl}}"],
+              "path": ["craftsmen", "photos"]
+            },
+            "description": "Remove photo from portfolio"
+          }
+        },
+        {
+          "name": "Get All Craftsmen (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/craftsmen?status=approved&page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["craftsmen"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "approved"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Get all craftsmen with filters (Admin)"
+          }
+        },
+        {
+          "name": "Get Pending Craftsmen (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/craftsmen/pending",
+              "host": ["{{baseUrl}}"],
+              "path": ["craftsmen", "pending"]
+            },
+            "description": "Get craftsmen awaiting approval (Admin)"
+          }
+        },
+        {
+          "name": "Update Craftsman Status (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"approved\",\n  \"reason\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/craftsmen/{{craftsmanId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["craftsmen", "{{craftsmanId}}", "status"]
+            },
+            "description": "Approve/reject/suspend craftsman (Admin)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Requests",
+      "description": "Service requests lifecycle",
+      "item": [
+        {
+          "name": "Get Request Statuses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/requests/statuses",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests", "statuses"]
+            },
+            "description": "Get all possible request status values"
+          },
+          "auth": {
+            "type": "noauth"
+          }
+        },
+        {
+          "name": "Create Service Request",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryId\": \"{{categoryId}}\",\n  \"title\": \"تصليح كهرباء المطبخ\",\n  \"description\": \"عندي مشكلة في فيشة المطبخ مش شغالة ومحتاج حد يصلحها\",\n  \"location\": {\n    \"type\": \"Point\",\n    \"coordinates\": [30.9667, 30.4522],\n    \"address\": \"شارع النصر\",\n    \"city\": \"الباجور\",\n    \"governorate\": \"المنوفية\"\n  },\n  \"budget\": {\n    \"min\": 100,\n    \"max\": 300\n  },\n  \"preferredTime\": {\n    \"date\": \"2024-12-20\",\n    \"timeSlot\": \"morning\",\n    \"flexibleDate\": true\n  },\n  \"isUrgent\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/requests",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests"]
+            },
+            "description": "Create new service request (Customer)"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data._id) {",
+                  "    pm.collectionVariables.set('requestId', jsonData.data._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get My Requests",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/requests/my?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests", "my"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Get authenticated user's requests"
+          }
+        },
+        {
+          "name": "Get Request by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/requests/{{requestId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests", "{{requestId}}"]
+            },
+            "description": "Get request details"
+          }
+        },
+        {
+          "name": "Update Request",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"تصليح كهرباء المطبخ - تحديث\",\n  \"description\": \"وصف محدث للطلب\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/requests/{{requestId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests", "{{requestId}}"]
+            },
+            "description": "Update request (Customer, before acceptance)"
+          }
+        },
+        {
+          "name": "Cancel Request",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"لقيت حد تاني\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/requests/{{requestId}}/cancel",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests", "{{requestId}}", "cancel"]
+            },
+            "description": "Cancel a pending or in-progress request"
+          }
+        },
+        {
+          "name": "Get Request Timeline",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/requests/{{requestId}}/timeline",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests", "{{requestId}}", "timeline"]
+            },
+            "description": "Get request status change history"
+          }
+        },
+        {
+          "name": "Get Available Requests (Craftsman)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/requests/available?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests", "available"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Get requests available to quote (Craftsman)"
+          }
+        },
+        {
+          "name": "Get My Active Jobs (Craftsman)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/requests/my-jobs/active",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests", "my-jobs", "active"]
+            },
+            "description": "Get craftsman's active jobs"
+          }
+        },
+        {
+          "name": "Get My Completed Jobs (Craftsman)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/requests/my-jobs/completed?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests", "my-jobs", "completed"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Get craftsman's completed jobs"
+          }
+        },
+        {
+          "name": "Submit Quote (Craftsman)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 200,\n  \"estimatedDuration\": \"ساعتين\",\n  \"notes\": \"هحتاج أجيب معايا الأدوات اللازمة\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/requests/{{requestId}}/quotes",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests", "{{requestId}}", "quotes"]
+            },
+            "description": "Submit quote for a request (Craftsman)"
+          }
+        },
+        {
+          "name": "Accept Quote (Customer)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/requests/{{requestId}}/quotes/:quoteId/accept",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests", "{{requestId}}", "quotes", ":quoteId", "accept"],
+              "variable": [
+                {
+                  "key": "quoteId",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Accept a craftsman's quote (Customer)"
+          }
+        },
+        {
+          "name": "Reject Quote (Customer)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"السعر غالي\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/requests/{{requestId}}/quotes/:quoteId/reject",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests", "{{requestId}}", "quotes", ":quoteId", "reject"],
+              "variable": [
+                {
+                  "key": "quoteId",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Reject a craftsman's quote (Customer)"
+          }
+        },
+        {
+          "name": "Update Request Status",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"in_progress\",\n  \"notes\": \"بدأت الشغل\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/requests/{{requestId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests", "{{requestId}}", "status"]
+            },
+            "description": "Update request status"
+          }
+        },
+        {
+          "name": "Get All Requests (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/requests?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get all requests with filters (Admin)"
+          }
+        },
+        {
+          "name": "Get Request Stats (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/requests/stats?period=month",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests", "stats"],
+              "query": [
+                {
+                  "key": "period",
+                  "value": "month"
+                }
+              ]
+            },
+            "description": "Get request statistics (Admin)"
+          }
+        },
+        {
+          "name": "Delete Request (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/requests/{{requestId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests", "{{requestId}}"]
+            },
+            "description": "Delete request permanently (Admin)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Chat",
+      "description": "Conversations and messaging",
+      "item": [
+        {
+          "name": "Get Conversations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/chat/conversations?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["chat", "conversations"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Get user's conversations"
+          }
+        },
+        {
+          "name": "Create Conversation",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": \"{{requestId}}\",\n  \"recipientId\": \"{{craftsmanId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/chat/conversations",
+              "host": ["{{baseUrl}}"],
+              "path": ["chat", "conversations"]
+            },
+            "description": "Create or get conversation for a request"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data._id) {",
+                  "    pm.collectionVariables.set('conversationId', jsonData.data._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Conversation",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/chat/conversations/{{conversationId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["chat", "conversations", "{{conversationId}}"]
+            },
+            "description": "Get specific conversation"
+          }
+        },
+        {
+          "name": "Get Messages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/chat/conversations/{{conversationId}}/messages?limit=50",
+              "host": ["{{baseUrl}}"],
+              "path": ["chat", "conversations", "{{conversationId}}", "messages"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "Get messages in a conversation"
+          }
+        },
+        {
+          "name": "Send Message",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"مرحبا، أنا مهتم بالخدمة\",\n  \"type\": \"text\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/chat/conversations/{{conversationId}}/messages",
+              "host": ["{{baseUrl}}"],
+              "path": ["chat", "conversations", "{{conversationId}}", "messages"]
+            },
+            "description": "Send a message"
+          }
+        },
+        {
+          "name": "Mark as Read",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/chat/conversations/{{conversationId}}/read",
+              "host": ["{{baseUrl}}"],
+              "path": ["chat", "conversations", "{{conversationId}}", "read"]
+            },
+            "description": "Mark conversation as read"
+          }
+        },
+        {
+          "name": "Get Unread Count",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/chat/unread-count",
+              "host": ["{{baseUrl}}"],
+              "path": ["chat", "unread-count"]
+            },
+            "description": "Get total unread messages count"
+          }
+        },
+        {
+          "name": "Archive Conversation",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/chat/conversations/{{conversationId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["chat", "conversations", "{{conversationId}}"]
+            },
+            "description": "Archive/hide a conversation"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "description": "Reviews and ratings",
+      "item": [
+        {
+          "name": "Get Craftsman Reviews",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reviews/craftsman/{{craftsmanId}}?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["reviews", "craftsman", "{{craftsmanId}}"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "latest",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get reviews for a craftsman"
+          },
+          "auth": {
+            "type": "noauth"
+          }
+        },
+        {
+          "name": "Get Craftsman Reviews Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reviews/craftsman/{{craftsmanId}}/summary",
+              "host": ["{{baseUrl}}"],
+              "path": ["reviews", "craftsman", "{{craftsmanId}}", "summary"]
+            },
+            "description": "Get rating summary for a craftsman"
+          },
+          "auth": {
+            "type": "noauth"
+          }
+        },
+        {
+          "name": "Get Review by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reviews/{{reviewId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["reviews", "{{reviewId}}"]
+            },
+            "description": "Get specific review"
+          },
+          "auth": {
+            "type": "noauth"
+          }
+        },
+        {
+          "name": "Create Review",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": \"{{requestId}}\",\n  \"craftsmanId\": \"{{craftsmanId}}\",\n  \"score\": 5,\n  \"comment\": \"شغل ممتاز والصنايعي ملتزم بالميعاد\",\n  \"qualities\": {\n    \"punctuality\": 5,\n    \"professionalism\": 5,\n    \"quality\": 5,\n    \"cleanliness\": 4,\n    \"communication\": 5\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reviews",
+              "host": ["{{baseUrl}}"],
+              "path": ["reviews"]
+            },
+            "description": "Create a review (Customer)"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data._id) {",
+                  "    pm.collectionVariables.set('reviewId', jsonData.data._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get My Reviews",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reviews/my?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["reviews", "my"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Get reviews written by user"
+          }
+        },
+        {
+          "name": "Update Review",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"score\": 4,\n  \"comment\": \"شغل كويس بس كان ممكن يكون أحسن\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reviews/{{reviewId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["reviews", "{{reviewId}}"]
+            },
+            "description": "Update review (within 24 hours)"
+          }
+        },
+        {
+          "name": "Respond to Review (Craftsman)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"response\": \"شكرا جدا على التقييم، نورتنا!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reviews/{{reviewId}}/respond",
+              "host": ["{{baseUrl}}"],
+              "path": ["reviews", "{{reviewId}}", "respond"]
+            },
+            "description": "Respond to review (Craftsman)"
+          }
+        },
+        {
+          "name": "Report Review",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"inappropriate\",\n  \"details\": \"التقييم يحتوي على ألفاظ غير لائقة\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reviews/{{reviewId}}/report",
+              "host": ["{{baseUrl}}"],
+              "path": ["reviews", "{{reviewId}}", "report"]
+            },
+            "description": "Report a review"
+          }
+        },
+        {
+          "name": "Toggle Review Visibility (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isVisible\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reviews/admin/{{reviewId}}/visibility",
+              "host": ["{{baseUrl}}"],
+              "path": ["reviews", "admin", "{{reviewId}}", "visibility"]
+            },
+            "description": "Show/hide review (Admin)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "description": "Push notifications management",
+      "item": [
+        {
+          "name": "Get Notifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notifications?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "isRead",
+                  "value": "false",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get user's notifications"
+          }
+        },
+        {
+          "name": "Get Unread Count",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/unread-count",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "unread-count"]
+            },
+            "description": "Get unread notifications count"
+          }
+        },
+        {
+          "name": "Mark as Read",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/:notificationId/read",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", ":notificationId", "read"],
+              "variable": [
+                {
+                  "key": "notificationId",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Mark single notification as read"
+          }
+        },
+        {
+          "name": "Mark All as Read",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/read-all",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "read-all"]
+            },
+            "description": "Mark all notifications as read"
+          }
+        },
+        {
+          "name": "Delete Notification",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/:notificationId",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", ":notificationId"],
+              "variable": [
+                {
+                  "key": "notificationId",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Delete a notification"
+          }
+        },
+        {
+          "name": "Register FCM Token",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"fcm_device_token_here\",\n  \"platform\": \"android\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/notifications/fcm-token",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "fcm-token"]
+            },
+            "description": "Register device FCM token"
+          }
+        },
+        {
+          "name": "Remove FCM Token",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"fcm_device_token_here\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/notifications/fcm-token",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "fcm-token"]
+            },
+            "description": "Remove device FCM token"
+          }
+        },
+        {
+          "name": "Broadcast Notification (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"عروض جديدة!\",\n  \"body\": \"خصم 20% على جميع الخدمات\",\n  \"targetRole\": \"customer\",\n  \"data\": {\n    \"type\": \"promotion\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/notifications/broadcast",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "broadcast"]
+            },
+            "description": "Broadcast notification (Admin)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Upload",
+      "description": "File uploads (images, documents)",
+      "item": [
+        {
+          "name": "Upload Single Image",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": ""
+                },
+                {
+                  "key": "folder",
+                  "value": "general",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/upload/image",
+              "host": ["{{baseUrl}}"],
+              "path": ["upload", "image"]
+            },
+            "description": "Upload single image (max 5MB)"
+          }
+        },
+        {
+          "name": "Upload Multiple Images",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": ""
+                },
+                {
+                  "key": "folder",
+                  "value": "general",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/upload/images",
+              "host": ["{{baseUrl}}"],
+              "path": ["upload", "images"]
+            },
+            "description": "Upload multiple images (max 10)"
+          }
+        },
+        {
+          "name": "Upload Profile Image",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/upload/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["upload", "profile"]
+            },
+            "description": "Upload profile avatar (max 2MB)"
+          }
+        },
+        {
+          "name": "Upload Cover Image",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/upload/cover",
+              "host": ["{{baseUrl}}"],
+              "path": ["upload", "cover"]
+            },
+            "description": "Upload cover/banner image"
+          }
+        },
+        {
+          "name": "Upload Work Photos (Craftsman)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/upload/work-photos",
+              "host": ["{{baseUrl}}"],
+              "path": ["upload", "work-photos"]
+            },
+            "description": "Upload work portfolio photos (Craftsman)"
+          }
+        },
+        {
+          "name": "Upload Document",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "document",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/upload/document",
+              "host": ["{{baseUrl}}"],
+              "path": ["upload", "document"]
+            },
+            "description": "Upload ID document (max 10MB)"
+          }
+        },
+        {
+          "name": "Upload Base64 Image",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"image\": \"data:image/jpeg;base64,/9j/4AAQSkZJRg...\",\n  \"folder\": \"general\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/upload/base64",
+              "host": ["{{baseUrl}}"],
+              "path": ["upload", "base64"]
+            },
+            "description": "Upload base64 encoded image"
+          }
+        },
+        {
+          "name": "Upload Category Image (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/upload/category",
+              "host": ["{{baseUrl}}"],
+              "path": ["upload", "category"]
+            },
+            "description": "Upload category icon/image (Admin)"
+          }
+        },
+        {
+          "name": "Delete Image",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"publicId\": \"cloudinary_public_id\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/upload",
+              "host": ["{{baseUrl}}"],
+              "path": ["upload"]
+            },
+            "description": "Delete uploaded image"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["health"]
+            },
+            "description": "Check API health status"
+          },
+          "auth": {
+            "type": "noauth"
+          }
+        },
+        {
+          "name": "API Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}",
+              "host": ["{{baseUrl}}"]
+            },
+            "description": "Get API info and available endpoints"
+          },
+          "auth": {
+            "type": "noauth"
+          }
+        }
+      ],
+      "description": "Health check endpoints"
+    }
+  ]
+}
