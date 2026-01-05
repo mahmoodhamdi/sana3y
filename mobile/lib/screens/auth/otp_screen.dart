@@ -114,9 +114,14 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
           });
         }
       } else if (widget.isRegistration) {
-        // OTP verified, go back with success
+        // Verify OTP first, then go back with success
+        await authNotifier.verifyOtp(
+          widget.email,
+          _otpController.text,
+          type: 'verification',
+        );
         if (mounted) {
-          context.pop(true);
+          context.pop(_otpController.text); // Return the OTP code
         }
       } else {
         // Verify OTP and go to registration

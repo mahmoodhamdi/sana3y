@@ -86,7 +86,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       // Send verification OTP
       final result = await authNotifier.sendVerificationOTP(_emailController.text.trim());
       if (mounted) {
-        final verified = await context.push<bool>(
+        final otpCode = await context.push<String>(
           '/otp',
           extra: {
             'email': _emailController.text.trim(),
@@ -94,10 +94,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             'devCode': result.code,
           },
         );
-        if (verified == true) {
+        if (otpCode != null && otpCode.isNotEmpty && mounted) {
           setState(() {
             _emailVerified = true;
-            _verifiedOtp = result.code ?? '';
+            _verifiedOtp = otpCode;
           });
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
