@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../widgets/loading_button.dart';
+import '../../widgets/osm_map_widget.dart';
+import 'package:latlong2/latlong.dart';
+import 'location_picker_screen.dart';
 
 class AddAddressScreen extends ConsumerStatefulWidget {
   final String? editId;
@@ -21,6 +25,10 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
   String _selectedCity = 'الباجور';
   bool _isDefault = false;
   bool _isSubmitting = false;
+
+  // Location state
+  LatLng? _selectedLocation;
+  String? _locationAddress;
 
   final List<String> _labels = ['المنزل', 'العمل', 'أخرى'];
   final List<String> _governorates = ['المنوفية', 'القاهرة', 'الجيزة', 'الإسكندرية'];
@@ -163,45 +171,118 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
               ),
               const SizedBox(height: 24),
 
-              // Map Placeholder
-              Container(
-                height: 180,
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey[300]!),
-                ),
-                child: Stack(
-                  children: [
-                    Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.map, size: 48, color: Colors.grey[400]),
-                          const SizedBox(height: 8),
-                          Text(
-                            'اضغط لتحديد الموقع على الخريطة',
-                            style: TextStyle(color: Colors.grey[600]),
+              // Map Widget with Location Picker
+              GestureDetector(
+                onTap: _openLocationPicker,
+                child: Container(
+                  height: 180,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey[300]!),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Stack(
+                      children: [
+                        // Map Preview (OSM)
+                        if (_selectedLocation != null)
+                          OSMMapWidget(
+                            initialCenter: _selectedLocation,
+                            initialZoom: 16,
+                            showZoomButtons: false,
+                            showMyLocationButton: false,
+                            showUserLocation: false,
+                            markers: [
+                              MapMarkerData(
+                                id: 'selected',
+                                position: _selectedLocation!,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ],
+                          )
+                        else
+                          Container(
+                            color: Colors.grey[200],
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.map, size: 48, color: Colors.grey[400]),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'اضغط لتحديد الموقع على الخريطة',
+                                    style: TextStyle(color: Colors.grey[600]),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                        ],
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 8,
-                      left: 8,
-                      child: ElevatedButton.icon(
-                        onPressed: _getCurrentLocation,
-                        icon: const Icon(Icons.my_location, size: 18),
-                        label: const Text('موقعي الحالي'),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
+                        // Location Address Overlay
+                        if (_locationAddress != null)
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              color: Colors.black54,
+                              child: Text(
+                                _locationAddress!,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                textDirection: TextDirection.rtl,
+                              ),
+                            ),
+                          ),
+                        // Edit Overlay
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColor,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                Icon(Icons.edit_location, color: Colors.white, size: 16),
+                                SizedBox(width: 4),
+                                Text(
+                                  'تغيير',
+                                  style: TextStyle(color: Colors.white, fontSize: 12),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
+                        // My Location Button
+                        Positioned(
+                          bottom: _locationAddress != null ? 50 : 8,
+                          left: 8,
+                          child: ElevatedButton.icon(
+                            onPressed: _getCurrentLocation,
+                            icon: const Icon(Icons.my_location, size: 18),
+                            label: const Text('موقعي الحالي'),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
               const SizedBox(height: 24),
@@ -245,10 +326,91 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
     }
   }
 
-  void _getCurrentLocation() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('جاري تحديد الموقع...')),
+  Future<void> _getCurrentLocation() async {
+    try {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('جاري تحديد الموقع...')),
+      );
+
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('الرجاء تفعيل خدمة الموقع'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+        return;
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('تم رفض إذن الموقع'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('إذن الموقع مرفوض بشكل دائم'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return;
+      }
+
+      final position = await Geolocator.getCurrentPosition();
+      final location = LatLng(position.latitude, position.longitude);
+
+      // Open location picker with current location
+      _openLocationPickerWithInitial(location);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('فشل في تحديد الموقع: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _openLocationPicker() async {
+    _openLocationPickerWithInitial(_selectedLocation);
+  }
+
+  Future<void> _openLocationPickerWithInitial(LatLng? initial) async {
+    final result = await Navigator.of(context).push<LocationResult>(
+      MaterialPageRoute(
+        builder: (context) => LocationPickerScreen(
+          initialLatitude: initial?.latitude,
+          initialLongitude: initial?.longitude,
+          title: 'حدد موقع العنوان',
+        ),
+      ),
     );
+
+    if (result != null && mounted) {
+      setState(() {
+        _selectedLocation = LatLng(result.latitude, result.longitude);
+        _locationAddress = result.address;
+      });
+    }
   }
 
   Future<void> _saveAddress() async {

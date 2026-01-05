@@ -56,8 +56,14 @@ dependencies:
 
   # Location & Maps
   geolocator: ^13.0.2
-  google_maps_flutter: ^2.10.1
-  geocoding: ^3.0.0
+  # google_maps_flutter: ^2.10.1  # TODO: Switch to Google Maps when billing is ready
+  # geocoding: ^3.0.0             # TODO: Switch to Google Geocoding when billing is ready
+
+  # FREE OpenStreetMap Alternatives
+  flutter_map: ^6.1.0              # OpenStreetMap renderer (FREE)
+  latlong2: ^0.9.1                 # Coordinates library
+  flutter_map_marker_cluster: ^1.3.6  # Marker clustering
+  http: ^1.2.0                     # For Nominatim/OSRM API calls
 
   # Media
   image_picker: ^1.1.2
