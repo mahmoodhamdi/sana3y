@@ -5,7 +5,7 @@ import '../providers/auth_provider.dart';
 import '../models/auth.dart';
 import '../models/user.dart';
 // Auth screens
-import '../screens/auth/phone_screen.dart';
+import '../screens/auth/login_screen.dart';
 import '../screens/auth/otp_screen.dart';
 import '../screens/auth/register_screen.dart';
 import '../screens/auth/welcome_screen.dart';
@@ -158,15 +158,16 @@ final routerProvider = Provider<GoRouter>((ref) {
       // Auth Routes
       GoRoute(
         path: AppRoutes.login,
-        builder: (context, state) => const PhoneScreen(),
+        builder: (context, state) => const LoginScreen(),
       ),
       GoRoute(
         path: AppRoutes.otp,
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>?;
           return OtpScreen(
-            phone: extra?['phone'] ?? '',
-            isLogin: extra?['isLogin'] ?? true,
+            email: extra?['email'] ?? '',
+            isPasswordReset: extra?['isPasswordReset'] ?? false,
+            isRegistration: extra?['isRegistration'] ?? false,
             devCode: extra?['devCode'],
           );
         },
@@ -176,7 +177,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>?;
           return RegisterScreen(
-            phone: extra?['phone'] ?? '',
+            email: extra?['email'],
+            otp: extra?['otp'],
           );
         },
       ),

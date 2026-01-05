@@ -52,7 +52,7 @@ class SwitchRoleScreen extends ConsumerWidget {
                             ),
                           ),
                           Text(
-                            user.phone,
+                            user.email,
                             style: TextStyle(color: Colors.grey[600]),
                             textDirection: TextDirection.ltr,
                           ),

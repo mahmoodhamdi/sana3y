@@ -80,10 +80,11 @@ class ManageProfileScreen extends ConsumerWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              user?.phone ?? '',
+                              user?.email ?? '',
                               style: TextStyle(
                                 color: Colors.grey[600],
                               ),
+                              textDirection: TextDirection.ltr,
                             ),
                             if (profile != null) ...[
                               const SizedBox(height: 4),

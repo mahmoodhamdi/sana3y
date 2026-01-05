@@ -7,14 +7,16 @@ import '../../providers/auth_provider.dart';
 import '../../widgets/loading_button.dart';
 
 class OtpScreen extends ConsumerStatefulWidget {
-  final String phone;
-  final bool isLogin;
+  final String email;
+  final bool isPasswordReset;
+  final bool isRegistration;
   final String? devCode;
 
   const OtpScreen({
     super.key,
-    required this.phone,
-    required this.isLogin,
+    required this.email,
+    this.isPasswordReset = false,
+    this.isRegistration = false,
     this.devCode,
   });
 
@@ -32,7 +34,6 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
   void initState() {
     super.initState();
     _startTimer();
-    // Auto-fill in development
     if (widget.devCode != null) {
       _otpController.text = widget.devCode!;
     }
@@ -66,10 +67,9 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
 
     final authNotifier = ref.read(authProvider.notifier);
     try {
-      final result = await authNotifier.sendOtp(
-        widget.phone,
-        type: widget.isLogin ? 'login' : 'verification',
-      );
+      final result = widget.isPasswordReset
+          ? await authNotifier.sendPasswordResetOTP(widget.email)
+          : await authNotifier.sendVerificationOTP(widget.email);
       _startTimer();
       if (result.code != null) {
         _otpController.text = result.code!;
@@ -100,17 +100,36 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
     final authNotifier = ref.read(authProvider.notifier);
 
     try {
-      if (widget.isLogin) {
-        await authNotifier.loginWithOtp(widget.phone, _otpController.text);
-        if (mounted) context.go('/');
-      } else {
+      if (widget.isPasswordReset) {
+        // Verify OTP and go to reset password screen
         await authNotifier.verifyOtp(
-          widget.phone,
+          widget.email,
+          _otpController.text,
+          type: 'password_reset',
+        );
+        if (mounted) {
+          context.push('/reset-password', extra: {
+            'email': widget.email,
+            'otp': _otpController.text,
+          });
+        }
+      } else if (widget.isRegistration) {
+        // OTP verified, go back with success
+        if (mounted) {
+          context.pop(true);
+        }
+      } else {
+        // Verify OTP and go to registration
+        await authNotifier.verifyOtp(
+          widget.email,
           _otpController.text,
           type: 'verification',
         );
         if (mounted) {
-          context.push('/register', extra: {'phone': widget.phone});
+          context.push('/register', extra: {
+            'email': widget.email,
+            'otp': _otpController.text,
+          });
         }
       }
     } catch (e) {
@@ -132,7 +151,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('التحقق من الرقم'),
+        title: Text(widget.isPasswordReset ? 'استعادة كلمة المرور' : 'التحقق من البريد'),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -145,7 +164,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
 
               // Icon
               Icon(
-                Icons.message_outlined,
+                Icons.email_outlined,
                 size: 80,
                 color: theme.colorScheme.primary,
               ),
@@ -161,7 +180,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                'تم إرسال كود مكون من 6 أرقام إلى\n${widget.phone}',
+                'تم إرسال كود مكون من 6 أرقام إلى\n${widget.email}',
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: Colors.grey[600],
                 ),

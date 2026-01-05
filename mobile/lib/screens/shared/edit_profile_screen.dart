@@ -14,7 +14,6 @@ class EditProfileScreen extends ConsumerStatefulWidget {
 class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
-  late TextEditingController _emailController;
   bool _isSubmitting = false;
   String? _selectedAvatar;
 
@@ -23,14 +22,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     super.initState();
     final user = ref.read(currentUserProvider);
     _nameController = TextEditingController(text: user?.name ?? '');
-    _emailController = TextEditingController(text: user?.email ?? '');
     _selectedAvatar = user?.avatar;
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _emailController.dispose();
     super.dispose();
   }
 
@@ -101,44 +98,17 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Email
+              // Email (Read-only)
               TextFormField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  labelText: 'البريد الإلكتروني (اختياري)',
-                  prefixIcon: Icon(Icons.email_outlined),
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value != null && value.isNotEmpty) {
-                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                      return 'البريد الإلكتروني غير صحيح';
-                    }
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // Phone (Read-only)
-              TextFormField(
-                initialValue: user?.phone ?? '',
+                initialValue: user?.email ?? '',
                 readOnly: true,
+                textDirection: TextDirection.ltr,
                 decoration: InputDecoration(
-                  labelText: 'رقم الهاتف',
-                  prefixIcon: const Icon(Icons.phone_outlined),
+                  labelText: 'البريد الإلكتروني',
+                  prefixIcon: const Icon(Icons.email_outlined),
                   border: const OutlineInputBorder(),
                   filled: true,
                   fillColor: Colors.grey[100],
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.edit),
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('هذه الميزة ستتوفر قريباً')),
-                      );
-                    },
-                  ),
                 ),
               ),
               const SizedBox(height: 32),
@@ -231,7 +201,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       // Update profile via auth provider
       await ref.read(authProvider.notifier).updateProfile(
         name: _nameController.text,
-        email: _emailController.text.isNotEmpty ? _emailController.text : null,
         avatar: _selectedAvatar,
       );
 

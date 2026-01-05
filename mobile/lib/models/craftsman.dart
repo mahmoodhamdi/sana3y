@@ -131,8 +131,8 @@ class Craftsman with _$Craftsman {
   factory Craftsman.fromJson(Map<String, dynamic> json) =>
       _$CraftsmanFromJson(json);
 
-  /// Get phone from user data
-  String? get phone => user?.phone;
+  /// Get email from user data
+  String? get email => user?.email;
 
   /// Get name (displayName or user name)
   String get name => displayName;

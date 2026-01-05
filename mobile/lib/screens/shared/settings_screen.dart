@@ -42,10 +42,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             onTap: () => _showChangePasswordDialog(),
           ),
           _SettingsTile(
-            icon: Icons.phone_android,
-            title: 'تغيير رقم الهاتف',
-            subtitle: user?.phone ?? '',
-            onTap: () => _showChangePhoneDialog(),
+            icon: Icons.email_outlined,
+            title: 'البريد الإلكتروني',
+            subtitle: user?.email ?? '',
+            onTap: () {},
           ),
           const Divider(height: 32),
 
@@ -198,12 +198,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  void _showChangePhoneDialog() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('هذه الميزة ستتوفر قريباً')),
     );
   }
 
