@@ -1,12 +1,14 @@
+export type AuthProvider = 'email' | 'google';
+
 export interface User {
   _id: string;
-  phone: string;
-  email?: string;
+  email: string;
   name: string;
   role: 'customer' | 'craftsman' | 'admin';
   avatar?: string;
-  isPhoneVerified: boolean;
-  isEmailVerified: boolean;
+  authProvider: AuthProvider;
+  googleId?: string;
+  isVerified: boolean;
   isActive: boolean;
   lastLoginAt?: string;
   createdAt: string;
