@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../models/chat.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/chat_provider.dart';
+import '../../services/api_client.dart';
+import '../../config/constants.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   final String conversationId;
@@ -16,7 +20,9 @@ class ChatScreen extends ConsumerStatefulWidget {
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final ImagePicker _picker = ImagePicker();
   bool _isSending = false;
+  bool _isUploadingImage = false;
 
   @override
   void initState() {
@@ -91,24 +97,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           ],
         ),
         actions: [
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              if (value == 'call') {
-                // TODO: Implement call
-              }
-            },
-            itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: 'call',
-                child: Row(
-                  children: [
-                    Icon(Icons.phone),
-                    SizedBox(width: 12),
-                    Text('اتصال'),
-                  ],
-                ),
-              ),
-            ],
+          IconButton(
+            icon: const Icon(Icons.call),
+            onPressed: () => _makeCall(otherParticipant?.phone),
+            tooltip: 'اتصال',
           ),
         ],
       ),
@@ -180,10 +172,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             child: Row(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.attach_file),
-                  onPressed: () {
-                    // TODO: Implement attachments
-                  },
+                  icon: _isUploadingImage
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.attach_file),
+                  onPressed: _isUploadingImage ? null : _showAttachmentOptions,
                 ),
                 Expanded(
                   child: TextField(
@@ -249,15 +245,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       _messageController.clear();
 
       // Scroll to bottom
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_scrollController.hasClients) {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-        }
-      });
+      _scrollToBottom();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -269,6 +257,157 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         setState(() => _isSending = false);
       }
     }
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  Future<void> _makeCall(String? phoneNumber) async {
+    if (phoneNumber == null || phoneNumber.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('رقم الهاتف غير متاح')),
+      );
+      return;
+    }
+
+    final Uri telUri = Uri(scheme: 'tel', path: phoneNumber);
+    try {
+      if (await canLaunchUrl(telUri)) {
+        await launchUrl(telUri);
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('تعذر فتح تطبيق الاتصال')),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('خطأ في الاتصال: $e')),
+        );
+      }
+    }
+  }
+
+  void _showAttachmentOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'إرفاق ملف',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            ListTile(
+              leading: const CircleAvatar(
+                backgroundColor: Colors.blue,
+                child: Icon(Icons.camera_alt, color: Colors.white),
+              ),
+              title: const Text('الكاميرا'),
+              subtitle: const Text('التقاط صورة جديدة'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickAndSendImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const CircleAvatar(
+                backgroundColor: Colors.green,
+                child: Icon(Icons.photo_library, color: Colors.white),
+              ),
+              title: const Text('معرض الصور'),
+              subtitle: const Text('اختيار صورة من المعرض'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickAndSendImage(ImageSource.gallery);
+              },
+            ),
+            ListTile(
+              leading: const CircleAvatar(
+                backgroundColor: Colors.orange,
+                child: Icon(Icons.location_on, color: Colors.white),
+              ),
+              title: const Text('الموقع'),
+              subtitle: const Text('مشاركة موقعك الحالي'),
+              onTap: () {
+                Navigator.pop(context);
+                _sendLocation();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _pickAndSendImage(ImageSource source) async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: source,
+        imageQuality: 80,
+        maxWidth: 1200,
+        maxHeight: 1200,
+      );
+
+      if (image == null) return;
+
+      setState(() => _isUploadingImage = true);
+
+      // Upload image
+      final apiClient = ApiClient();
+      final response = await apiClient.uploadFile(
+        ApiEndpoints.upload,
+        image.path,
+        'image',
+      );
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        final imageUrl = response.data['data']['url'] as String?;
+        if (imageUrl != null) {
+          // Send image message
+          await ref
+              .read(messagesNotifierProvider(widget.conversationId).notifier)
+              .sendMessage(SendMessageData(
+                content: imageUrl,
+                type: MessageType.image,
+              ));
+          _scrollToBottom();
+        }
+      } else {
+        throw Exception('فشل رفع الصورة');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('فشل في إرسال الصورة: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isUploadingImage = false);
+      }
+    }
+  }
+
+  Future<void> _sendLocation() async {
+    // For now, show a message that location sharing will be available
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('مشاركة الموقع ستكون متاحة قريباً')),
+    );
   }
 }
 

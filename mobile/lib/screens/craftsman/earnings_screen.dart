@@ -4,11 +4,18 @@ import '../../models/request.dart';
 import '../../providers/request_provider.dart';
 import '../../providers/craftsman_provider.dart';
 
-class EarningsScreen extends ConsumerWidget {
+class EarningsScreen extends ConsumerStatefulWidget {
   const EarningsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<EarningsScreen> createState() => _EarningsScreenState();
+}
+
+class _EarningsScreenState extends ConsumerState<EarningsScreen> {
+  bool _isWithdrawing = false;
+
+  @override
+  Widget build(BuildContext context) {
     final profileAsync = ref.watch(myCraftsmanProfileProvider);
     final earningsAsync = ref.watch(craftsmanEarningsProvider);
     final completedJobsAsync = ref.watch(completedJobsNotifierProvider);
@@ -37,7 +44,7 @@ class EarningsScreen extends ConsumerWidget {
                     currentBalance: profile.currentBalance,
                     pendingBalance: profile.totalEarnings - profile.currentBalance,
                     totalEarnings: profile.totalEarnings,
-                    onWithdraw: () => _showWithdrawSheet(context),
+                    onWithdraw: () => _showWithdrawSheet(context, profile.currentBalance),
                   );
                 },
                 loading: () => const _BalanceCardSkeleton(),
@@ -123,7 +130,7 @@ class EarningsScreen extends ConsumerWidget {
     );
   }
 
-  void _showWithdrawSheet(BuildContext context) {
+  void _showWithdrawSheet(BuildContext context, double maxBalance) {
     final amountController = TextEditingController();
 
     showModalBottomSheet(
@@ -132,78 +139,155 @@ class EarningsScreen extends ConsumerWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'طلب سحب',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: amountController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'المبلغ المطلوب',
-                  suffixText: 'ج.م',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.blue[50],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (context, setSheetState) => Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Icon(Icons.info_outline, color: Colors.blue[700]),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'سيتم تحويل المبلغ خلال 1-3 أيام عمل',
-                        style: TextStyle(color: Colors.blue[700], fontSize: 13),
-                      ),
+                    const Text(
+                      'طلب سحب',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.pop(context),
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // TODO: Implement withdrawal
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('تم تقديم طلب السحب')),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  child: const Text('تقديم الطلب'),
+                const SizedBox(height: 8),
+                Text(
+                  'الرصيد المتاح: ${maxBalance.toInt()} ج.م',
+                  style: TextStyle(color: Colors.grey[600]),
                 ),
-              ),
-              const SizedBox(height: 16),
-            ],
+                const SizedBox(height: 20),
+                TextField(
+                  controller: amountController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'المبلغ المطلوب',
+                    suffixText: 'ج.م',
+                    hintText: 'الحد الأدنى 100 ج.م',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[50],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.info_outline, color: Colors.blue[700]),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'سيتم تحويل المبلغ خلال 1-3 أيام عمل',
+                          style: TextStyle(color: Colors.blue[700], fontSize: 13),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _isWithdrawing
+                        ? null
+                        : () async {
+                            final amountText = amountController.text.trim();
+                            if (amountText.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('يرجى إدخال المبلغ')),
+                              );
+                              return;
+                            }
+
+                            final amount = double.tryParse(amountText);
+                            if (amount == null || amount <= 0) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('يرجى إدخال مبلغ صحيح')),
+                              );
+                              return;
+                            }
+
+                            if (amount < 100) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('الحد الأدنى للسحب هو 100 ج.م')),
+                              );
+                              return;
+                            }
+
+                            if (amount > maxBalance) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('المبلغ أكبر من الرصيد المتاح')),
+                              );
+                              return;
+                            }
+
+                            setSheetState(() => _isWithdrawing = true);
+                            setState(() => _isWithdrawing = true);
+
+                            try {
+                              final service = ref.read(craftsmanServiceProvider);
+                              final result = await service.requestPayout(amount);
+
+                              if (result != null) {
+                                if (mounted) {
+                                  Navigator.pop(context);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(result['message'] ?? 'تم تقديم طلب السحب بنجاح'),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                  // Refresh data
+                                  ref.invalidate(myCraftsmanProfileProvider);
+                                  ref.invalidate(craftsmanEarningsProvider);
+                                }
+                              }
+                            } catch (e) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('فشل في تقديم الطلب: $e'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            } finally {
+                              if (mounted) {
+                                setSheetState(() => _isWithdrawing = false);
+                                setState(() => _isWithdrawing = false);
+                              }
+                            }
+                          },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    child: _isWithdrawing
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text('تقديم الطلب'),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
           ),
         ),
       ),

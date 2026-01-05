@@ -3,7 +3,9 @@ import Review, { IReview } from '@models/Review';
 import ServiceRequest from '@models/ServiceRequest';
 import Craftsman from '@models/Craftsman';
 import Customer from '@models/Customer';
+import User from '@models/User';
 import { NotFoundError, BadRequestError, ForbiddenError } from '@utils/errors';
+import notificationService from './notification.service';
 
 interface CreateReviewParams {
   requestId: string;
@@ -337,7 +339,7 @@ class ReviewService {
    */
   async reportReview(
     reviewId: string,
-    _reporterId: string,
+    reporterId: string,
     reason: string
   ): Promise<void> {
     const review = await Review.findById(reviewId);
@@ -350,7 +352,24 @@ class ReviewService {
     review.reportReason = reason;
     await review.save();
 
-    // TODO: Notify admin for review
+    // Notify all admins about the reported review
+    const admins = await User.find({ role: 'admin', isActive: true });
+    for (const admin of admins) {
+      await notificationService.createNotification({
+        userId: admin._id.toString(),
+        type: 'system',
+        title: 'Review Reported',
+        titleAr: 'تم الإبلاغ عن تقييم',
+        body: `A review has been reported for: ${reason}`,
+        bodyAr: `تم الإبلاغ عن تقييم بسبب: ${reason}`,
+        data: {
+          reviewId,
+          reporterId,
+          reason,
+          action: 'review_reported',
+        },
+      });
+    }
   }
 
   /**

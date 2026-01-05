@@ -7,6 +7,7 @@ import requestRoutes from './request.routes';
 import chatRoutes from './chat.routes';
 import reviewRoutes from './review.routes';
 import notificationRoutes from './notification.routes';
+import paymentRoutes from './payment.routes';
 
 const router = Router();
 
@@ -37,6 +38,9 @@ router.use(`${API_VERSION}/reviews`, reviewRoutes);
 // Notification routes
 router.use(`${API_VERSION}/notifications`, notificationRoutes);
 
+// Payment routes
+router.use(`${API_VERSION}/payments`, paymentRoutes);
+
 // Health check
 router.get('/health', (_req, res) => {
   res.json({
@@ -61,6 +65,7 @@ router.get(API_VERSION, (_req, res) => {
       reviews: `${API_VERSION}/reviews`,
       notifications: `${API_VERSION}/notifications`,
       upload: `${API_VERSION}/upload`,
+      payments: `${API_VERSION}/payments`,
     },
   });
 });

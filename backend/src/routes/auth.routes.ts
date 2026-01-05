@@ -14,6 +14,8 @@ import {
   resetPassword,
   checkEmail,
   logout,
+  switchRole,
+  getAvailableRoles,
 } from '@controllers/auth.controller';
 import { authenticate } from '@middleware/auth';
 import { rateLimiter } from '@middleware/rateLimiter';
@@ -52,5 +54,7 @@ router.get('/me', authenticate, getProfile);
 router.put('/me', authenticate, updateProfile);
 router.post('/change-password', authenticate, changePassword);
 router.post('/logout', authenticate, logout);
+router.get('/roles', authenticate, getAvailableRoles);
+router.post('/switch-role', authenticate, switchRole);
 
 export default router;

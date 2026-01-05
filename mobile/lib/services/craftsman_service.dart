@@ -264,4 +264,54 @@ class CraftsmanService {
 
     return null;
   }
+
+  /// Get earnings summary from API
+  Future<Map<String, dynamic>?> getEarnings() async {
+    try {
+      final response = await _client.get(
+        '${ApiEndpoints.craftsmen}/earnings',
+      );
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        return response.data['data'] as Map<String, dynamic>;
+      }
+    } catch (e) {
+      // Handle error
+    }
+    return null;
+  }
+
+  /// Request a payout/withdrawal
+  Future<Map<String, dynamic>?> requestPayout(double amount) async {
+    try {
+      final response = await _client.post(
+        '${ApiEndpoints.craftsmen}/payout',
+        data: {'amount': amount},
+      );
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        return response.data['data'] as Map<String, dynamic>;
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return null;
+  }
+
+  /// Get payout history
+  Future<List<dynamic>?> getPayoutHistory({int page = 1, int limit = 20}) async {
+    try {
+      final response = await _client.get(
+        '${ApiEndpoints.craftsmen}/payout/history',
+        queryParameters: {'page': page, 'limit': limit},
+      );
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        return response.data['data'] as List<dynamic>;
+      }
+    } catch (e) {
+      // Handle error
+    }
+    return null;
+  }
 }

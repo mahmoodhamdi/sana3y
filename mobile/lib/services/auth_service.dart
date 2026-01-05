@@ -162,4 +162,24 @@ class AuthService {
     final token = await _client.getToken();
     return token != null;
   }
+
+  // Switch user role
+  Future<AuthResult> switchRole(String newRole) async {
+    final response = await _client.post(
+      '/auth/switch-role',
+      data: {'role': newRole},
+    );
+    final result = AuthResult.fromJson(response.data['data']);
+    await _client.setTokens(
+      token: result.tokens.token,
+      refreshToken: result.tokens.refreshToken,
+    );
+    return result;
+  }
+
+  // Get available roles
+  Future<Map<String, dynamic>> getAvailableRoles() async {
+    final response = await _client.get('/auth/roles');
+    return response.data['data'] as Map<String, dynamic>;
+  }
 }

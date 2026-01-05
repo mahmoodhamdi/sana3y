@@ -165,12 +165,19 @@ class SwitchRoleScreen extends ConsumerWidget {
     );
 
     try {
-      // TODO: Call API to switch role when backend supports it
-      // For now, we can navigate based on current user role
-      // await ref.read(authProvider.notifier).switchRole(newRole);
+      // Call API to switch role
+      await ref.read(authProvider.notifier).switchRole(newRole);
 
       if (context.mounted) {
         Navigator.pop(context); // Close loading
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'تم التبديل إلى حساب ${newRole == UserRole.customer ? 'العميل' : 'الصنايعي'}',
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
         _navigateToHome(context, newRole);
       }
     } catch (e) {

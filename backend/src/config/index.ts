@@ -53,6 +53,24 @@ export const config = {
     urgentFee: parseInt(process.env.URGENT_FEE || '20', 10),
     minWithdrawal: parseInt(process.env.MIN_WITHDRAWAL || '100', 10),
   },
+
+  twilio: {
+    accountSid: process.env.TWILIO_ACCOUNT_SID || '',
+    authToken: process.env.TWILIO_AUTH_TOKEN || '',
+    phoneNumber: process.env.TWILIO_PHONE_NUMBER || '',
+  },
+
+  unifonic: {
+    appSid: process.env.UNIFONIC_APP_SID || '',
+    senderId: process.env.UNIFONIC_SENDER_ID || 'Sana3y',
+  },
+
+  paymob: {
+    apiKey: process.env.PAYMOB_API_KEY || '',
+    integrationId: process.env.PAYMOB_INTEGRATION_ID || '',
+    iframeId: process.env.PAYMOB_IFRAME_ID || '',
+    hmacSecret: process.env.PAYMOB_HMAC_SECRET || '',
+  },
 };
 
 export default config;

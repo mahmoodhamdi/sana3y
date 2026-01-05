@@ -295,3 +295,46 @@ export const logout = async (req: Request, res: Response, next: NextFunction) =>
     next(err);
   }
 };
+
+/**
+ * Switch user role
+ * POST /api/v1/auth/switch-role
+ */
+export const switchRole = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) {
+      throw new BadRequestError('غير مصرح');
+    }
+
+    const { role } = req.body;
+    if (!role || !['customer', 'craftsman'].includes(role)) {
+      throw new BadRequestError('الدور غير صالح');
+    }
+
+    const result = await authService.switchRole(userId, role);
+
+    return sendSuccess(res, result, 'تم تغيير الدور بنجاح');
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * Get available roles
+ * GET /api/v1/auth/roles
+ */
+export const getAvailableRoles = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) {
+      throw new BadRequestError('غير مصرح');
+    }
+
+    const result = await authService.getAvailableRoles(userId);
+
+    return sendSuccess(res, result, 'تم جلب الأدوار المتاحة');
+  } catch (err) {
+    next(err);
+  }
+};

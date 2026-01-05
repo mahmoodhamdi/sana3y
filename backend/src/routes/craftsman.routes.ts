@@ -15,6 +15,9 @@ import {
   toggleAvailability,
   addWorkPhotos,
   removeWorkPhoto,
+  getEarnings,
+  requestPayout,
+  getPayoutHistory,
 } from '@controllers/craftsman.controller';
 import { authenticate, requireRole } from '@middleware/auth';
 
@@ -34,6 +37,11 @@ router.put('/online', authenticate, requireRole('craftsman'), toggleOnline);
 router.put('/availability', authenticate, requireRole('craftsman'), toggleAvailability);
 router.post('/photos', authenticate, requireRole('craftsman'), addWorkPhotos);
 router.delete('/photos', authenticate, requireRole('craftsman'), removeWorkPhoto);
+
+// Earnings and payouts
+router.get('/earnings', authenticate, requireRole('craftsman'), getEarnings);
+router.post('/payout', authenticate, requireRole('craftsman'), requestPayout);
+router.get('/payout/history', authenticate, requireRole('craftsman'), getPayoutHistory);
 
 // Admin routes
 router.get('/', authenticate, requireRole('admin'), getCraftsmen);

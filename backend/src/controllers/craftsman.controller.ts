@@ -388,3 +388,81 @@ export const removeWorkPhoto = async (
     next(err);
   }
 };
+
+/**
+ * Get craftsman earnings summary
+ * GET /api/v1/craftsmen/earnings
+ */
+export const getEarnings = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      throw new UnauthorizedError('الرجاء تسجيل الدخول');
+    }
+
+    const earnings = await craftsmanService.getEarnings(req.user.userId);
+    sendSuccess(res, earnings, 'تم جلب الأرباح بنجاح');
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * Request a payout/withdrawal
+ * POST /api/v1/craftsmen/payout
+ */
+export const requestPayout = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      throw new UnauthorizedError('الرجاء تسجيل الدخول');
+    }
+
+    const { amount } = req.body;
+    if (!amount || typeof amount !== 'number' || amount <= 0) {
+      throw new BadRequestError('يجب توفير مبلغ صالح للسحب');
+    }
+
+    const result = await craftsmanService.requestPayout(req.user.userId, amount);
+    sendSuccess(res, result, result.message);
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * Get payout history
+ * GET /api/v1/craftsmen/payout/history
+ */
+export const getPayoutHistory = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      throw new UnauthorizedError('الرجاء تسجيل الدخول');
+    }
+
+    const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
+    const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 20;
+
+    const result = await craftsmanService.getPayoutHistory(req.user.userId, page, limit);
+    sendPaginated(
+      res,
+      result.transactions,
+      result.page,
+      limit,
+      result.total,
+      'تم جلب سجل المعاملات بنجاح'
+    );
+  } catch (err) {
+    next(err);
+  }
+};

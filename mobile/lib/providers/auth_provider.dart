@@ -257,6 +257,27 @@ class Auth extends _$Auth {
     }
   }
 
+  // Switch user role
+  Future<void> switchRole(UserRole newRole) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+    try {
+      final authService = ref.read(authServiceProvider);
+      final roleStr = newRole == UserRole.customer ? 'customer' : 'craftsman';
+      final result = await authService.switchRole(roleStr);
+      state = AuthState(
+        status: AuthStatus.authenticated,
+        user: result.user,
+        tokens: result.tokens,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: _getErrorMessage(e),
+      );
+      rethrow;
+    }
+  }
+
   void clearError() {
     state = state.copyWith(errorMessage: null);
   }

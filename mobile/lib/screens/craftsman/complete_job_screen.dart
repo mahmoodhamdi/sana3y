@@ -1,9 +1,13 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../models/request.dart';
 import '../../providers/request_provider.dart';
 import '../../widgets/loading_button.dart';
+import '../../services/api_client.dart';
+import '../../config/constants.dart';
 
 class CompleteJobScreen extends ConsumerStatefulWidget {
   final String jobId;
@@ -19,7 +23,10 @@ class _CompleteJobScreenState extends ConsumerState<CompleteJobScreen> {
   final _actualAmountController = TextEditingController();
   final _notesController = TextEditingController();
   final List<String> _completionPhotos = [];
+  final List<File> _localPhotos = [];
+  final ImagePicker _picker = ImagePicker();
   bool _isSubmitting = false;
+  bool _isUploading = false;
 
   @override
   void dispose() {
@@ -277,11 +284,90 @@ class _CompleteJobScreenState extends ConsumerState<CompleteJobScreen> {
     );
   }
 
-  void _addPhoto() {
-    // TODO: Implement image picker
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('سيتم إضافة خاصية رفع الصور قريباً')),
+  Future<void> _addPhoto() async {
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'اختر مصدر الصورة',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('الكاميرا'),
+              onTap: () => Navigator.pop(context, ImageSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('معرض الصور'),
+              onTap: () => Navigator.pop(context, ImageSource.gallery),
+            ),
+          ],
+        ),
+      ),
     );
+
+    if (source == null) return;
+
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: source,
+        imageQuality: 80,
+        maxWidth: 1200,
+        maxHeight: 1200,
+      );
+
+      if (image == null) return;
+
+      setState(() => _isUploading = true);
+
+      // Upload image to server
+      final apiClient = ApiClient();
+      final response = await apiClient.uploadFile(
+        ApiEndpoints.upload,
+        image.path,
+        'image',
+      );
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        final url = response.data['data']['url'] as String?;
+        if (url != null) {
+          setState(() {
+            _completionPhotos.add(url);
+            _localPhotos.add(File(image.path));
+          });
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('تم رفع الصورة بنجاح'),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
+        }
+      } else {
+        throw Exception('فشل رفع الصورة');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('فشل في رفع الصورة: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isUploading = false);
+      }
+    }
   }
 
   Future<void> _completeJob(ServiceRequest job) async {

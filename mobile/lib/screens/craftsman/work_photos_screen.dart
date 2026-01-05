@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../providers/craftsman_provider.dart';
+import '../../services/api_client.dart';
+import '../../config/constants.dart';
 
 class WorkPhotosScreen extends ConsumerStatefulWidget {
   const WorkPhotosScreen({super.key});
@@ -11,6 +14,7 @@ class WorkPhotosScreen extends ConsumerStatefulWidget {
 
 class _WorkPhotosScreenState extends ConsumerState<WorkPhotosScreen> {
   final List<String> _photos = [];
+  final ImagePicker _picker = ImagePicker();
   bool _isUploading = false;
 
   @override
@@ -189,7 +193,7 @@ class _WorkPhotosScreenState extends ConsumerState<WorkPhotosScreen> {
   }
 
   Future<void> _addPhoto() async {
-    final source = await showModalBottomSheet<String>(
+    final source = await showModalBottomSheet<ImageSource>(
       context: context,
       builder: (context) => Container(
         padding: const EdgeInsets.all(24),
@@ -204,12 +208,12 @@ class _WorkPhotosScreenState extends ConsumerState<WorkPhotosScreen> {
             ListTile(
               leading: const Icon(Icons.camera_alt),
               title: const Text('الكاميرا'),
-              onTap: () => Navigator.pop(context, 'camera'),
+              onTap: () => Navigator.pop(context, ImageSource.camera),
             ),
             ListTile(
               leading: const Icon(Icons.photo_library),
               title: const Text('معرض الصور'),
-              onTap: () => Navigator.pop(context, 'gallery'),
+              onTap: () => Navigator.pop(context, ImageSource.gallery),
             ),
           ],
         ),
@@ -218,23 +222,44 @@ class _WorkPhotosScreenState extends ConsumerState<WorkPhotosScreen> {
 
     if (source == null) return;
 
-    setState(() => _isUploading = true);
-
     try {
-      // Simulate upload
-      await Future.delayed(const Duration(seconds: 1));
+      final XFile? image = await _picker.pickImage(
+        source: source,
+        imageQuality: 80,
+        maxWidth: 1200,
+        maxHeight: 1200,
+      );
 
-      setState(() {
-        _photos.add('https://via.placeholder.com/300');
-      });
+      if (image == null) return;
 
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم إضافة الصورة بنجاح'),
-            backgroundColor: Colors.green,
-          ),
-        );
+      setState(() => _isUploading = true);
+
+      // Upload image to server
+      final apiClient = ApiClient();
+      final response = await apiClient.uploadFile(
+        '${ApiEndpoints.craftsmen}/photos',
+        image.path,
+        'photo',
+      );
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        final url = response.data['data']['url'] as String?;
+        if (url != null) {
+          setState(() {
+            _photos.add(url);
+          });
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('تم إضافة الصورة بنجاح'),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
+        }
+      } else {
+        throw Exception('فشل رفع الصورة');
       }
     } catch (e) {
       if (mounted) {
@@ -272,14 +297,36 @@ class _WorkPhotosScreenState extends ConsumerState<WorkPhotosScreen> {
     );
 
     if (confirmed == true) {
-      setState(() {
-        _photos.removeAt(index);
-      });
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('تم حذف الصورة')),
+      try {
+        final photoUrl = _photos[index];
+        final apiClient = ApiClient();
+        final response = await apiClient.delete(
+          '${ApiEndpoints.craftsmen}/photos',
+          queryParameters: {'url': photoUrl},
         );
+
+        if (response.statusCode == 200 && response.data['success'] == true) {
+          setState(() {
+            _photos.removeAt(index);
+          });
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('تم حذف الصورة')),
+            );
+          }
+        } else {
+          throw Exception('فشل حذف الصورة');
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('فشل في حذف الصورة: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     }
   }

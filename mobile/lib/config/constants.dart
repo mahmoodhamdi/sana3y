@@ -93,6 +93,9 @@ class ApiEndpoints {
   static const String upload = '/upload';
   static const String uploadMultiple = '/upload/multiple';
 
+  // Payments
+  static const String payments = '/payments';
+
   // Settings
   static const String settings = '/settings';
 }

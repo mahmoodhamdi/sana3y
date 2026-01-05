@@ -539,6 +539,92 @@ class AuthService {
     const user = await User.findOne({ email: normalizedEmail, isVerified: true });
     return !!user;
   }
+
+  /**
+   * Switch user role between customer and craftsman
+   */
+  async switchRole(userId: string, newRole: 'customer' | 'craftsman'): Promise<AuthResult> {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new NotFoundError('المستخدم غير موجود');
+    }
+
+    if (user.role === 'admin') {
+      throw new BadRequestError('لا يمكن للمسؤولين تغيير دورهم');
+    }
+
+    if (user.role === newRole) {
+      throw new BadRequestError('أنت بالفعل في هذا الدور');
+    }
+
+    // Check if user has the required profile for the new role
+    if (newRole === USER_ROLES.CRAFTSMAN) {
+      let craftsmanProfile = await Craftsman.findOne({ userId: user._id });
+      if (!craftsmanProfile) {
+        // Create craftsman profile if not exists
+        craftsmanProfile = await Craftsman.create({
+          userId: user._id,
+          displayName: user.name,
+          services: [],
+          status: 'pending',
+        });
+      }
+    } else if (newRole === USER_ROLES.CUSTOMER) {
+      let customerProfile = await Customer.findOne({ userId: user._id });
+      if (!customerProfile) {
+        // Create customer profile if not exists
+        customerProfile = await Customer.create({
+          userId: user._id,
+          addresses: [],
+        });
+      }
+    }
+
+    // Update user role
+    user.role = newRole;
+    await user.save();
+
+    // Generate new tokens with updated role
+    const tokenPayload: TokenPayload = {
+      userId: user._id.toString(),
+      role: user.role,
+      email: user.email,
+    };
+    const tokens = generateTokens(tokenPayload);
+
+    return { user: user.toObject(), tokens };
+  }
+
+  /**
+   * Get available roles for a user
+   */
+  async getAvailableRoles(userId: string): Promise<{
+    currentRole: string;
+    availableRoles: { role: string; hasProfile: boolean; status?: string }[];
+  }> {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new NotFoundError('المستخدم غير موجود');
+    }
+
+    const customerProfile = await Customer.findOne({ userId: user._id });
+    const craftsmanProfile = await Craftsman.findOne({ userId: user._id });
+
+    return {
+      currentRole: user.role,
+      availableRoles: [
+        {
+          role: 'customer',
+          hasProfile: !!customerProfile,
+        },
+        {
+          role: 'craftsman',
+          hasProfile: !!craftsmanProfile,
+          status: craftsmanProfile?.status,
+        },
+      ],
+    };
+  }
 }
 
 export const authService = new AuthService();

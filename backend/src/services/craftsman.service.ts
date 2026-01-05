@@ -1,6 +1,7 @@
 import { Types, PipelineStage } from 'mongoose';
 import Craftsman from '@models/Craftsman';
 import User from '@models/User';
+import Transaction from '@models/Transaction';
 import { ICraftsman, ICraftsmanService, IWorkingHour, ICraftsmanDocuments } from '../types';
 import { NotFoundError, BadRequestError, ConflictError } from '@utils/errors';
 import categoryService from './category.service';
@@ -567,6 +568,139 @@ class CraftsmanService {
     }>
   ): Promise<void> {
     await Craftsman.findByIdAndUpdate(craftsmanId, { $inc: updates });
+  }
+
+  /**
+   * Get craftsman earnings summary
+   */
+  async getEarnings(userId: string): Promise<{
+    currentBalance: number;
+    pendingBalance: number;
+    totalEarnings: number;
+    thisMonthEarnings: number;
+    completedJobsCount: number;
+  }> {
+    const craftsman = await Craftsman.findOne({ userId });
+    if (!craftsman) {
+      throw new NotFoundError('الصنايعي غير موجود');
+    }
+
+    // Get this month's earnings from transactions
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+
+    const monthlyTransactions = await Transaction.aggregate([
+      {
+        $match: {
+          userId: new Types.ObjectId(userId),
+          type: 'job_payment',
+          status: 'completed',
+          createdAt: { $gte: startOfMonth },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: '$netAmount' },
+        },
+      },
+    ]);
+
+    return {
+      currentBalance: craftsman.currentBalance || 0,
+      pendingBalance: (craftsman.totalEarnings || 0) - (craftsman.currentBalance || 0),
+      totalEarnings: craftsman.totalEarnings || 0,
+      thisMonthEarnings: monthlyTransactions[0]?.total || 0,
+      completedJobsCount: craftsman.completedJobs || 0,
+    };
+  }
+
+  /**
+   * Request a payout/withdrawal
+   */
+  async requestPayout(userId: string, amount: number): Promise<{
+    success: boolean;
+    transactionId: string;
+    message: string;
+  }> {
+    const craftsman = await Craftsman.findOne({ userId });
+    if (!craftsman) {
+      throw new NotFoundError('الصنايعي غير موجود');
+    }
+
+    // Validate amount
+    const minWithdrawal = 100; // Minimum withdrawal in EGP
+    if (amount < minWithdrawal) {
+      throw new BadRequestError(`الحد الأدنى للسحب هو ${minWithdrawal} جنيه`);
+    }
+
+    if (amount > craftsman.currentBalance) {
+      throw new BadRequestError('الرصيد غير كافي');
+    }
+
+    // Create transaction record
+    const transaction = await Transaction.create({
+      fromUserId: userId,
+      type: 'craftsman_payout' as const,
+      amount,
+      fee: 0,
+      netAmount: amount,
+      notes: 'طلب سحب رصيد',
+      status: 'pending' as const,
+    });
+
+    // Deduct from available balance
+    craftsman.currentBalance -= amount;
+    await craftsman.save();
+
+    return {
+      success: true,
+      transactionId: transaction._id.toString(),
+      message: 'تم تقديم طلب السحب بنجاح. سيتم التحويل خلال 1-3 أيام عمل',
+    };
+  }
+
+  /**
+   * Get payout history
+   */
+  async getPayoutHistory(
+    userId: string,
+    page = 1,
+    limit = 20
+  ): Promise<{
+    transactions: unknown[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }> {
+    const skip = (page - 1) * limit;
+
+    const [transactions, total] = await Promise.all([
+      Transaction.find({
+        $or: [
+          { toUserId: userId, type: 'job_payment' },
+          { fromUserId: userId, type: 'craftsman_payout' },
+        ],
+      })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Transaction.countDocuments({
+        $or: [
+          { toUserId: userId, type: 'job_payment' },
+          { fromUserId: userId, type: 'craftsman_payout' },
+        ],
+      }),
+    ]);
+
+    return {
+      transactions,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 }
 

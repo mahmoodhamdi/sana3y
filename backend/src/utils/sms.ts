@@ -1,5 +1,6 @@
 import { config } from '@config/index';
 import { logger } from '@utils/logger';
+import axios from 'axios';
 
 export interface SmsResult {
   success: boolean;
@@ -9,29 +10,99 @@ export interface SmsResult {
 
 /**
  * Send SMS via configured provider
- * Currently uses console logging in development
- * In production, integrate with Twilio, Firebase, or local SMS gateway
+ * Supports: Twilio, Unifonic (Egypt), or console logging in development
  */
 export const sendSms = async (phone: string, message: string): Promise<SmsResult> => {
   try {
+    const formattedPhone = formatEgyptPhone(phone);
+
     // In development, just log the SMS
     if (config.env === 'development') {
-      logger.info(`[SMS DEV] To: ${phone}`);
+      logger.info(`[SMS DEV] To: ${formattedPhone}`);
       logger.info(`[SMS DEV] Message: ${message}`);
       return { success: true, messageId: `dev-${Date.now()}` };
     }
 
-    // TODO: Implement actual SMS sending
-    // Options:
-    // 1. Twilio
-    // 2. Firebase Phone Auth
-    // 3. Local Egyptian SMS Gateway (e.g., VictoryLink, Unifonic)
+    // Check for Twilio configuration
+    if (config.twilio?.accountSid && config.twilio?.authToken) {
+      return sendViaTwilio(formattedPhone, message);
+    }
 
-    logger.warn('SMS provider not configured. Message not sent.');
+    // Check for Unifonic configuration (Egyptian SMS Gateway)
+    if (config.unifonic?.appSid) {
+      return sendViaUnifonic(formattedPhone, message);
+    }
+
+    // Fallback: log warning and return success for graceful degradation
+    logger.warn(`SMS provider not configured. Message to ${formattedPhone} not sent.`);
     return { success: true, messageId: `mock-${Date.now()}` };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     logger.error(`SMS sending failed: ${errorMessage}`);
+    return { success: false, error: errorMessage };
+  }
+};
+
+/**
+ * Send SMS via Twilio
+ */
+const sendViaTwilio = async (phone: string, message: string): Promise<SmsResult> => {
+  try {
+    const { accountSid, authToken, phoneNumber } = config.twilio!;
+    const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
+
+    const response = await axios.post(
+      url,
+      new URLSearchParams({
+        To: phone,
+        From: phoneNumber!,
+        Body: message,
+      }),
+      {
+        auth: { username: accountSid!, password: authToken! },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      }
+    );
+
+    logger.info(`[SMS Twilio] Sent to ${phone}, SID: ${response.data.sid}`);
+    return { success: true, messageId: response.data.sid };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Twilio error';
+    logger.error(`[SMS Twilio] Failed: ${errorMessage}`);
+    return { success: false, error: errorMessage };
+  }
+};
+
+/**
+ * Send SMS via Unifonic (Egyptian SMS Gateway)
+ */
+const sendViaUnifonic = async (phone: string, message: string): Promise<SmsResult> => {
+  try {
+    const { appSid, senderId } = config.unifonic!;
+    const url = 'https://el.cloud.unifonic.com/rest/SMS/messages';
+
+    const response = await axios.post(
+      url,
+      {
+        AppSid: appSid,
+        SenderID: senderId || 'Sana3y',
+        Recipient: phone.replace('+', ''),
+        Body: message,
+      },
+      {
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+
+    if (response.data.success) {
+      logger.info(`[SMS Unifonic] Sent to ${phone}, ID: ${response.data.data?.MessageID}`);
+      return { success: true, messageId: response.data.data?.MessageID };
+    }
+
+    throw new Error(response.data.message || 'Unifonic API error');
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unifonic error';
+    logger.error(`[SMS Unifonic] Failed: ${errorMessage}`);
     return { success: false, error: errorMessage };
   }
 };
