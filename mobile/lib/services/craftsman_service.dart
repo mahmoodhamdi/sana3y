@@ -99,7 +99,7 @@ class CraftsmanService {
       if (categoryId != null) queryParams['categoryId'] = categoryId;
 
       final response = await _client.get(
-        '${ApiEndpoints.nearbyCraftsmen}',
+        ApiEndpoints.nearbyCraftsmen,
         queryParameters: queryParams,
       );
 

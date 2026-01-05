@@ -12,7 +12,7 @@ class NotificationsState extends _$NotificationsState {
   }
 
   Future<NotificationsResponse> _fetchNotifications({int page = 1}) async {
-    final service = ref.read(notificationServiceProvider);
+    final service = ref.read(notificationApiServiceProvider);
     return service.getNotifications(page: page);
   }
 
@@ -36,7 +36,7 @@ class NotificationsState extends _$NotificationsState {
   }
 
   Future<void> markAsRead(String id) async {
-    final service = ref.read(notificationServiceProvider);
+    final service = ref.read(notificationApiServiceProvider);
     await service.markAsRead(id);
 
     final current = state.valueOrNull;
@@ -67,13 +67,13 @@ class NotificationsState extends _$NotificationsState {
   }
 
   Future<void> markAllAsRead() async {
-    final service = ref.read(notificationServiceProvider);
+    final service = ref.read(notificationApiServiceProvider);
     await service.markAllAsRead();
     await refresh();
   }
 
   Future<void> deleteNotification(String id) async {
-    final service = ref.read(notificationServiceProvider);
+    final service = ref.read(notificationApiServiceProvider);
     await service.deleteNotification(id);
 
     final current = state.valueOrNull;
@@ -92,6 +92,6 @@ class NotificationsState extends _$NotificationsState {
 
 @riverpod
 Future<int> unreadNotificationCount(Ref ref) async {
-  final service = ref.watch(notificationServiceProvider);
+  final service = ref.watch(notificationApiServiceProvider);
   return service.getUnreadCount();
 }

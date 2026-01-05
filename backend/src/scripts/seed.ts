@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import dayjs from 'dayjs';
 import { config } from '../config';
 import {
   User,
@@ -191,40 +192,40 @@ const categories = [
 // ===================== ZONES DATA =====================
 const zones = [
   {
-    name: 'الباجور',
-    nameEn: 'El-Bagour',
-    governorate: 'المنوفية',
-    governorateEn: 'Menoufia',
-    isActive: true,
-    location: {
+    name: 'El-Bagour',
+    nameAr: 'الباجور',
+    type: 'circle' as const,
+    center: {
       type: 'Point' as const,
       coordinates: [30.9667, 30.4522],
     },
-    radius: 15,
+    radius: 15000, // 15km in meters
+    serviceFee: 5,
+    isActive: true,
   },
   {
-    name: 'شبين الكوم',
-    nameEn: 'Shebin El-Kom',
-    governorate: 'المنوفية',
-    governorateEn: 'Menoufia',
-    isActive: true,
-    location: {
+    name: 'Shebin El-Kom',
+    nameAr: 'شبين الكوم',
+    type: 'circle' as const,
+    center: {
       type: 'Point' as const,
       coordinates: [31.0167, 30.5667],
     },
-    radius: 20,
+    radius: 20000, // 20km in meters
+    serviceFee: 5,
+    isActive: true,
   },
   {
-    name: 'منوف',
-    nameEn: 'Menouf',
-    governorate: 'المنوفية',
-    governorateEn: 'Menoufia',
-    isActive: true,
-    location: {
+    name: 'Menouf',
+    nameAr: 'منوف',
+    type: 'circle' as const,
+    center: {
       type: 'Point' as const,
       coordinates: [30.9333, 30.4667],
     },
-    radius: 12,
+    radius: 12000, // 12km in meters
+    serviceFee: 5,
+    isActive: true,
   },
 ];
 
@@ -271,10 +272,11 @@ const customerUsers = [
     email: 'mohamed@example.com',
     addresses: [
       {
-        label: 'المنزل',
+        label: 'home' as const,
+        name: 'المنزل',
         address: 'شارع الجمهورية، الباجور',
+        area: 'الباجور',
         city: 'الباجور',
-        governorate: 'المنوفية',
         location: { type: 'Point' as const, coordinates: [30.9667, 30.4522] },
         isDefault: true,
       },
@@ -286,10 +288,11 @@ const customerUsers = [
     email: 'ahmed@example.com',
     addresses: [
       {
-        label: 'المنزل',
+        label: 'home' as const,
+        name: 'المنزل',
         address: 'شارع النيل، شبين الكوم',
+        area: 'شبين الكوم',
         city: 'شبين الكوم',
-        governorate: 'المنوفية',
         location: { type: 'Point' as const, coordinates: [31.0167, 30.5667] },
         isDefault: true,
       },
@@ -301,10 +304,11 @@ const customerUsers = [
     email: 'khaled@example.com',
     addresses: [
       {
-        label: 'المنزل',
+        label: 'home' as const,
+        name: 'المنزل',
         address: 'شارع المحطة، منوف',
+        area: 'منوف',
         city: 'منوف',
-        governorate: 'المنوفية',
         location: { type: 'Point' as const, coordinates: [30.9333, 30.4667] },
         isDefault: true,
       },
@@ -559,29 +563,29 @@ async function seed() {
       const categoryId = categoryMap.get(craftsman.categorySlug);
       const profile = new Craftsman({
         userId: user._id,
+        displayName: craftsman.name,
         bio: craftsman.bio,
         services: [
           {
             categoryId,
-            priceRange: { min: 100, max: 500 },
+            subcategories: [],
+            experience: 5,
+            priceType: 'quote',
             description: craftsman.bio,
           },
         ],
-        workingHours: {
-          saturday: { isOpen: true, openTime: '08:00', closeTime: '18:00' },
-          sunday: { isOpen: true, openTime: '08:00', closeTime: '18:00' },
-          monday: { isOpen: true, openTime: '08:00', closeTime: '18:00' },
-          tuesday: { isOpen: true, openTime: '08:00', closeTime: '18:00' },
-          wednesday: { isOpen: true, openTime: '08:00', closeTime: '18:00' },
-          thursday: { isOpen: true, openTime: '08:00', closeTime: '18:00' },
-          friday: { isOpen: false, openTime: '00:00', closeTime: '00:00' },
-        },
+        workingHours: [
+          { day: 0, isWorking: true, start: '08:00', end: '18:00' }, // Sunday
+          { day: 1, isWorking: true, start: '08:00', end: '18:00' }, // Monday
+          { day: 2, isWorking: true, start: '08:00', end: '18:00' }, // Tuesday
+          { day: 3, isWorking: true, start: '08:00', end: '18:00' }, // Wednesday
+          { day: 4, isWorking: true, start: '08:00', end: '18:00' }, // Thursday
+          { day: 5, isWorking: false, start: '00:00', end: '00:00' }, // Friday
+          { day: 6, isWorking: true, start: '08:00', end: '18:00' }, // Saturday
+        ],
         location: {
           type: 'Point',
           coordinates: [30.9667 + Math.random() * 0.1, 30.4522 + Math.random() * 0.1],
-          address: 'الباجور، المنوفية',
-          city: 'الباجور',
-          governorate: 'المنوفية',
         },
         serviceRadius: 10 + Math.floor(Math.random() * 10),
         status: craftsman.status,
@@ -592,7 +596,7 @@ async function seed() {
         isAvailable: craftsman.status === 'approved',
         isFeatured: craftsman.isFeatured,
         totalEarnings: craftsman.completedJobs * 250,
-        availableBalance: craftsman.completedJobs * 200,
+        currentBalance: craftsman.completedJobs * 200,
       });
       await profile.save();
       craftsmanProfileDocs.push(profile);
@@ -616,6 +620,7 @@ async function seed() {
 
     const requestDocs = [];
     const approvedCraftsmen = craftsmanProfileDocs.filter((c) => c.status === 'approved');
+    const today = dayjs().format('YYMMDD');
 
     for (let i = 0; i < 30; i++) {
       const customer = customerProfileDocs[Math.floor(Math.random() * customerProfileDocs.length)];
@@ -624,28 +629,36 @@ async function seed() {
       const status = requestStatuses[Math.floor(Math.random() * requestStatuses.length)];
       const title = requestTitles[Math.floor(Math.random() * requestTitles.length)];
 
+      const urgencyTypes: Array<'urgent' | 'today' | 'scheduled'> = ['urgent', 'today', 'scheduled'];
+      const urgency = urgencyTypes[Math.floor(Math.random() * urgencyTypes.length)];
+      const scheduledDate =
+        urgency === 'scheduled'
+          ? new Date(Date.now() + Math.random() * 7 * 24 * 60 * 60 * 1000)
+          : undefined;
+
       const request: Record<string, unknown> = {
+        requestNumber: `SAN-${today}-${String(i + 1).padStart(4, '0')}`,
         customerId: customer.userId,
         categoryId,
         title,
         description: `${title} - نحتاج خدمة سريعة وموثوقة. الرجاء التواصل لمزيد من التفاصيل.`,
-        location: {
-          type: 'Point',
-          coordinates: [30.9667 + Math.random() * 0.1, 30.4522 + Math.random() * 0.1],
-          address: 'الباجور، المنوفية',
+        address: {
+          address: 'شارع الجمهورية، الباجور',
+          area: 'الباجور',
           city: 'الباجور',
-          governorate: 'المنوفية',
+          location: {
+            type: 'Point',
+            coordinates: [30.9667 + Math.random() * 0.1, 30.4522 + Math.random() * 0.1],
+          },
         },
-        budget: {
+        estimatedPrice: {
           min: 100 + Math.floor(Math.random() * 100),
           max: 300 + Math.floor(Math.random() * 200),
         },
-        preferredTime: {
-          date: new Date(Date.now() + Math.random() * 7 * 24 * 60 * 60 * 1000),
-          timeSlot: ['morning', 'afternoon', 'evening'][Math.floor(Math.random() * 3)],
-          flexibleDate: Math.random() > 0.5,
-        },
-        isUrgent: Math.random() > 0.8,
+        urgency,
+        scheduledDate,
+        scheduledTimeSlot: urgency === 'scheduled' ? 'morning' : undefined,
+        isUrgent: urgency === 'urgent',
         status,
         createdAt: randomDate(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), new Date()),
       };
@@ -653,30 +666,34 @@ async function seed() {
       // Add quotes for non-pending requests
       if (status !== 'pending') {
         const quotePrice = 150 + Math.floor(Math.random() * 200);
-        request.quotes = [
+        request.quotesReceived = [
           {
             craftsmanId: craftsman.userId,
             price: quotePrice,
             estimatedDuration: `${1 + Math.floor(Math.random() * 4)} ساعات`,
-            notes: 'سأحضر جميع الأدوات والمواد اللازمة',
-            status: status === 'quoted' ? 'pending' : 'accepted',
+            note: 'سأحضر جميع الأدوات والمواد اللازمة',
             createdAt: new Date(),
           },
         ];
 
         if (['accepted', 'in_progress', 'completed'].includes(status)) {
           request.craftsmanId = craftsman.userId;
-          request.acceptedQuote = (request.quotes as Array<Record<string, unknown>>)[0];
-          request.totalAmount = quotePrice;
+          request.quotedPrice = quotePrice;
+          request.finalPrice = quotePrice;
           request.commission = quotePrice * 0.15;
           request.serviceFee = quotePrice * 0.05;
+          request.craftsmanEarnings = quotePrice - quotePrice * 0.15;
         }
       }
 
       requestDocs.push(request);
     }
 
-    await ServiceRequest.insertMany(requestDocs);
+    // Save requests individually to trigger pre-save hooks for requestNumber generation
+    for (const requestData of requestDocs) {
+      const request = new ServiceRequest(requestData);
+      await request.save();
+    }
     logger.info(`Inserted ${requestDocs.length} service requests`);
 
     // Create sample reviews for completed requests
@@ -722,11 +739,11 @@ async function seed() {
     // Create sample notifications
     const notificationDocs = [];
     const notificationTypes = [
-      { type: 'request_new', title: 'طلب جديد', body: 'لديك طلب خدمة جديد في منطقتك' },
-      { type: 'request_quote', title: 'عرض سعر جديد', body: 'تلقيت عرض سعر جديد على طلبك' },
-      { type: 'request_accepted', title: 'تم قبول العرض', body: 'تم قبول عرض السعر الخاص بك' },
-      { type: 'request_completed', title: 'تم إنهاء الخدمة', body: 'تم إنهاء الخدمة بنجاح' },
-      { type: 'review_received', title: 'تقييم جديد', body: 'تلقيت تقييماً جديداً' },
+      { type: 'request', title: 'طلب جديد', body: 'لديك طلب خدمة جديد في منطقتك' },
+      { type: 'quote', title: 'عرض سعر جديد', body: 'تلقيت عرض سعر جديد على طلبك' },
+      { type: 'status', title: 'تم قبول العرض', body: 'تم قبول عرض السعر الخاص بك' },
+      { type: 'status', title: 'تم إنهاء الخدمة', body: 'تم إنهاء الخدمة بنجاح' },
+      { type: 'review', title: 'تقييم جديد', body: 'تلقيت تقييماً جديداً' },
       { type: 'system', title: 'مرحباً بك', body: 'مرحباً بك في تطبيق صنايعي' },
     ];
 

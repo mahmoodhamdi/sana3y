@@ -7,7 +7,7 @@ part of 'notification_provider.dart';
 // **************************************************************************
 
 String _$unreadNotificationCountHash() =>
-    r'318329319a3ac8fa18f46d44a16b3fb78239e011';
+    r'5c3c0bc528f2e67a8b7491634cd82805625aea34';
 
 /// See also [unreadNotificationCount].
 @ProviderFor(unreadNotificationCount)
@@ -25,7 +25,7 @@ final unreadNotificationCountProvider = AutoDisposeFutureProvider<int>.internal(
 // ignore: unused_element
 typedef UnreadNotificationCountRef = AutoDisposeFutureProviderRef<int>;
 String _$notificationsStateHash() =>
-    r'6538ae0ff0fbd623c6ae9b173a0142a4cbf3b15d';
+    r'c3bb1c02fb18cb49808fb07191049c1dc3002991';
 
 /// See also [NotificationsState].
 @ProviderFor(NotificationsState)

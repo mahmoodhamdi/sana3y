@@ -29,6 +29,10 @@ export const config = {
     clientEmail: process.env.FIREBASE_CLIENT_EMAIL || '',
   },
 
+  google: {
+    apiKey: process.env.GOOGLE_API_KEY || '',
+  },
+
   sms: {
     apiKey: process.env.SMS_API_KEY || '',
     senderId: process.env.SMS_SENDER_ID || 'SANA3Y',

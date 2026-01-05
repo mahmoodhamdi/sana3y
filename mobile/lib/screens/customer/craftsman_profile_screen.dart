@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../models/craftsman.dart';
 import '../../providers/craftsman_provider.dart';
-import '../../config/routes.dart';
 
 class CraftsmanProfileScreen extends ConsumerWidget {
   final String craftsmanId;

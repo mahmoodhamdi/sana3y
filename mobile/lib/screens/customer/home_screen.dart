@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../config/routes.dart';
-import '../../models/category.dart';
-import '../../models/craftsman.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/category_provider.dart';
 import '../../providers/craftsman_provider.dart';

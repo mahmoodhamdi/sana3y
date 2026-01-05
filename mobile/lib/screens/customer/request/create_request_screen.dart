@@ -33,8 +33,8 @@ class _CreateRequestScreenState extends ConsumerState<CreateRequestScreen> {
   bool _isSubmitting = false;
 
   // Location (will be fetched from device later)
-  double _latitude = 30.0444;  // Cairo default
-  double _longitude = 31.2357;
+  final double _latitude = 30.0444;  // Cairo default
+  final double _longitude = 31.2357;
   String _governorate = 'القاهرة';
   String _city = 'القاهرة';
 

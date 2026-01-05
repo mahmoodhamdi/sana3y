@@ -1,10 +1,53 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../providers/auth_provider.dart';
 import 'api_client.dart';
 
 part 'notification_service.g.dart';
+
+// Singleton for early initialization (before Riverpod is available)
+class NotificationService {
+  static final NotificationService _instance = NotificationService._internal();
+  static NotificationService get instance => _instance;
+
+  NotificationService._internal();
+
+  final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  String? _fcmToken;
+
+  String? get fcmToken => _fcmToken;
+
+  Future<void> initialize() async {
+    // Request permission
+    final settings = await _messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+      provisional: false,
+    );
+
+    debugPrint('FCM Authorization status: ${settings.authorizationStatus}');
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized ||
+        settings.authorizationStatus == AuthorizationStatus.provisional) {
+      // Get FCM token
+      _fcmToken = await _messaging.getToken();
+      debugPrint('FCM Token: $_fcmToken');
+
+      // Listen for token refresh
+      _messaging.onTokenRefresh.listen((newToken) {
+        _fcmToken = newToken;
+        debugPrint('FCM Token refreshed: $newToken');
+      });
+
+      // Handle foreground messages
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        debugPrint('Foreground message received: ${message.notification?.title}');
+      });
+    }
+  }
+}
 
 class NotificationData {
   final String id;
@@ -72,38 +115,28 @@ class NotificationsResponse {
 }
 
 @riverpod
-NotificationService notificationService(Ref ref) {
+NotificationApiService notificationApiService(Ref ref) {
   final apiClient = ref.watch(apiClientProvider);
-  return NotificationService(apiClient);
+  return NotificationApiService(apiClient);
 }
 
-class NotificationService {
+class NotificationApiService {
   final ApiClient _apiClient;
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
 
-  NotificationService(this._apiClient);
+  NotificationApiService(this._apiClient);
 
-  // Initialize Firebase Messaging
+  // Initialize Firebase Messaging and register token
   Future<void> initialize() async {
-    // Request permission
-    final settings = await _messaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      // Get FCM token
-      final token = await _messaging.getToken();
-      if (token != null) {
-        await registerFCMToken(token);
-      }
-
-      // Listen for token refresh
-      _messaging.onTokenRefresh.listen((newToken) {
-        registerFCMToken(newToken);
-      });
+    final token = NotificationService.instance.fcmToken;
+    if (token != null) {
+      await registerFCMToken(token);
     }
+
+    // Listen for token refresh
+    _messaging.onTokenRefresh.listen((newToken) {
+      registerFCMToken(newToken);
+    });
   }
 
   // Register FCM token with backend

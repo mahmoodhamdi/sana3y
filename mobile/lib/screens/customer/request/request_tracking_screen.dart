@@ -467,7 +467,7 @@ class _AssignedCraftsmanCard extends StatelessWidget {
           children: [
             const Icon(Icons.star, size: 16, color: Colors.amber),
             const SizedBox(width: 4),
-            Text('${craftsman.rating?.toStringAsFixed(1) ?? '0.0'}'),
+            Text(craftsman.rating?.toStringAsFixed(1) ?? '0.0'),
             const SizedBox(width: 8),
             Text('${craftsman.completedJobs ?? 0} عمل'),
           ],
