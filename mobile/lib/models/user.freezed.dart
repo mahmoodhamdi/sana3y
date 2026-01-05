@@ -22,13 +22,13 @@ User _$UserFromJson(Map<String, dynamic> json) {
 mixin _$User {
   @JsonKey(name: '_id')
   String get id => throw _privateConstructorUsedError;
-  String get phone => throw _privateConstructorUsedError;
+  String get email => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   UserRole get role => throw _privateConstructorUsedError;
-  String? get email => throw _privateConstructorUsedError;
   String? get avatar => throw _privateConstructorUsedError;
-  bool get isPhoneVerified => throw _privateConstructorUsedError;
-  bool get isEmailVerified => throw _privateConstructorUsedError;
+  AuthProvider get authProvider => throw _privateConstructorUsedError;
+  String? get googleId => throw _privateConstructorUsedError;
+  bool get isVerified => throw _privateConstructorUsedError;
   bool get isActive => throw _privateConstructorUsedError;
   List<String> get fcmTokens => throw _privateConstructorUsedError;
   DateTime? get lastLoginAt => throw _privateConstructorUsedError;
@@ -51,13 +51,13 @@ abstract class $UserCopyWith<$Res> {
   @useResult
   $Res call(
       {@JsonKey(name: '_id') String id,
-      String phone,
+      String email,
       String name,
       UserRole role,
-      String? email,
       String? avatar,
-      bool isPhoneVerified,
-      bool isEmailVerified,
+      AuthProvider authProvider,
+      String? googleId,
+      bool isVerified,
       bool isActive,
       List<String> fcmTokens,
       DateTime? lastLoginAt,
@@ -81,13 +81,13 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
   @override
   $Res call({
     Object? id = null,
-    Object? phone = null,
+    Object? email = null,
     Object? name = null,
     Object? role = null,
-    Object? email = freezed,
     Object? avatar = freezed,
-    Object? isPhoneVerified = null,
-    Object? isEmailVerified = null,
+    Object? authProvider = null,
+    Object? googleId = freezed,
+    Object? isVerified = null,
     Object? isActive = null,
     Object? fcmTokens = null,
     Object? lastLoginAt = freezed,
@@ -99,9 +99,9 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      phone: null == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
+      email: null == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
           ? _value.name
@@ -111,21 +111,21 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.role
           : role // ignore: cast_nullable_to_non_nullable
               as UserRole,
-      email: freezed == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String?,
       avatar: freezed == avatar
           ? _value.avatar
           : avatar // ignore: cast_nullable_to_non_nullable
               as String?,
-      isPhoneVerified: null == isPhoneVerified
-          ? _value.isPhoneVerified
-          : isPhoneVerified // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isEmailVerified: null == isEmailVerified
-          ? _value.isEmailVerified
-          : isEmailVerified // ignore: cast_nullable_to_non_nullable
+      authProvider: null == authProvider
+          ? _value.authProvider
+          : authProvider // ignore: cast_nullable_to_non_nullable
+              as AuthProvider,
+      googleId: freezed == googleId
+          ? _value.googleId
+          : googleId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isVerified: null == isVerified
+          ? _value.isVerified
+          : isVerified // ignore: cast_nullable_to_non_nullable
               as bool,
       isActive: null == isActive
           ? _value.isActive
@@ -160,13 +160,13 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
   @useResult
   $Res call(
       {@JsonKey(name: '_id') String id,
-      String phone,
+      String email,
       String name,
       UserRole role,
-      String? email,
       String? avatar,
-      bool isPhoneVerified,
-      bool isEmailVerified,
+      AuthProvider authProvider,
+      String? googleId,
+      bool isVerified,
       bool isActive,
       List<String> fcmTokens,
       DateTime? lastLoginAt,
@@ -187,13 +187,13 @@ class __$$UserImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? phone = null,
+    Object? email = null,
     Object? name = null,
     Object? role = null,
-    Object? email = freezed,
     Object? avatar = freezed,
-    Object? isPhoneVerified = null,
-    Object? isEmailVerified = null,
+    Object? authProvider = null,
+    Object? googleId = freezed,
+    Object? isVerified = null,
     Object? isActive = null,
     Object? fcmTokens = null,
     Object? lastLoginAt = freezed,
@@ -205,9 +205,9 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      phone: null == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
+      email: null == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
           ? _value.name
@@ -217,21 +217,21 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value.role
           : role // ignore: cast_nullable_to_non_nullable
               as UserRole,
-      email: freezed == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String?,
       avatar: freezed == avatar
           ? _value.avatar
           : avatar // ignore: cast_nullable_to_non_nullable
               as String?,
-      isPhoneVerified: null == isPhoneVerified
-          ? _value.isPhoneVerified
-          : isPhoneVerified // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isEmailVerified: null == isEmailVerified
-          ? _value.isEmailVerified
-          : isEmailVerified // ignore: cast_nullable_to_non_nullable
+      authProvider: null == authProvider
+          ? _value.authProvider
+          : authProvider // ignore: cast_nullable_to_non_nullable
+              as AuthProvider,
+      googleId: freezed == googleId
+          ? _value.googleId
+          : googleId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isVerified: null == isVerified
+          ? _value.isVerified
+          : isVerified // ignore: cast_nullable_to_non_nullable
               as bool,
       isActive: null == isActive
           ? _value.isActive
@@ -262,13 +262,13 @@ class __$$UserImplCopyWithImpl<$Res>
 class _$UserImpl implements _User {
   const _$UserImpl(
       {@JsonKey(name: '_id') required this.id,
-      required this.phone,
+      required this.email,
       required this.name,
       required this.role,
-      this.email,
       this.avatar,
-      this.isPhoneVerified = false,
-      this.isEmailVerified = false,
+      this.authProvider = AuthProvider.email,
+      this.googleId,
+      this.isVerified = false,
       this.isActive = true,
       final List<String> fcmTokens = const [],
       this.lastLoginAt,
@@ -283,21 +283,21 @@ class _$UserImpl implements _User {
   @JsonKey(name: '_id')
   final String id;
   @override
-  final String phone;
+  final String email;
   @override
   final String name;
   @override
   final UserRole role;
   @override
-  final String? email;
-  @override
   final String? avatar;
   @override
   @JsonKey()
-  final bool isPhoneVerified;
+  final AuthProvider authProvider;
+  @override
+  final String? googleId;
   @override
   @JsonKey()
-  final bool isEmailVerified;
+  final bool isVerified;
   @override
   @JsonKey()
   final bool isActive;
@@ -319,7 +319,7 @@ class _$UserImpl implements _User {
 
   @override
   String toString() {
-    return 'User(id: $id, phone: $phone, name: $name, role: $role, email: $email, avatar: $avatar, isPhoneVerified: $isPhoneVerified, isEmailVerified: $isEmailVerified, isActive: $isActive, fcmTokens: $fcmTokens, lastLoginAt: $lastLoginAt, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'User(id: $id, email: $email, name: $name, role: $role, avatar: $avatar, authProvider: $authProvider, googleId: $googleId, isVerified: $isVerified, isActive: $isActive, fcmTokens: $fcmTokens, lastLoginAt: $lastLoginAt, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -328,15 +328,16 @@ class _$UserImpl implements _User {
         (other.runtimeType == runtimeType &&
             other is _$UserImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.phone, phone) || other.phone == phone) &&
+            (identical(other.email, email) || other.email == email) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.role, role) || other.role == role) &&
-            (identical(other.email, email) || other.email == email) &&
             (identical(other.avatar, avatar) || other.avatar == avatar) &&
-            (identical(other.isPhoneVerified, isPhoneVerified) ||
-                other.isPhoneVerified == isPhoneVerified) &&
-            (identical(other.isEmailVerified, isEmailVerified) ||
-                other.isEmailVerified == isEmailVerified) &&
+            (identical(other.authProvider, authProvider) ||
+                other.authProvider == authProvider) &&
+            (identical(other.googleId, googleId) ||
+                other.googleId == googleId) &&
+            (identical(other.isVerified, isVerified) ||
+                other.isVerified == isVerified) &&
             (identical(other.isActive, isActive) ||
                 other.isActive == isActive) &&
             const DeepCollectionEquality()
@@ -354,13 +355,13 @@ class _$UserImpl implements _User {
   int get hashCode => Object.hash(
       runtimeType,
       id,
-      phone,
+      email,
       name,
       role,
-      email,
       avatar,
-      isPhoneVerified,
-      isEmailVerified,
+      authProvider,
+      googleId,
+      isVerified,
       isActive,
       const DeepCollectionEquality().hash(_fcmTokens),
       lastLoginAt,
@@ -386,13 +387,13 @@ class _$UserImpl implements _User {
 abstract class _User implements User {
   const factory _User(
       {@JsonKey(name: '_id') required final String id,
-      required final String phone,
+      required final String email,
       required final String name,
       required final UserRole role,
-      final String? email,
       final String? avatar,
-      final bool isPhoneVerified,
-      final bool isEmailVerified,
+      final AuthProvider authProvider,
+      final String? googleId,
+      final bool isVerified,
       final bool isActive,
       final List<String> fcmTokens,
       final DateTime? lastLoginAt,
@@ -405,19 +406,19 @@ abstract class _User implements User {
   @JsonKey(name: '_id')
   String get id;
   @override
-  String get phone;
+  String get email;
   @override
   String get name;
   @override
   UserRole get role;
   @override
-  String? get email;
-  @override
   String? get avatar;
   @override
-  bool get isPhoneVerified;
+  AuthProvider get authProvider;
   @override
-  bool get isEmailVerified;
+  String? get googleId;
+  @override
+  bool get isVerified;
   @override
   bool get isActive;
   @override

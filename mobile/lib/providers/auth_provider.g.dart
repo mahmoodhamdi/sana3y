@@ -87,7 +87,7 @@ final userRoleProvider = AutoDisposeProvider<UserRole?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef UserRoleRef = AutoDisposeProviderRef<UserRole?>;
-String _$authHash() => r'e20314ffda7f61517143454715ee2b739a0052f9';
+String _$authHash() => r'e051ca3beb25860e71f2225b4b9e45222b16d60d';
 
 /// See also [Auth].
 @ProviderFor(Auth)

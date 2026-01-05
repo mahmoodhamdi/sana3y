@@ -41,20 +41,29 @@ class OtpSendResult with _$OtpSendResult {
 }
 
 @freezed
-class SendOtpRequest with _$SendOtpRequest {
-  const factory SendOtpRequest({
-    required String phone,
-    @Default('verification') String type,
-  }) = _SendOtpRequest;
+class SendVerificationOTPRequest with _$SendVerificationOTPRequest {
+  const factory SendVerificationOTPRequest({
+    required String email,
+  }) = _SendVerificationOTPRequest;
 
-  factory SendOtpRequest.fromJson(Map<String, dynamic> json) =>
-      _$SendOtpRequestFromJson(json);
+  factory SendVerificationOTPRequest.fromJson(Map<String, dynamic> json) =>
+      _$SendVerificationOTPRequestFromJson(json);
+}
+
+@freezed
+class SendPasswordResetOTPRequest with _$SendPasswordResetOTPRequest {
+  const factory SendPasswordResetOTPRequest({
+    required String email,
+  }) = _SendPasswordResetOTPRequest;
+
+  factory SendPasswordResetOTPRequest.fromJson(Map<String, dynamic> json) =>
+      _$SendPasswordResetOTPRequestFromJson(json);
 }
 
 @freezed
 class VerifyOtpRequest with _$VerifyOtpRequest {
   const factory VerifyOtpRequest({
-    required String phone,
+    required String email,
     required String code,
     @Default('verification') String type,
   }) = _VerifyOtpRequest;
@@ -66,11 +75,11 @@ class VerifyOtpRequest with _$VerifyOtpRequest {
 @freezed
 class RegisterRequest with _$RegisterRequest {
   const factory RegisterRequest({
-    required String phone,
+    required String email,
+    required String password,
     required String name,
     required String role,
-    String? email,
-    String? password,
+    required String otp,
   }) = _RegisterRequest;
 
   factory RegisterRequest.fromJson(Map<String, dynamic> json) =>
@@ -78,25 +87,25 @@ class RegisterRequest with _$RegisterRequest {
 }
 
 @freezed
-class LoginOtpRequest with _$LoginOtpRequest {
-  const factory LoginOtpRequest({
-    required String phone,
-    required String otp,
-  }) = _LoginOtpRequest;
-
-  factory LoginOtpRequest.fromJson(Map<String, dynamic> json) =>
-      _$LoginOtpRequestFromJson(json);
-}
-
-@freezed
 class LoginPasswordRequest with _$LoginPasswordRequest {
   const factory LoginPasswordRequest({
-    required String phone,
+    required String email,
     required String password,
   }) = _LoginPasswordRequest;
 
   factory LoginPasswordRequest.fromJson(Map<String, dynamic> json) =>
       _$LoginPasswordRequestFromJson(json);
+}
+
+@freezed
+class LoginGoogleRequest with _$LoginGoogleRequest {
+  const factory LoginGoogleRequest({
+    required String idToken,
+    @Default('customer') String role,
+  }) = _LoginGoogleRequest;
+
+  factory LoginGoogleRequest.fromJson(Map<String, dynamic> json) =>
+      _$LoginGoogleRequestFromJson(json);
 }
 
 @freezed
@@ -113,7 +122,7 @@ class ChangePasswordRequest with _$ChangePasswordRequest {
 @freezed
 class ResetPasswordRequest with _$ResetPasswordRequest {
   const factory ResetPasswordRequest({
-    required String phone,
+    required String email,
     required String otp,
     required String newPassword,
   }) = _ResetPasswordRequest;
@@ -126,12 +135,21 @@ class ResetPasswordRequest with _$ResetPasswordRequest {
 class UpdateProfileRequest with _$UpdateProfileRequest {
   const factory UpdateProfileRequest({
     String? name,
-    String? email,
     String? avatar,
   }) = _UpdateProfileRequest;
 
   factory UpdateProfileRequest.fromJson(Map<String, dynamic> json) =>
       _$UpdateProfileRequestFromJson(json);
+}
+
+@freezed
+class CheckEmailRequest with _$CheckEmailRequest {
+  const factory CheckEmailRequest({
+    required String email,
+  }) = _CheckEmailRequest;
+
+  factory CheckEmailRequest.fromJson(Map<String, dynamic> json) =>
+      _$CheckEmailRequestFromJson(json);
 }
 
 enum AuthStatus {

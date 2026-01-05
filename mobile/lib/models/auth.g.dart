@@ -48,23 +48,34 @@ Map<String, dynamic> _$$OtpSendResultImplToJson(_$OtpSendResultImpl instance) =>
       'code': instance.code,
     };
 
-_$SendOtpRequestImpl _$$SendOtpRequestImplFromJson(Map<String, dynamic> json) =>
-    _$SendOtpRequestImpl(
-      phone: json['phone'] as String,
-      type: json['type'] as String? ?? 'verification',
+_$SendVerificationOTPRequestImpl _$$SendVerificationOTPRequestImplFromJson(
+        Map<String, dynamic> json) =>
+    _$SendVerificationOTPRequestImpl(
+      email: json['email'] as String,
     );
 
-Map<String, dynamic> _$$SendOtpRequestImplToJson(
-        _$SendOtpRequestImpl instance) =>
+Map<String, dynamic> _$$SendVerificationOTPRequestImplToJson(
+        _$SendVerificationOTPRequestImpl instance) =>
     <String, dynamic>{
-      'phone': instance.phone,
-      'type': instance.type,
+      'email': instance.email,
+    };
+
+_$SendPasswordResetOTPRequestImpl _$$SendPasswordResetOTPRequestImplFromJson(
+        Map<String, dynamic> json) =>
+    _$SendPasswordResetOTPRequestImpl(
+      email: json['email'] as String,
+    );
+
+Map<String, dynamic> _$$SendPasswordResetOTPRequestImplToJson(
+        _$SendPasswordResetOTPRequestImpl instance) =>
+    <String, dynamic>{
+      'email': instance.email,
     };
 
 _$VerifyOtpRequestImpl _$$VerifyOtpRequestImplFromJson(
         Map<String, dynamic> json) =>
     _$VerifyOtpRequestImpl(
-      phone: json['phone'] as String,
+      email: json['email'] as String,
       code: json['code'] as String,
       type: json['type'] as String? ?? 'verification',
     );
@@ -72,7 +83,7 @@ _$VerifyOtpRequestImpl _$$VerifyOtpRequestImplFromJson(
 Map<String, dynamic> _$$VerifyOtpRequestImplToJson(
         _$VerifyOtpRequestImpl instance) =>
     <String, dynamic>{
-      'phone': instance.phone,
+      'email': instance.email,
       'code': instance.code,
       'type': instance.type,
     };
@@ -80,49 +91,49 @@ Map<String, dynamic> _$$VerifyOtpRequestImplToJson(
 _$RegisterRequestImpl _$$RegisterRequestImplFromJson(
         Map<String, dynamic> json) =>
     _$RegisterRequestImpl(
-      phone: json['phone'] as String,
+      email: json['email'] as String,
+      password: json['password'] as String,
       name: json['name'] as String,
       role: json['role'] as String,
-      email: json['email'] as String?,
-      password: json['password'] as String?,
+      otp: json['otp'] as String,
     );
 
 Map<String, dynamic> _$$RegisterRequestImplToJson(
         _$RegisterRequestImpl instance) =>
     <String, dynamic>{
-      'phone': instance.phone,
-      'name': instance.name,
-      'role': instance.role,
       'email': instance.email,
       'password': instance.password,
-    };
-
-_$LoginOtpRequestImpl _$$LoginOtpRequestImplFromJson(
-        Map<String, dynamic> json) =>
-    _$LoginOtpRequestImpl(
-      phone: json['phone'] as String,
-      otp: json['otp'] as String,
-    );
-
-Map<String, dynamic> _$$LoginOtpRequestImplToJson(
-        _$LoginOtpRequestImpl instance) =>
-    <String, dynamic>{
-      'phone': instance.phone,
+      'name': instance.name,
+      'role': instance.role,
       'otp': instance.otp,
     };
 
 _$LoginPasswordRequestImpl _$$LoginPasswordRequestImplFromJson(
         Map<String, dynamic> json) =>
     _$LoginPasswordRequestImpl(
-      phone: json['phone'] as String,
+      email: json['email'] as String,
       password: json['password'] as String,
     );
 
 Map<String, dynamic> _$$LoginPasswordRequestImplToJson(
         _$LoginPasswordRequestImpl instance) =>
     <String, dynamic>{
-      'phone': instance.phone,
+      'email': instance.email,
       'password': instance.password,
+    };
+
+_$LoginGoogleRequestImpl _$$LoginGoogleRequestImplFromJson(
+        Map<String, dynamic> json) =>
+    _$LoginGoogleRequestImpl(
+      idToken: json['idToken'] as String,
+      role: json['role'] as String? ?? 'customer',
+    );
+
+Map<String, dynamic> _$$LoginGoogleRequestImplToJson(
+        _$LoginGoogleRequestImpl instance) =>
+    <String, dynamic>{
+      'idToken': instance.idToken,
+      'role': instance.role,
     };
 
 _$ChangePasswordRequestImpl _$$ChangePasswordRequestImplFromJson(
@@ -142,7 +153,7 @@ Map<String, dynamic> _$$ChangePasswordRequestImplToJson(
 _$ResetPasswordRequestImpl _$$ResetPasswordRequestImplFromJson(
         Map<String, dynamic> json) =>
     _$ResetPasswordRequestImpl(
-      phone: json['phone'] as String,
+      email: json['email'] as String,
       otp: json['otp'] as String,
       newPassword: json['newPassword'] as String,
     );
@@ -150,7 +161,7 @@ _$ResetPasswordRequestImpl _$$ResetPasswordRequestImplFromJson(
 Map<String, dynamic> _$$ResetPasswordRequestImplToJson(
         _$ResetPasswordRequestImpl instance) =>
     <String, dynamic>{
-      'phone': instance.phone,
+      'email': instance.email,
       'otp': instance.otp,
       'newPassword': instance.newPassword,
     };
@@ -159,7 +170,6 @@ _$UpdateProfileRequestImpl _$$UpdateProfileRequestImplFromJson(
         Map<String, dynamic> json) =>
     _$UpdateProfileRequestImpl(
       name: json['name'] as String?,
-      email: json['email'] as String?,
       avatar: json['avatar'] as String?,
     );
 
@@ -167,8 +177,19 @@ Map<String, dynamic> _$$UpdateProfileRequestImplToJson(
         _$UpdateProfileRequestImpl instance) =>
     <String, dynamic>{
       'name': instance.name,
-      'email': instance.email,
       'avatar': instance.avatar,
+    };
+
+_$CheckEmailRequestImpl _$$CheckEmailRequestImplFromJson(
+        Map<String, dynamic> json) =>
+    _$CheckEmailRequestImpl(
+      email: json['email'] as String,
+    );
+
+Map<String, dynamic> _$$CheckEmailRequestImplToJson(
+        _$CheckEmailRequestImpl instance) =>
+    <String, dynamic>{
+      'email': instance.email,
     };
 
 _$AuthStateImpl _$$AuthStateImplFromJson(Map<String, dynamic> json) =>

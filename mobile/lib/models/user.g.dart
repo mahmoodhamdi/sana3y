@@ -8,13 +8,15 @@ part of 'user.dart';
 
 _$UserImpl _$$UserImplFromJson(Map<String, dynamic> json) => _$UserImpl(
       id: json['_id'] as String,
-      phone: json['phone'] as String,
+      email: json['email'] as String,
       name: json['name'] as String,
       role: $enumDecode(_$UserRoleEnumMap, json['role']),
-      email: json['email'] as String?,
       avatar: json['avatar'] as String?,
-      isPhoneVerified: json['isPhoneVerified'] as bool? ?? false,
-      isEmailVerified: json['isEmailVerified'] as bool? ?? false,
+      authProvider:
+          $enumDecodeNullable(_$AuthProviderEnumMap, json['authProvider']) ??
+              AuthProvider.email,
+      googleId: json['googleId'] as String?,
+      isVerified: json['isVerified'] as bool? ?? false,
       isActive: json['isActive'] as bool? ?? true,
       fcmTokens: (json['fcmTokens'] as List<dynamic>?)
               ?.map((e) => e as String)
@@ -34,13 +36,13 @@ _$UserImpl _$$UserImplFromJson(Map<String, dynamic> json) => _$UserImpl(
 Map<String, dynamic> _$$UserImplToJson(_$UserImpl instance) =>
     <String, dynamic>{
       '_id': instance.id,
-      'phone': instance.phone,
+      'email': instance.email,
       'name': instance.name,
       'role': _$UserRoleEnumMap[instance.role]!,
-      'email': instance.email,
       'avatar': instance.avatar,
-      'isPhoneVerified': instance.isPhoneVerified,
-      'isEmailVerified': instance.isEmailVerified,
+      'authProvider': _$AuthProviderEnumMap[instance.authProvider]!,
+      'googleId': instance.googleId,
+      'isVerified': instance.isVerified,
       'isActive': instance.isActive,
       'fcmTokens': instance.fcmTokens,
       'lastLoginAt': instance.lastLoginAt?.toIso8601String(),
@@ -52,6 +54,11 @@ const _$UserRoleEnumMap = {
   UserRole.customer: 'customer',
   UserRole.craftsman: 'craftsman',
   UserRole.admin: 'admin',
+};
+
+const _$AuthProviderEnumMap = {
+  AuthProvider.email: 'email',
+  AuthProvider.google: 'google',
 };
 
 _$AddressImpl _$$AddressImplFromJson(Map<String, dynamic> json) =>

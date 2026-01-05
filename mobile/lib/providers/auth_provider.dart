@@ -43,12 +43,13 @@ class Auth extends _$Auth {
     }
   }
 
-  Future<OtpSendResult> sendOtp(String phone, {String type = 'verification'}) async {
+  // Send verification OTP to email
+  Future<OtpSendResult> sendVerificationOTP(String email) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
       final authService = ref.read(authServiceProvider);
-      final result = await authService.sendOtp(
-        SendOtpRequest(phone: phone, type: type),
+      final result = await authService.sendVerificationOTP(
+        SendVerificationOTPRequest(email: email),
       );
       state = state.copyWith(isLoading: false);
       return result;
@@ -61,12 +62,32 @@ class Auth extends _$Auth {
     }
   }
 
-  Future<bool> verifyOtp(String phone, String code, {String type = 'verification'}) async {
+  // Send password reset OTP to email
+  Future<OtpSendResult> sendPasswordResetOTP(String email) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+    try {
+      final authService = ref.read(authServiceProvider);
+      final result = await authService.sendPasswordResetOTP(
+        SendPasswordResetOTPRequest(email: email),
+      );
+      state = state.copyWith(isLoading: false);
+      return result;
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: _getErrorMessage(e),
+      );
+      rethrow;
+    }
+  }
+
+  // Verify OTP
+  Future<bool> verifyOtp(String email, String code, {String type = 'verification'}) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
       final authService = ref.read(authServiceProvider);
       final result = await authService.verifyOtp(
-        VerifyOtpRequest(phone: phone, code: code, type: type),
+        VerifyOtpRequest(email: email, code: code, type: type),
       );
       state = state.copyWith(isLoading: false);
       return result;
@@ -79,23 +100,24 @@ class Auth extends _$Auth {
     }
   }
 
+  // Register with email and password
   Future<void> register({
-    required String phone,
+    required String email,
+    required String password,
     required String name,
     required String role,
-    String? email,
-    String? password,
+    required String otp,
   }) async {
     state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
     try {
       final authService = ref.read(authServiceProvider);
       final result = await authService.register(
         RegisterRequest(
-          phone: phone,
-          name: name,
-          role: role,
           email: email,
           password: password,
+          name: name,
+          role: role,
+          otp: otp,
         ),
       );
       state = AuthState(
@@ -112,33 +134,13 @@ class Auth extends _$Auth {
     }
   }
 
-  Future<void> loginWithOtp(String phone, String otp) async {
-    state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
-    try {
-      final authService = ref.read(authServiceProvider);
-      final result = await authService.loginWithOtp(
-        LoginOtpRequest(phone: phone, otp: otp),
-      );
-      state = AuthState(
-        status: AuthStatus.authenticated,
-        user: result.user,
-        tokens: result.tokens,
-      );
-    } catch (e) {
-      state = AuthState(
-        status: AuthStatus.error,
-        errorMessage: _getErrorMessage(e),
-      );
-      rethrow;
-    }
-  }
-
-  Future<void> loginWithPassword(String phone, String password) async {
+  // Login with email and password
+  Future<void> loginWithPassword(String email, String password) async {
     state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
     try {
       final authService = ref.read(authServiceProvider);
       final result = await authService.loginWithPassword(
-        LoginPasswordRequest(phone: phone, password: password),
+        LoginPasswordRequest(email: email, password: password),
       );
       state = AuthState(
         status: AuthStatus.authenticated,
@@ -154,16 +156,46 @@ class Auth extends _$Auth {
     }
   }
 
+  // Login with Google
+  Future<void> loginWithGoogle({String role = 'customer'}) async {
+    state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
+    try {
+      final authService = ref.read(authServiceProvider);
+      final result = await authService.loginWithGoogle(role: role);
+      state = AuthState(
+        status: AuthStatus.authenticated,
+        user: result.user,
+        tokens: result.tokens,
+      );
+    } catch (e) {
+      state = AuthState(
+        status: AuthStatus.error,
+        errorMessage: _getErrorMessage(e),
+      );
+      rethrow;
+    }
+  }
+
+  // Check if email exists
+  Future<bool> checkEmailExists(String email) async {
+    try {
+      final authService = ref.read(authServiceProvider);
+      return await authService.checkEmailExists(CheckEmailRequest(email: email));
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Update profile
   Future<void> updateProfile({
     String? name,
-    String? email,
     String? avatar,
   }) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
       final authService = ref.read(authServiceProvider);
       final user = await authService.updateProfile(
-        UpdateProfileRequest(name: name, email: email, avatar: avatar),
+        UpdateProfileRequest(name: name, avatar: avatar),
       );
       state = state.copyWith(user: user, isLoading: false);
     } catch (e) {
@@ -175,6 +207,7 @@ class Auth extends _$Auth {
     }
   }
 
+  // Change password
   Future<void> changePassword(String currentPassword, String newPassword) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
@@ -195,12 +228,13 @@ class Auth extends _$Auth {
     }
   }
 
-  Future<void> resetPassword(String phone, String otp, String newPassword) async {
+  // Reset password with OTP
+  Future<void> resetPassword(String email, String otp, String newPassword) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
       final authService = ref.read(authServiceProvider);
       await authService.resetPassword(
-        ResetPasswordRequest(phone: phone, otp: otp, newPassword: newPassword),
+        ResetPasswordRequest(email: email, otp: otp, newPassword: newPassword),
       );
       state = state.copyWith(isLoading: false);
     } catch (e) {
@@ -212,6 +246,7 @@ class Auth extends _$Auth {
     }
   }
 
+  // Logout
   Future<void> logout() async {
     state = state.copyWith(isLoading: true);
     try {

@@ -12,17 +12,24 @@ enum UserRole {
   admin,
 }
 
+enum AuthProvider {
+  @JsonValue('email')
+  email,
+  @JsonValue('google')
+  google,
+}
+
 @freezed
 class User with _$User {
   const factory User({
     @JsonKey(name: '_id') required String id,
-    required String phone,
+    required String email,
     required String name,
     required UserRole role,
-    String? email,
     String? avatar,
-    @Default(false) bool isPhoneVerified,
-    @Default(false) bool isEmailVerified,
+    @Default(AuthProvider.email) AuthProvider authProvider,
+    String? googleId,
+    @Default(false) bool isVerified,
     @Default(true) bool isActive,
     @Default([]) List<String> fcmTokens,
     DateTime? lastLoginAt,
