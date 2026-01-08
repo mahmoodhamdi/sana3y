@@ -71,9 +71,9 @@ Configured in `backend/tsconfig.json`:
 
 ### Backend API Structure
 - Base URL: `/api/v1`
-- Routes: `/auth`, `/categories`, `/craftsmen`, `/requests`, `/chat`, `/reviews`, `/notifications`, `/upload`
+- Routes: `/auth`, `/categories`, `/craftsmen`, `/requests`, `/chat`, `/reviews`, `/notifications`, `/upload`, `/payment`
 - Health check: `/health`
-- API Documentation: `/api/docs` (Swagger UI)
+- API Documentation: `/api/docs` (Swagger UI), `/api/redoc` (ReDoc)
 - Postman collection available in `backend/src/docs/`
 
 ### Mobile Architecture
@@ -124,12 +124,18 @@ Located in `shared/constants/index.ts` and mirrored in `mobile/lib/config/consta
 - Default location: الباجور (30.4522, 30.9667)
 - Service radius: 10 km
 
+## Request Lifecycle
+
+Status flow: `pending` → `quoted` → `accepted` → `in_progress` → `completed`
+(can be `cancelled` at any point before completion)
+
 ## Socket.io Events
 
 Key events in `mobile/lib/config/constants.dart` (SocketEvents class):
 - `request:new`, `request:quote`, `request:accepted`, `request:status` - Request lifecycle
 - `message:new`, `message:read` - Chat
 - `craftsman:online`, `craftsman:offline` - Availability
+- `typing:start`, `typing:stop` - Typing indicators
 
 ## Code Generation
 
