@@ -31,6 +31,7 @@ class _CreateRequestScreenState extends ConsumerState<CreateRequestScreen> {
   double? _budgetMax;
   final List<String> _images = [];
   bool _isSubmitting = false;
+  int _currentStep = 0;
 
   // Location (will be fetched from device later)
   final double _latitude = 30.0444;  // Cairo default
@@ -44,6 +45,14 @@ class _CreateRequestScreenState extends ConsumerState<CreateRequestScreen> {
     if (widget.categoryId != null) {
       _loadCategory();
     }
+    // Add listeners to update button state when text changes
+    _titleController.addListener(_onTextChanged);
+    _descriptionController.addListener(_onTextChanged);
+    _addressController.addListener(_onTextChanged);
+  }
+
+  void _onTextChanged() {
+    setState(() {});
   }
 
   void _loadCategory() {
@@ -53,10 +62,44 @@ class _CreateRequestScreenState extends ConsumerState<CreateRequestScreen> {
 
   @override
   void dispose() {
+    _titleController.removeListener(_onTextChanged);
+    _descriptionController.removeListener(_onTextChanged);
+    _addressController.removeListener(_onTextChanged);
     _titleController.dispose();
     _descriptionController.dispose();
     _addressController.dispose();
     super.dispose();
+  }
+
+  bool _canContinueStep(int step) {
+    switch (step) {
+      case 0:
+        return _selectedCategory != null;
+      case 1:
+        // Title >= 3 chars and description >= 10 chars
+        return _titleController.text.trim().length >= 3 &&
+            _descriptionController.text.trim().length >= 10;
+      case 2:
+        return _addressController.text.trim().isNotEmpty;
+      case 3:
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  void _onStepContinue() {
+    if (_canContinueStep(_currentStep)) {
+      if (_currentStep < 3) {
+        setState(() => _currentStep++);
+      }
+    }
+  }
+
+  void _onStepCancel() {
+    if (_currentStep > 0) {
+      setState(() => _currentStep--);
+    }
   }
 
   @override
@@ -71,7 +114,16 @@ class _CreateRequestScreenState extends ConsumerState<CreateRequestScreen> {
         key: _formKey,
         child: Stepper(
           type: StepperType.vertical,
+          currentStep: _currentStep,
+          onStepContinue: _onStepContinue,
+          onStepCancel: _onStepCancel,
+          onStepTapped: (step) {
+            if (step < _currentStep) {
+              setState(() => _currentStep = step);
+            }
+          },
           controlsBuilder: (context, details) {
+            final canContinue = _canContinueStep(details.currentStep);
             return Padding(
               padding: const EdgeInsets.only(top: 16),
               child: Row(
@@ -85,7 +137,7 @@ class _CreateRequestScreenState extends ConsumerState<CreateRequestScreen> {
                   ElevatedButton(
                     onPressed: details.currentStep == 3
                         ? (_isSubmitting ? null : _submitRequest)
-                        : details.onStepContinue,
+                        : (canContinue ? details.onStepContinue : null),
                     child: Text(
                       details.currentStep == 3
                           ? (_isSubmitting ? 'جاري الإرسال...' : 'إرسال الطلب')
@@ -105,28 +157,32 @@ class _CreateRequestScreenState extends ConsumerState<CreateRequestScreen> {
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (_, __) => const Text('فشل في تحميل الخدمات'),
               ),
-              isActive: true,
+              isActive: _currentStep >= 0,
+              state: _currentStep > 0 ? StepState.complete : StepState.indexed,
             ),
 
             // Step 2: Request Details
             Step(
               title: const Text('تفاصيل الطلب'),
               content: _buildDetailsStep(),
-              isActive: _selectedCategory != null,
+              isActive: _currentStep >= 1,
+              state: _currentStep > 1 ? StepState.complete : StepState.indexed,
             ),
 
             // Step 3: Location & Time
             Step(
               title: const Text('الموقع والوقت'),
               content: _buildLocationStep(),
-              isActive: _titleController.text.isNotEmpty,
+              isActive: _currentStep >= 2,
+              state: _currentStep > 2 ? StepState.complete : StepState.indexed,
             ),
 
             // Step 4: Review
             Step(
               title: const Text('مراجعة الطلب'),
               content: _buildReviewStep(),
-              isActive: _addressController.text.isNotEmpty,
+              isActive: _currentStep >= 3,
+              state: _currentStep == 3 ? StepState.indexed : StepState.indexed,
             ),
           ],
         ),
@@ -232,13 +288,14 @@ class _CreateRequestScreenState extends ConsumerState<CreateRequestScreen> {
         TextFormField(
           controller: _titleController,
           decoration: const InputDecoration(
-            labelText: 'عنوان الطلب',
-            hintText: 'مثال: إصلاح تسريب مياه في الحمام',
+            labelText: 'عنوان الطلب *',
+            hintText: 'مثال: إصلاح تسريب مياه',
+            helperText: '3 أحرف على الأقل',
             border: OutlineInputBorder(),
           ),
           validator: (value) {
-            if (value == null || value.length < 5) {
-              return 'العنوان يجب أن يكون 5 أحرف على الأقل';
+            if (value == null || value.trim().length < 3) {
+              return 'العنوان يجب أن يكون 3 أحرف على الأقل';
             }
             return null;
           },
@@ -248,13 +305,14 @@ class _CreateRequestScreenState extends ConsumerState<CreateRequestScreen> {
           controller: _descriptionController,
           maxLines: 4,
           decoration: const InputDecoration(
-            labelText: 'وصف المشكلة',
+            labelText: 'وصف المشكلة *',
             hintText: 'اشرح المشكلة بالتفصيل...',
+            helperText: '10 أحرف على الأقل',
             border: OutlineInputBorder(),
           ),
           validator: (value) {
-            if (value == null || value.length < 20) {
-              return 'الوصف يجب أن يكون 20 حرف على الأقل';
+            if (value == null || value.trim().length < 10) {
+              return 'الوصف يجب أن يكون 10 أحرف على الأقل';
             }
             return null;
           },

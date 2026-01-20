@@ -8,6 +8,8 @@ import chatRoutes from './chat.routes';
 import reviewRoutes from './review.routes';
 import notificationRoutes from './notification.routes';
 import paymentRoutes from './payment.routes';
+import adminRoutes from './admin.routes';
+import customerRoutes from './customer.routes';
 
 const router = Router();
 
@@ -41,6 +43,12 @@ router.use(`${API_VERSION}/notifications`, notificationRoutes);
 // Payment routes
 router.use(`${API_VERSION}/payments`, paymentRoutes);
 
+// Admin routes (dashboard management)
+router.use(`${API_VERSION}/admin`, adminRoutes);
+
+// Customer routes (addresses, favorites)
+router.use(`${API_VERSION}/customers`, customerRoutes);
+
 // Health check
 router.get('/health', (_req, res) => {
   res.json({
@@ -66,6 +74,8 @@ router.get(API_VERSION, (_req, res) => {
       notifications: `${API_VERSION}/notifications`,
       upload: `${API_VERSION}/upload`,
       payments: `${API_VERSION}/payments`,
+      admin: `${API_VERSION}/admin`,
+      customers: `${API_VERSION}/customers`,
     },
   });
 });

@@ -20,6 +20,7 @@ export interface INotification extends Document {
   readAt?: Date;
   isSent: boolean;
   sentAt?: Date;
+  isBroadcast: boolean;
   createdAt: Date;
 }
 
@@ -59,6 +60,10 @@ const notificationSchema = new Schema<INotification>(
       default: false,
     },
     sentAt: Date,
+    isBroadcast: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

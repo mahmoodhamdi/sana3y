@@ -127,8 +127,7 @@ const serviceCategorySchema = new Schema<IServiceCategory>(
   }
 );
 
-// Indexes
-serviceCategorySchema.index({ slug: 1 });
+// Indexes (slug index is created by unique: true)
 serviceCategorySchema.index({ sortOrder: 1 });
 serviceCategorySchema.index({ isActive: 1 });
 serviceCategorySchema.index({ isPopular: 1 });

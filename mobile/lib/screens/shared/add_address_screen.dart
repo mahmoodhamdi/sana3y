@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -337,10 +338,13 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('الرجاء تفعيل خدمة الموقع'),
+              content: Text('الرجاء تفعيل خدمة الموقع من إعدادات الجهاز'),
               backgroundColor: Colors.orange,
+              duration: Duration(seconds: 4),
             ),
           );
+          // Try to open location settings
+          await Geolocator.openLocationSettings();
         }
         return;
       }
@@ -352,7 +356,7 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('تم رفض إذن الموقع'),
+                content: Text('تم رفض إذن الموقع - يرجى السماح بالوصول للموقع'),
                 backgroundColor: Colors.red,
               ),
             );
@@ -365,24 +369,58 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('إذن الموقع مرفوض بشكل دائم'),
+              content: Text('إذن الموقع مرفوض - يرجى تفعيله من إعدادات التطبيق'),
               backgroundColor: Colors.red,
+              duration: Duration(seconds: 4),
             ),
           );
+          // Open app settings
+          await Geolocator.openAppSettings();
         }
         return;
       }
 
-      final position = await Geolocator.getCurrentPosition();
+      // Get position with timeout
+      final position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          timeLimit: Duration(seconds: 15),
+        ),
+      );
       final location = LatLng(position.latitude, position.longitude);
 
       // Open location picker with current location
       _openLocationPickerWithInitial(location);
-    } catch (e) {
+    } on TimeoutException {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('انتهت مهلة تحديد الموقع - تأكد من وجودك في مكان مفتوح'),
+            backgroundColor: Colors.orange,
+            duration: Duration(seconds: 4),
+          ),
+        );
+      }
+    } on LocationServiceDisabledException {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('خدمة الموقع غير مفعلة'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        String errorMsg = 'فشل في تحديد الموقع';
+        if (e.toString().contains('permission')) {
+          errorMsg = 'لا يوجد إذن للوصول للموقع';
+        } else if (e.toString().contains('timeout')) {
+          errorMsg = 'انتهت مهلة تحديد الموقع';
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('فشل في تحديد الموقع: $e'),
+            content: Text(errorMsg),
             backgroundColor: Colors.red,
           ),
         );

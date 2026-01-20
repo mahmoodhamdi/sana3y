@@ -106,8 +106,7 @@ const customerSchema = new Schema<ICustomer>(
   }
 );
 
-// Indexes
-customerSchema.index({ userId: 1 });
+// Indexes (userId index is created by unique: true)
 customerSchema.index({ 'addresses.location': '2dsphere' });
 
 // Virtual for user details

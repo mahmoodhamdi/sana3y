@@ -66,15 +66,34 @@ MongoDB runs on port 27017, Mongo Express on 8081, Redis on 6379.
 
 ### Backend Path Aliases
 Configured in `backend/tsconfig.json`:
+- `@/*` - General alias for `src/*`
 - `@config/*`, `@controllers/*`, `@middleware/*`, `@models/*`, `@routes/*`, `@services/*`, `@validators/*`, `@utils/*`, `@types/*`
 - `@shared/*` - References shared types from `../../shared/`
 
 ### Backend API Structure
 - Base URL: `/api/v1`
-- Routes: `/auth`, `/categories`, `/craftsmen`, `/requests`, `/chat`, `/reviews`, `/notifications`, `/upload`, `/payment`
+- Routes: `/auth`, `/categories`, `/craftsmen`, `/customers`, `/requests`, `/chat`, `/reviews`, `/notifications`, `/upload`, `/payments`, `/admin`
 - Health check: `/health`
-- API Documentation: `/api/docs` (Swagger UI), `/api/redoc` (ReDoc)
+- API info: `/api/v1`
+- API Documentation: `/api/docs` (Swagger UI), `/api/redoc` (ReDoc), `/api/docs.json` (spec)
 - Postman collection available in `backend/src/docs/`
+
+### Admin API Routes (`/admin` - requires admin role)
+- **Dashboard**: `GET /dashboard` - Platform statistics
+- **Customers**: `GET /customers`, `GET /customers/:id`, `PUT /customers/:id/status`
+- **Craftsmen**: `GET /craftsmen`, `GET /craftsmen/pending`, `PUT /craftsmen/:id/status`, `POST /craftsmen/:id/approve`, `POST /craftsmen/:id/reject`, `POST /craftsmen/:id/suspend`
+- **Requests**: `GET /requests`
+- **Transactions**: `GET /transactions`, `GET /transactions/stats`
+- **Zones**: `GET /zones`, `POST /zones`, `PUT /zones/:id`, `DELETE /zones/:id`
+- **Settings**: `GET /settings`, `PUT /settings`
+- **Notifications**: `GET /notifications`, `POST /notifications` (broadcast)
+
+### Backend Middleware
+Auth middleware in `backend/src/middleware/auth.ts` provides:
+- `authenticate` - Require valid JWT token
+- `optionalAuth` - Continue without auth if no token
+- `requireRole(...roles)` - Require specific roles
+- `requireAdmin`, `requireCraftsman`, `requireCustomer`, `requireCraftsmanOrAdmin` - Role shortcuts
 
 ### Mobile Architecture
 - **State Management**: Riverpod with code generation (`riverpod_generator`)
@@ -82,12 +101,13 @@ Configured in `backend/tsconfig.json`:
 - **Models**: Freezed for immutable data classes with JSON serialization
 - **Services**: Dio for HTTP, Socket.io for real-time
 - **Screen Organization**: `screens/auth/` (shared), `screens/customer/`, `screens/craftsman/`, `screens/shared/`
+- **Constants**: `lib/config/constants.dart` contains `AppConstants`, `ApiEndpoints`, `SocketEvents`
 
 ### Admin Dashboard Architecture
 - **App Router**: Next.js 16 with route groups `(auth)` and `(dashboard)`
 - **State**: Zustand for global state, React Query for server state
 - **UI**: shadcn/ui components with Radix primitives
-- **Dashboard Routes**: `/dashboard`, `/craftsmen`, `/customers`, `/requests`, `/categories`, `/finance`, `/zones`, `/notifications`, `/settings`
+- **Dashboard Routes**: `/dashboard`, `/craftsmen`, `/craftsmen/pending`, `/customers`, `/requests`, `/categories`, `/finance`, `/zones`, `/notifications`, `/settings`
 
 ### Database Models (MongoDB)
 Key models in `backend/src/models/`:
@@ -105,6 +125,39 @@ Note: Quote is embedded in ServiceRequest, not a separate model.
 
 ### Shared Constants
 `shared/constants/index.ts` contains business constants: `USER_ROLES`, `CRAFTSMAN_STATUS`, `REQUEST_STATUS`, `PAYMENT_STATUS`, `DEFAULTS` (commission rates, fees, limits).
+
+## Authentication Flow
+
+Email-based auth with OTP verification:
+1. User requests OTP via `/auth/send-verification-otp`
+2. OTP sent to email (code returned in dev mode for testing)
+3. Verify OTP via `/auth/verify-otp`
+4. Register via `/auth/register` or login via `/auth/login`
+5. JWT access/refresh tokens returned
+
+Google auth also supported via Firebase ID token verification.
+
+Role switching: Users can switch between customer/craftsman roles via `/auth/switch-role`. Switching creates the missing profile if needed. Craftsmen start with `pending` status until admin approval.
+
+## External Services
+
+### Payment (Paymob)
+- `backend/src/services/payment.service.ts` handles card and wallet payments
+- Supports Vodafone Cash, Orange Money via wallet integration
+- Webhook callback verifies HMAC signature for security
+- Env vars: `PAYMOB_API_KEY`, `PAYMOB_INTEGRATION_ID`, `PAYMOB_IFRAME_ID`, `PAYMOB_HMAC_SECRET`
+
+### SMS (Twilio/Unifonic)
+- `backend/src/utils/sms.ts` supports multiple providers
+- Twilio for international, Unifonic for Egyptian SMS gateway
+- Falls back to console logging in development mode
+- Env vars: `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_PHONE_NUMBER` or `UNIFONIC_APP_SID`, `UNIFONIC_SENDER_ID`
+
+### Maps (OpenStreetMap - FREE)
+- `backend/src/services/location.service.ts` uses free APIs
+- Nominatim for geocoding (1 req/sec rate limit)
+- OSRM for routing and distance calculation
+- No API keys required
 
 ## Key Patterns
 
@@ -129,13 +182,32 @@ Located in `shared/constants/index.ts` and mirrored in `mobile/lib/config/consta
 Status flow: `pending` → `quoted` → `accepted` → `in_progress` → `completed`
 (can be `cancelled` at any point before completion)
 
+Craftsman status flow: `pending` → `approved` | `rejected` | `suspended`
+
 ## Socket.io Events
 
-Key events in `mobile/lib/config/constants.dart` (SocketEvents class):
-- `request:new`, `request:quote`, `request:accepted`, `request:status` - Request lifecycle
-- `message:new`, `message:read` - Chat
-- `craftsman:online`, `craftsman:offline` - Availability
-- `typing:start`, `typing:stop` - Typing indicators
+Socket service in `backend/src/services/socket.service.ts` manages real-time communication.
+
+### Room Structure
+- `user:{userId}` - User-specific notifications
+- `craftsman:{craftsmanId}` - Craftsman-specific events
+- `category:{categoryId}` - Craftsmen in category
+- `zone:{zoneId}` - Craftsmen in service zone
+- `request:{requestId}` - Request updates
+- `chat:{chatId}` - Chat messages
+- `admin` - Admin notifications
+
+### Key Events (Client → Server)
+- `location:update` - Craftsman location update
+- `craftsman:status` - Online/offline toggle
+- `request:join`, `request:leave` - Join/leave request room
+- `chat:join`, `chat:leave`, `chat:typing` - Chat interactions
+
+### Key Events (Server → Client)
+- `request:new`, `request:quote_added`, `request:quote_accepted`, `request:status_changed`
+- `quote:new`, `quote:accepted`
+- `chat:message`, `chat:typing`
+- `craftsman:location`
 
 ## Code Generation
 
@@ -146,3 +218,22 @@ dart run build_runner build --delete-conflicting-outputs
 ```
 
 Generated files: `*.freezed.dart`, `*.g.dart` - do not edit manually.
+
+## Security Middleware
+
+Security middleware in `backend/src/middleware/security.ts` provides:
+- `preventNoSQLInjection` - Blocks MongoDB operator injection attempts
+- `securityHeaders` - Adds security headers (X-Content-Type-Options, X-Frame-Options, etc.)
+- `sanitizeInput` - XSS prevention via HTML entity encoding
+- `requestSizeLimiter` - Limit request body size
+- `validateContentType` - Ensure correct Content-Type headers
+
+Additional security via npm packages: `helmet`, `express-mongo-sanitize`, `hpp` (HTTP parameter pollution)
+
+## Testing Notes
+
+- Backend tests use Jest with MongoDB Memory Server (no external DB needed)
+- Run specific test file: `npm run test -- path/to/test.ts`
+- Run tests matching pattern: `npm run test -- --testPathPatterns="auth"`
+- Mobile tests: `flutter test test/path/to/test.dart`
+- Test suites: `api.test.ts`, `auth.test.ts`, `admin.test.ts`, `customer.test.ts`, `endpoints.test.ts`

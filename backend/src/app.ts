@@ -4,20 +4,27 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
+import mongoSanitize from 'express-mongo-sanitize';
+import hpp from 'hpp';
 import swaggerUi from 'swagger-ui-express';
 import redoc from 'redoc-express';
 import { config } from './config';
 import { swaggerSpec } from './config/swagger';
 import { errorHandler } from './middleware/errorHandler';
 import { notFoundHandler } from './middleware/notFound';
+import { securityHeaders, preventNoSQLInjection } from './middleware/security';
 import { logger } from './utils/logger';
 import routes from './routes';
 
 const createApp = (): Application => {
   const app = express();
 
+  // Trust proxy for Cloudflare tunnel / reverse proxy
+  app.set('trust proxy', 1);
+
   // Security middleware
   app.use(helmet());
+  app.use(securityHeaders);
 
   // CORS
   app.use(
@@ -45,6 +52,13 @@ const createApp = (): Application => {
   // Body parsing
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+  // Sanitize request data
+  app.use(mongoSanitize());
+  app.use(preventNoSQLInjection);
+
+  // HTTP Parameter Pollution protection
+  app.use(hpp());
 
   // Compression
   app.use(compression());

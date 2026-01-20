@@ -88,8 +88,7 @@ const transactionSchema = new Schema<ITransaction>(
   }
 );
 
-// Indexes
-transactionSchema.index({ transactionNumber: 1 });
+// Indexes (transactionNumber index is created by unique: true)
 transactionSchema.index({ type: 1 });
 transactionSchema.index({ status: 1 });
 transactionSchema.index({ fromUserId: 1 });

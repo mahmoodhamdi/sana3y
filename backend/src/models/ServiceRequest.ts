@@ -348,8 +348,7 @@ const serviceRequestSchema = new Schema<IServiceRequest>(
   }
 );
 
-// Indexes
-serviceRequestSchema.index({ requestNumber: 1 });
+// Indexes (requestNumber index is created by unique: true)
 serviceRequestSchema.index({ customerId: 1 });
 serviceRequestSchema.index({ craftsmanId: 1 });
 serviceRequestSchema.index({ status: 1 });

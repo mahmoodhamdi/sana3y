@@ -53,9 +53,8 @@ const otpSchema = new Schema<IOTP>(
   }
 );
 
-// Indexes
+// Indexes (expiresAt TTL index is created by index: { expires: 0 } in schema)
 otpSchema.index({ email: 1, type: 1 });
-otpSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 // Static method to generate OTP
 otpSchema.statics.generateOTP = async function (

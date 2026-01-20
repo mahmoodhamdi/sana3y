@@ -53,8 +53,7 @@ const settingSchema = new Schema<ISetting>(
   }
 );
 
-// Index
-settingSchema.index({ key: 1 });
+// Indexes (key index is created by unique: true)
 settingSchema.index({ isPublic: 1 });
 
 // Static method to get setting value

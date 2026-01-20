@@ -1,6 +1,6 @@
 class AppConstants {
   // API
-  static const String baseUrl = 'https://pronouncedly-resupine-benito.ngrok-free.dev/api/v1';
+  static const String baseUrl = 'https://sherman-workers-directors-leonard.trycloudflare.com/api/v1';
   static const Duration apiTimeout = Duration(seconds: 30);
 
   // App Info
@@ -57,37 +57,59 @@ class AppConstants {
 
 class ApiEndpoints {
   // Auth
-  static const String sendOtp = '/auth/send-otp';
+  static const String sendVerificationOtp = '/auth/send-verification-otp';
+  static const String sendResetOtp = '/auth/send-reset-otp';
   static const String verifyOtp = '/auth/verify-otp';
   static const String register = '/auth/register';
   static const String login = '/auth/login';
+  static const String loginGoogle = '/auth/login/google';
   static const String logout = '/auth/logout';
-  static const String refreshToken = '/auth/refresh-token';
+  static const String refreshToken = '/auth/refresh';
   static const String me = '/auth/me';
-  static const String updateProfile = '/auth/profile';
+  static const String changePassword = '/auth/change-password';
+  static const String resetPassword = '/auth/reset-password';
+  static const String checkEmail = '/auth/check-email';
+  static const String switchRole = '/auth/switch-role';
+  static const String roles = '/auth/roles';
 
   // Categories
   static const String categories = '/categories';
 
   // Craftsmen
   static const String craftsmen = '/craftsmen';
+  static const String craftsmenPublic = '/craftsmen/public';
+  static const String craftsmenFeatured = '/craftsmen/featured';
   static const String nearbyCraftsmen = '/craftsmen/nearby';
-  static const String searchCraftsmen = '/craftsmen/search';
-  static const String craftsmanProfile = '/craftsman/profile';
-  static const String craftsmanServices = '/craftsman/services';
-  static const String craftsmanAvailability = '/craftsman/availability';
-  static const String craftsmanOnlineStatus = '/craftsman/online-status';
-  static const String craftsmanWorkPhotos = '/craftsman/work-photos';
-  static const String craftsmanStatistics = '/craftsman/statistics';
-  static const String craftsmanRequests = '/craftsman/requests';
+  static const String craftsmenByCategory = '/craftsmen/category'; // + /:categoryId
+  static const String craftsmanMe = '/craftsmen/me';
+  static const String craftsmanProfile = '/craftsmen/profile';
+  static const String craftsmanOnline = '/craftsmen/online';
+  static const String craftsmanAvailability = '/craftsmen/availability';
+  static const String craftsmanPhotos = '/craftsmen/photos';
+  static const String craftsmanEarnings = '/craftsmen/earnings';
+  static const String craftsmanPayout = '/craftsmen/payout';
+  static const String craftsmanPayoutHistory = '/craftsmen/payout/history';
 
   // Requests
   static const String requests = '/requests';
-  static const String customerRequests = '/requests';
-  static const String availableRequests = '/craftsman/requests/available';
+  static const String myRequests = '/requests/my';
+  static const String availableRequests = '/requests/available';
+  static const String activeJobs = '/requests/my-jobs/active';
+  static const String completedJobs = '/requests/my-jobs/completed';
+  static const String requestStatuses = '/requests/statuses';
 
-  // Conversations
-  static const String conversations = '/conversations';
+  // Chat
+  static const String chatConversations = '/chat/conversations';
+  static const String chatUnreadCount = '/chat/unread-count';
+
+  // Notifications
+  static const String notifications = '/notifications';
+  static const String notificationsUnreadCount = '/notifications/unread-count';
+  static const String notificationsReadAll = '/notifications/read-all';
+  static const String notificationsFcmToken = '/notifications/fcm-token';
+
+  // Reviews
+  static const String reviews = '/reviews';
 
   // Upload
   static const String upload = '/upload';
@@ -95,9 +117,25 @@ class ApiEndpoints {
 
   // Payments
   static const String payments = '/payments';
+  static const String paymentsInitialize = '/payments/initialize';
+  static const String paymentsWallet = '/payments/wallet';
+  static const String paymentsWebhook = '/payments/webhook';
 
-  // Settings
-  static const String settings = '/settings';
+  // Customer
+  static const String customerMe = '/customers/me';
+  static const String customerAddresses = '/customers/addresses';
+  static const String customerFavorites = '/customers/favorites';
+
+  // Admin
+  static const String adminDashboard = '/admin/dashboard';
+  static const String adminCustomers = '/admin/customers';
+  static const String adminCraftsmen = '/admin/craftsmen';
+  static const String adminCraftsmenPending = '/admin/craftsmen/pending';
+  static const String adminRequests = '/admin/requests';
+  static const String adminTransactions = '/admin/transactions';
+  static const String adminZones = '/admin/zones';
+  static const String adminSettings = '/admin/settings';
+  static const String adminNotifications = '/admin/notifications';
 }
 
 class SocketEvents {

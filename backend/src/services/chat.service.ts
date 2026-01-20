@@ -78,7 +78,7 @@ class ChatService {
   async getConversationById(
     conversationId: string,
     userId: string
-  ): Promise<IConversation | null> {
+  ): Promise<Record<string, unknown> | null> {
     const conversation = await Conversation.findOne({
       _id: new Types.ObjectId(conversationId),
       participants: new Types.ObjectId(userId),
@@ -93,7 +93,28 @@ class ChatService {
         },
       });
 
-    return conversation;
+    if (!conversation) return null;
+
+    // Transform to fix requestId/request structure
+    const convJson = conversation.toJSON() as unknown as Record<string, unknown>;
+    const populatedRequest = convJson.requestId as Record<string, unknown> | undefined;
+    const requestIdString = typeof populatedRequest === 'object' && populatedRequest?._id
+      ? String(populatedRequest._id)
+      : conversation.requestId.toString();
+    const unread = conversation.unreadCount.get(userId) || 0;
+
+    return {
+      ...convJson,
+      requestId: requestIdString,
+      request: typeof populatedRequest === 'object' && populatedRequest?._id ? {
+        _id: populatedRequest._id,
+        requestNumber: populatedRequest.requestNumber,
+        title: populatedRequest.title,
+        status: populatedRequest.status,
+        category: populatedRequest.category,
+      } : null,
+      myUnreadCount: unread,
+    };
   }
 
   /**
@@ -127,11 +148,27 @@ class ChatService {
       }),
     ]);
 
-    // Add unread count for current user
+    // Add unread count for current user and fix requestId/request structure
     const conversationsWithUnread = conversations.map((conv) => {
       const unread = conv.unreadCount.get(userId) || 0;
+      const convJson = conv.toJSON() as unknown as Record<string, unknown>;
+
+      // Extract populated request and keep requestId as string
+      const populatedRequest = convJson.requestId as Record<string, unknown> | undefined;
+      const requestIdString = typeof populatedRequest === 'object' && populatedRequest?._id
+        ? String(populatedRequest._id)
+        : conv.requestId.toString();
+
       return {
-        ...conv.toJSON(),
+        ...convJson,
+        requestId: requestIdString,
+        request: typeof populatedRequest === 'object' && populatedRequest?._id ? {
+          _id: populatedRequest._id,
+          requestNumber: populatedRequest.requestNumber,
+          title: populatedRequest.title,
+          status: populatedRequest.status,
+          category: populatedRequest.category,
+        } : null,
         myUnreadCount: unread,
       };
     });

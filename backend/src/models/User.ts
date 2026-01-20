@@ -100,9 +100,7 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
   }
 );
 
-// Indexes
-userSchema.index({ email: 1 });
-userSchema.index({ googleId: 1 });
+// Indexes (email and googleId indexes are created by unique: true)
 userSchema.index({ role: 1 });
 userSchema.index({ authProvider: 1 });
 userSchema.index({ createdAt: -1 });

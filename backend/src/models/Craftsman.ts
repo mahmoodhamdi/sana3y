@@ -270,8 +270,7 @@ const craftsmanSchema = new Schema<ICraftsman>(
   }
 );
 
-// Indexes
-craftsmanSchema.index({ userId: 1 });
+// Indexes (userId index is created by unique: true)
 craftsmanSchema.index({ location: '2dsphere' });
 craftsmanSchema.index({ 'services.categoryId': 1 });
 craftsmanSchema.index({ status: 1 });
