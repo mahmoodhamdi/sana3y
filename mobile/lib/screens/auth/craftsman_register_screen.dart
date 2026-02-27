@@ -92,7 +92,7 @@ class _CraftsmanRegisterScreenState extends ConsumerState<CraftsmanRegisterScree
             ),
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
-              value: _selectedCategoryId,
+              initialValue: _selectedCategoryId,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: 'اختر تخصصك',

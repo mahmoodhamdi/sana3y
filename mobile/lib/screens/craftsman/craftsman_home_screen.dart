@@ -353,7 +353,7 @@ class _OnlineToggle extends ConsumerWidget {
               await service.toggleOnlineStatus(value);
               ref.invalidate(myCraftsmanProfileProvider);
             },
-            activeColor: Colors.green,
+            activeThumbColor: Colors.green,
             inactiveThumbColor: Colors.grey,
           ),
         ],

@@ -101,7 +101,7 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
                 children: [
                   Expanded(
                     child: DropdownButtonFormField<String>(
-                      value: _selectedGovernorate,
+                      initialValue: _selectedGovernorate,
                       decoration: const InputDecoration(
                         labelText: 'المحافظة',
                         border: OutlineInputBorder(),
@@ -120,7 +120,7 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
                   const SizedBox(width: 16),
                   Expanded(
                     child: DropdownButtonFormField<String>(
-                      value: _selectedCity,
+                      initialValue: _selectedCity,
                       decoration: const InputDecoration(
                         labelText: 'المدينة',
                         border: OutlineInputBorder(),

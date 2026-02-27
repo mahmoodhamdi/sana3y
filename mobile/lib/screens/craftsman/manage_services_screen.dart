@@ -288,7 +288,7 @@ class _ServiceCard extends StatelessWidget {
                       const SizedBox(width: 16),
                       Expanded(
                         child: DropdownButtonFormField<String>(
-                          value: priceType,
+                          initialValue: priceType,
                           decoration: const InputDecoration(
                             labelText: 'نوع التسعير',
                             border: OutlineInputBorder(),

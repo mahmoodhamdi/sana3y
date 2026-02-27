@@ -205,7 +205,7 @@ class _CraftsmanSetupScreenState extends ConsumerState<CraftsmanSetupScreen> {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _selectedCategoryId,
+              initialValue: _selectedCategoryId,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),

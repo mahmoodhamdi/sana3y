@@ -409,7 +409,7 @@ class _CreateRequestScreenState extends ConsumerState<CreateRequestScreen> {
           children: [
             Expanded(
               child: DropdownButtonFormField<String>(
-                value: _governorate,
+                initialValue: _governorate,
                 decoration: const InputDecoration(
                   labelText: 'المحافظة',
                   border: OutlineInputBorder(),
@@ -429,7 +429,7 @@ class _CreateRequestScreenState extends ConsumerState<CreateRequestScreen> {
             const SizedBox(width: 16),
             Expanded(
               child: DropdownButtonFormField<String>(
-                value: _city,
+                initialValue: _city,
                 decoration: const InputDecoration(
                   labelText: 'المدينة',
                   border: OutlineInputBorder(),
