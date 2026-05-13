@@ -12,7 +12,9 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "test": "jest",
     "test:watch": "jest --watch",
-    "seed": "ts-node src/scripts/seed.ts"
+    "seed": "ts-node src/scripts/seed.ts",
+    "seed:demo": "ts-node src/scripts/seed-demo.ts",
+    "seed:all": "ts-node src/scripts/seed.ts && ts-node src/scripts/seed-demo.ts"
   },
   "keywords": [
     "sana3y",
