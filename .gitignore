@@ -134,3 +134,5 @@ admin-dashboard/.env.local
 # Cache
 .cache/
 *.cache
+.agent/
+demo_data_local/
