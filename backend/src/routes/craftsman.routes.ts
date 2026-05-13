@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request } from 'express';
 import {
   getCraftsmen,
   getApprovedCraftsmen,
@@ -42,6 +42,57 @@ router.delete('/photos', authenticate, requireRole('craftsman'), removeWorkPhoto
 router.get('/earnings', authenticate, requireRole('craftsman'), getEarnings);
 router.post('/payout', authenticate, requireRole('craftsman'), requestPayout);
 router.get('/payout/history', authenticate, requireRole('craftsman'), getPayoutHistory);
+
+// Wallet aggregate (uses wallet.service — single endpoint for the mobile wallet screen)
+import { getCraftsmanWalletBalance, requestWithdrawal } from '@services/wallet.service';
+router.get('/wallet', authenticate, requireRole('craftsman'), async (req, res, next) => {
+  try {
+    const userId =
+      (req as Request & { user?: { _id?: string; userId?: string } }).user?._id ??
+      (req as Request & { user?: { userId?: string } }).user?.userId;
+    if (!userId) {
+      res.status(401).json({ success: false, message: 'Unauthorized' });
+      return;
+    }
+    const balance = await getCraftsmanWalletBalance(String(userId));
+    res.json({ success: true, data: balance });
+  } catch (err) {
+    next(err);
+  }
+});
+router.post('/wallet/withdraw', authenticate, requireRole('craftsman'), async (req, res, next) => {
+  try {
+    const userId =
+      (req as Request & { user?: { _id?: string; userId?: string } }).user?._id ??
+      (req as Request & { user?: { userId?: string } }).user?.userId;
+    if (!userId) {
+      res.status(401).json({ success: false, message: 'Unauthorized' });
+      return;
+    }
+    const { amount, method, destinationRef } = req.body as {
+      amount?: number;
+      method?: 'bank_transfer' | 'instapay' | 'vodafone_cash' | 'cash_at_office';
+      destinationRef?: string;
+    };
+    if (typeof amount !== 'number' || amount <= 0) {
+      res.status(400).json({ success: false, message: 'amount must be a positive number' });
+      return;
+    }
+    if (!method || !destinationRef) {
+      res.status(400).json({ success: false, message: 'method and destinationRef are required' });
+      return;
+    }
+    const result = await requestWithdrawal({
+      craftsmanUserId: String(userId),
+      amount,
+      method,
+      destinationRef,
+    });
+    res.status(201).json({ success: true, data: result });
+  } catch (err) {
+    next(err);
+  }
+});
 
 // Admin routes
 router.get('/', authenticate, requireRole('admin'), getCraftsmen);
