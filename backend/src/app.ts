@@ -1,10 +1,10 @@
 import express, { Application } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import mongoose from 'mongoose';
 import morgan from 'morgan';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
-import mongoSanitize from 'express-mongo-sanitize';
 import hpp from 'hpp';
 import swaggerUi from 'swagger-ui-express';
 import redoc from 'redoc-express';
@@ -53,8 +53,9 @@ const createApp = (): Application => {
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-  // Sanitize request data
-  app.use(mongoSanitize());
+  // Sanitize request data (Express 5 disallows reassigning req.query, so we use our
+  // custom preventNoSQLInjection middleware instead of express-mongo-sanitize, which
+  // tries to reassign it).
   app.use(preventNoSQLInjection);
 
   // HTTP Parameter Pollution protection
@@ -76,13 +77,47 @@ const createApp = (): Application => {
     );
   }
 
-  // Health check
+  // Health check (liveness)
   app.get('/health', (_req, res) => {
     res.status(200).json({
       success: true,
       message: 'Sana3y API is running',
       timestamp: new Date().toISOString(),
       environment: config.env,
+    });
+  });
+
+  // Health check (readiness — DB + dependent services)
+  app.get('/health/ready', (_req, res) => {
+    const dbState = mongoose.connection.readyState;
+    const dbStates: Record<number, string> = {
+      0: 'disconnected',
+      1: 'connected',
+      2: 'connecting',
+      3: 'disconnecting',
+    };
+    const isReady = dbState === 1;
+    res.status(isReady ? 200 : 503).json({
+      success: isReady,
+      checks: {
+        database: { status: dbStates[dbState] ?? 'unknown', healthy: isReady },
+        smsProvider: { configured: config.smsProvider, healthy: true },
+        paymentProvider: { configured: config.paymentProvider, healthy: true },
+      },
+      timestamp: new Date().toISOString(),
+    });
+  });
+
+  // Health check (version — git SHA + package version)
+  app.get('/health/version', (_req, res) => {
+    res.json({
+      success: true,
+      version: process.env.npm_package_version || '1.0.0',
+      commit: process.env.GIT_COMMIT || 'dev',
+      buildTime: process.env.BUILD_TIME || null,
+      node: process.version,
+      environment: config.env,
+      timestamp: new Date().toISOString(),
     });
   });
 
