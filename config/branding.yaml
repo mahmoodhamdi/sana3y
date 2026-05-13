@@ -1,0 +1,104 @@
+# Sana3y White-Label Branding Config
+#
+# This file is the single source of truth for everything that changes between
+# city-licensed deployments: the city name, language, currency, default
+# coordinates, primary/accent colors, and which SMS / payment / map providers
+# to wire up.
+#
+# After editing this file, run:
+#
+#     ./scripts/apply-branding.sh
+#
+# That script regenerates the backend `.env`, the admin dashboard `.env.local`,
+# the Flutter `lib/config/branding.dart`, and the visible app titles in each
+# component so a fresh checkout becomes "Sana3y <YOUR CITY>" in one step.
+#
+# Default values below are for the reference deployment in الباجور (Menoufia).
+
+brand:
+  name_ar: "صنايعي الباجور"
+  name_en: "Sana3y Bagour"
+  short_code: "bagour"
+  tagline_ar: "كل الصنايعية في إيدك"
+  tagline_en: "Every craftsman, at your fingertips"
+
+  primary_color: "#1E88E5"
+  accent_color: "#FFA000"
+  background_color: "#F5F7FA"
+  surface_color: "#FFFFFF"
+
+  logo_path: "branding/logo.png"
+  logo_dark_path: "branding/logo-dark.png"
+  splash_path: "branding/splash.png"
+  favicon_path: "branding/favicon.ico"
+
+  domain: "bagour.sana3y.app"
+  support_email: "support@bagour.sana3y.app"
+  support_whatsapp: "+201XXXXXXXXX"
+  support_phone: "+201XXXXXXXXX"
+
+region:
+  city_ar: "الباجور"
+  city_en: "Bagour"
+  governorate_ar: "المنوفية"
+  governorate_en: "Menoufia"
+  country_ar: "مصر"
+  country_en: "Egypt"
+  country_code: "EG"
+  timezone: "Africa/Cairo"
+  center_lat: 30.4522
+  center_lng: 30.9667
+  service_radius_km: 15
+  # Map provider — keep flutter_map + Nominatim for free deployments;
+  # switch to google_maps once the operator has a billing account.
+  map_provider: "openstreetmap"
+
+locale:
+  primary: "ar-EG"
+  supported:
+    - "ar-EG"
+    - "en-US"
+  rtl: true
+
+currency:
+  code: "EGP"
+  symbol_ar: "جنيه"
+  symbol_en: "EGP"
+
+business:
+  commission_pct: 15
+  service_fee_pct: 5
+  urgent_fee_pct: 20
+  min_withdrawal: 100
+  max_request_photos: 6
+  max_quote_validity_hours: 48
+
+# Pick from: mock | twilio | unifonic | victorylink | mnaswer
+sms:
+  provider: "unifonic"
+  sender_id: "Sana3y"
+
+# Pick from: mock | paymob | fawry | vodafone_cash | instapay
+payment:
+  provider: "paymob"
+  # The mobile app exposes these to the customer at checkout time.
+  enabled_methods:
+    - "paymob"
+    - "vodafone_cash"
+    - "fawry"
+    - "cash_on_completion"
+
+categories:
+  # Operators can disable categories that don't make sense in their city, e.g.
+  # disabling "Marine Engines" in a non-coastal city.
+  enabled:
+    - "plumbing"
+    - "electrical"
+    - "carpentry"
+    - "painting"
+    - "ac"
+    - "aluminum"
+    - "appliances"
+    - "moving"
+    - "cleaning"
+    - "welding"
